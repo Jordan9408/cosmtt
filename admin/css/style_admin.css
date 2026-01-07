@@ -1,0 +1,413 @@
+/* Couleur */
+
+:root {
+	--primary-color: #f9f9f9;
+	--secondary-color: #f4c430;
+	--third-color: #e8d630;
+	--fourth-color: #ddd;
+	--fifth-color: #000;
+	--sixth-color: #036;
+	--seventh-color: #d2e9ff;
+	--eighth-color: #FF3028;
+	--ninth-color: #1b6e31;
+	--tenth-color: #2b66dd;
+}
+
+/* *{
+    background: green;
+} */
+body {
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	text-align: center;
+}
+
+main {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.table-container{
+	display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.main-align-table {
+    display: flex;
+}
+
+/* Vous pouvez également ajouter un style spécifique pour chaque tableau si nécessaire */
+.main-align-table table {
+    margin: 10px; /* Espace entre les tableaux */
+}
+
+
+.error-message {
+	padding-bottom: 10px;
+	color:red;
+}
+
+
+/* form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+} */
+ul {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+
+li {
+	list-style: none;
+    border: 1px solid #f4c430;
+    border-radius: 5px;
+    /* padding: 6px 0px; */
+    width: 250px;
+    text-align: center;
+    margin-top: 20px;
+    color: #000;
+    background-color: #f4c430;
+	/* display:flex; */
+}
+
+a {
+	display: flex;
+    justify-content: center;
+	text-decoration: none;
+    color: #000;
+    width: 246px;
+    padding: 6px 0;
+}
+
+th {
+	background-color: var(--sixth-color);
+	color: var(--primary-color);
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+	background: var(--fifth-color);
+	padding: 10px 0;
+	color: var(--primary-color);
+	text-align: center;
+	margin: 0;
+}
+
+
+h2 {
+	text-align: center;
+	font-family: 'Open Sans', sans-serif;
+	background-color: var(--secondary-color);
+	padding: 5px;
+	margin: 18px auto 36px;
+}
+
+/* -------------------------------- */
+/* #connexion {
+	margin-top: 2.4em;
+	padding: 11px;
+	background: var(--secondary-color);
+} */
+
+/* form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: stretch;
+    align-items: center;
+	border: #000 2px solid;
+	border-radius: 15px;
+	background: var(--secondary-color);
+	margin: 0px 25em 2em 31em;
+	padding: 5px;
+} */
+
+.encad {
+	padding: 15px 62px;
+	/* width: 200px; */
+	margin-bottom: 59px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: var(--secondary-color);
+	border: 1px solid var(--fifth-color);
+	border-radius: 20px;
+}
+
+.height_form {
+	margin-bottom: 0;
+}
+
+
+.connect-input {
+	width: 200px;
+	height: 35px;
+	margin: 5px auto;
+	border-radius: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.mdp_oublie {
+	font-size: 16px;
+	font-weight: 400;
+	padding: 5px;
+}
+
+/* 
+a:visited {
+	color: var(--primary-color);
+} */
+
+.connect-submit {
+	background: var(--primary-color);
+	width: 200px;
+	padding: 10px;
+	margin-top: 5px;
+	cursor: pointer;
+	border: none;
+	border-radius: 7px;
+	margin: 10px auto 0px auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 2px solid var(--fifth-color);
+}
+
+.connect-submit:hover {
+	color: var(--sixth-color);
+
+}
+
+.connect-submit:active {
+	background: var(--secondary-color);
+	color: var(--sixth-color);
+	box-shadow: 1px 1px 1px, inset 1px 1px 1px;
+}
+
+.form input {
+	width: 200px;
+	height: 35px;
+	margin: 6px auto;
+	border-radius: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.mdp_oublie {
+	font-size: 16px;
+	font-weight: 400;
+	padding: 5px;
+}
+
+
+
+.poule-select > select {
+	width: 90px;
+	margin-bottom: 5px;
+}
+
+
+/* t */
+.link_container {
+	margin-bottom: 20px;
+}
+
+.link {
+	background-color: var(--secondary-color);
+	/* padding: 10px 20px; */
+	border-radius: 6px;
+	-webkit-text-decoration: 0;
+	text-decoration: 0;
+}
+
+a.link {
+	color: var(--fifth-color);
+}
+
+body {
+	background-color: var(--primary-color);
+	/* min-height: 100vh; */
+}
+
+#container {
+	position: absolute;
+	margin: 10em 15%;
+}
+
+img,
+.image {
+	width: 30px;
+	margin: auto;
+}
+
+.logo-cosmtt {
+	position: absolute;
+	top: 0;
+	left: 40px;
+	width: 65px;
+	z-index: 1;
+}
+
+th,
+td {
+	padding: 1px 6px;
+	text-align: center;
+}
+
+table tr {
+	background-color: var(--seventh-color);
+}
+
+#menu_btn {
+	/* width: 200px; */
+	/* display: flex; */
+	/* justify-content: center; */
+	margin: 0 25em;
+}
+
+/* POPUP */
+/* #showPopup {
+	padding: 5px;
+	border-radius: 5px;
+	background: #f4c430;
+} */
+
+/* Styles pour la popup */
+
+#closePopup {
+	position: absolute;
+	top: 105px;
+	right: 25em;
+	font-size: 25px;
+	cursor: pointer;
+	background: none;
+	border: none;
+}
+
+.popup {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	z-index: 1;
+}
+
+.popup-card {
+	background-color: #f4c430;
+	width: 300px;
+	margin: 100px auto;
+	padding: 20px;
+	border-radius: 5px;
+}
+
+/* Styles pour centrer la popup */
+.popup-content {
+	text-align: center;
+}
+
+.form-group {
+	text-align: left;
+	/* margin: 10px 45px; */
+}
+
+/* Calendrier styles */
+.calendrier-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    max-width: 1000px;
+    margin: 0 auto 40px auto;
+}
+
+.journee-table {
+    border-collapse: collapse;
+    width: 220px;
+    margin: 0 10px 20px 10px;
+}
+
+.journee-table thead tr:first-child th {
+    background-color: #0b3d91;
+    color: white;
+    font-weight: bold;
+    font-size: 0.95em;
+    text-align: center;
+    padding: 6px 10px;
+}
+
+.journee-table th,
+.journee-table td {
+    border: 1px solid black;
+    padding: 4px 8px;
+    text-align: center;
+}
+
+.journee-table th {
+    background-color: #0b3d91;
+    color: white;
+    font-size: 0.9em;
+}
+
+.journee-table td:empty {
+    background-color: #f0f0f0;
+}
+
+.lienPopup {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0px;
+}
+
+.lienShowPopup {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    /* margin: 5px; */
+	margin: 0 35px;
+    border-radius: 5px;
+    background-color: #f4c430;
+    color: black;
+    cursor: pointer;
+}
+
+.title-bar {
+    background-color: #f2b600;
+    color: black;
+    font-weight: bold;
+    font-size: 1.5em;
+    padding: 10px 0;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+/* championnat */
+
+
+
+/* page classement */
+
+        /* Fin page classement */
+
+@media (max-width: 376px) {
+	#menu_btn {
+		/* width: 200px; */
+		/* display: flex; */
+		/* justify-content: center; */
+		margin: 0;
+	}	
+}

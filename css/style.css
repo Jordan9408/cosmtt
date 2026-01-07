@@ -1,0 +1,1799 @@
+/* Couleur */
+/* *{
+	border: 2px solid red;
+} */
+:root {
+	--primary-color: #f9f9f9;
+	--secondary-color: #f4c430;
+	--third-color: #e8d630;
+	--fourth-color: #ddd;
+	--fifth-color: #000;
+	--sixth-color: #036;
+	--seventh-color: #d2e9ff;
+	--eighth-color: #FF3028;
+	--ninth-color: #1b6e31;
+	--tenth-color: #2b66dd;
+}
+
+/* CSS Document */
+/* scrollbar */
+::-webkit-scrollbar {
+  display: none;
+  
+}
+/* Pour Firefox */
+/* scrollbar-width: none; */
+
+/* Pour IE et Edge Legacy */
+/* -ms-overflow-style: none; */
+
+/* Fin du scrollbar */
+
+body {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	background-color: var(--primary-color);
+	overflow: auto;
+	/* box-sizing: border-box; */
+}
+
+header {
+	background-color: var(--second-color);
+	height: 60.1px;
+	padding: 0 20px;
+	/* box-shadow: 0 2px 5px rgba(0,0,0,0.1); */
+	z-index: 1000;
+	position: relative;
+}
+
+/* loader */
+.loader {
+	position: fixed;
+	margin:auto;
+	background: #fff;
+	top: 50%;
+	left: 50%;
+	z-index: 10;
+	width: 72px;
+	height: 72px;
+	border-radius: 50%;
+	background: radial-gradient(farthest-side, #f4c430 94%, #0000) top/11.5px 11.5px no-repeat,
+		conic-gradient(#0000 30%, #f4c430);
+	-webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 11.5px), #000 0);
+	mask: radial-gradient(farthest-side, #0000 calc(100% - 11.5px), #000 0);
+	-webkit-animation: spinner 1s infinite linear;
+	-webkit-animation: spinner 1s infinite linear;
+	-webkit-animation: spinner 1s infinite linear;
+	animation: spinner 1s infinite linear;
+}
+
+.loader.fondu-out {
+	opacity: 0;
+	transition: opacity 0.2s ease-out;
+	z-index: -1;
+}
+
+/* fin loader */
+
+/*Menu déroulant*/
+nav {
+	top: 23px;
+}
+
+#menu {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+#menu ul,
+#menu li {
+	margin: 0 auto;
+	padding: 0;
+	list-style: none;
+}
+
+#menu ul {
+	width: 100%;
+}
+
+#menu li {
+	float: left;
+	display: inline;
+	position: relative;
+	z-index: 1;
+}
+
+#menu li {
+	background-color: none;
+	float: left;
+	width: 150px;
+	text-align: center;
+	margin: 0;
+	font-size: 15px;
+}
+
+#menu li a,
+#menu li .sousMenu {
+	font-family: 'Times New Roman', Times, serif;
+	font-size: 15px;
+	font-weight: 400;
+}
+
+#menu li .sousMenu {
+	text-decoration: none;
+	background-color: var(--primary-color);
+	border: none;
+	color: var(--fifth-color);
+
+}
+
+#menu li a:link,
+#menu li a:visited {
+	background-color: var(--primary-color);
+	display: block;
+	color: var(--fifth-color);
+	margin: 0;
+	padding: 20px 10px;
+	text-decoration: none;
+}
+
+#menu li a:hover {
+	background: var(--secondary-color);
+	color: #000;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#menu .sousmenu {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+#menu .sousMenu:hover {
+	background: var(--secondary-color);
+	color: #000;
+}
+
+#menu .sousmenu li {
+	float: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+#menu .sousmenu li a:link,
+#menu .sousmenu li a:visited {
+	display: block;
+	color: var(--fifth-color);
+	margin: 0;
+	border: 0;
+	text-decoration: none;
+}
+
+#menu .sousmenu li a:hover,
+#menu .sousmenu button:hover {
+	background-image: none;
+	background-color: var(--secondary-color);
+}
+
+#menu .sousmenu li {
+	float: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
+	font-size: 10px;
+}
+
+#menu .sousmenu {
+	display: none;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+#menu li:hover>.sousmenu {
+	display: block;
+}
+
+#menu {
+	width: 100%;
+	height: 59.5px;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	position: relative;
+	top: 0;
+	left: 0;
+}
+
+.logo-cosmtt {
+	position: absolute;
+	top: 6px;
+	left: 30px;
+	width: 50px;
+	z-index: 1;
+}
+
+.toggle {
+	display: none;
+}
+
+/*Fin du Menu déroulant*/
+
+h1 {
+	position: relative;
+	bottom: 25px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	color: var(--third-color);
+	font-size: 40px;
+	font-family: "Raleway", Helvetica, Arial, sans-serif;
+	text-shadow: 3px 5px var(--fifth-color);
+	text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+
+	-webkit-animation-name: anim-h1;
+	animation-name: anim-h1;
+	-webkit-animation-duration: 3s;
+	animation-duration: 3s;
+	-webkit-animation-fill-mode: forwards;
+	animation-fill-mode: forwards;
+}
+
+/* position: relative; */
+h2 {
+	text-align: center;
+	font-family: 'Open Sans', sans-serif;
+}
+
+footer {
+	background: var(--fifth-color);
+	padding: 20px 10px;
+	text-align: center;
+	font-size: 14px;
+	color: var(--primary-color);
+}
+
+@media screen and (max-width: 1024px) {
+	footer {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+		z-index: 1000;
+	}
+}
+
+@media screen and (max-width: 376px) {
+	footer {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+		z-index: 1000;
+	}
+}
+
+
+footer p {
+	display: flex;
+	justify-content: center;
+	color: var(--primary-color);
+}
+
+/* page index */
+#container {
+	padding: 20px 0;
+	margin: 0 auto;
+	max-width: 1200px;
+}
+
+#criterium1 {
+	display: flex;
+	justify-content: center;
+}
+
+#criterium2 {
+	display: flex;
+	justify-content: center;
+}
+
+#criterium1>article,
+#criterium2>article {
+	width: 44em;
+	height: 150px;
+	margin: 13px auto;
+}
+
+hr {
+	width: 44em;
+	clear: left;
+}
+
+form {
+	display: block;
+	width: 510px;
+	margin:auto;
+}
+
+input,
+textarea {
+	width: 99%;
+}
+
+input:focus,
+textarea:focus {
+	background-color: var(--fourth-color);
+}
+
+#gymnase {
+	display: flex;
+	justify-content: center;
+	align-content: center;
+	background-image: url("../img/gymnase.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	height: 400px;
+	position: relative;
+	bottom: 3px;
+}
+
+#title-contact {
+	background-color: var(--fourth-color);
+	padding-top: 1em;
+	margin-bottom: 0;
+	width: 100%;
+}
+
+#contact {
+	background-color: var(--fourth-color);
+	padding-top: 10px;
+	padding-bottom: 15px;
+}
+
+#message {
+	width: 99%;
+	height: 19em;
+	margin-bottom: .5em;
+}
+
+#submit {
+	background-color: var(--third-color);
+	border: none;
+	border-radius: 7px;
+	width: 100%;
+	padding: 3px 0;
+	cursor: pointer;
+}
+
+#submit:active {
+	box-shadow: 1px 1px 1px, inset 1px 1px 1px 1px;
+}
+
+#pied_de_page {
+	padding: 25px;
+	margin: 0;
+	background-color: var(--fifth-color);
+	color: var(--primary-color);
+	display: flex;
+	justify-content: space-around;
+	list-style-type: none;
+}
+
+#pied_de_page>li>a {
+	color: var(--primary-color);
+}
+
+#pied_de_page>li>a:hover {
+	color: var(--seventh-color);
+}
+
+.img_criterium {
+	width: 200px;
+	float: left;
+	padding: 0 10px 15px 0;
+}
+
+.title_article {
+	color: var(--fifth-color);
+	font-family: Geneva, Tahoma, sans-serif;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.a_criterium {
+	color: grey;
+	text-decoration: none;
+}
+
+.button {
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+}
+
+.btn {
+	position: relative;
+	background: none;
+	width: 150px;
+	height: 40px;
+	border: 4px solid var(--third-color);
+	font-size: 12px;
+	font-weight: bold;
+	color: var(--third-color);
+	transition: .2s linear;
+	cursor: pointer;
+}
+
+.btn:hover {
+	color: var(--primary-color);
+}
+
+/*transition*/
+.btn::before {
+	content: "";
+	position: absolute;
+	width: 0px;
+	height: 35px;
+	top: -1px;
+	left: 0px;
+	background-color: var(--third-color);
+	z-index: -1;
+}
+
+.btn:hover::before {
+	width: 145px;
+}
+
+.align-horiz {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/*Page info_club*/
+h3 {
+	position: relative;
+	font-family: 'Times New Roman', sans-serif;
+	text-align: start;
+}
+
+#main_info_club {
+	height: 36em;
+    margin: 1em;
+}
+
+#infoclub {
+	display: flex;
+	justify-content: center;
+	position: relative;
+	top: 40px;
+	text-align: center;
+}
+
+#hours {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 30%;
+	margin-right: 20px;
+}
+
+#hours,
+#price {
+	display: block;
+	position: relative;
+	font-family: 'Open Sans', sans-serif;
+	text-align: center;
+}
+
+#info_contact {
+	display: flex;
+	justify-content: center;
+}
+
+#price {
+	display: block;
+	width: 305px;
+}
+
+#tarifs {
+	position: relative;
+}
+
+#tarifs {
+	border: none;
+	width: 300px;
+}
+
+#tarifs tr td {
+	border: 1px solid var(--fifth-color);
+	padding: 2px 5px 2px 5px;
+}
+
+#infocontact {
+	margin-top: 3.4em;
+}
+
+#ufolep {
+	background: var(--fourth-color);
+}
+.calendar {
+	display: inline;
+	justify-content: center;
+	position: relative;
+	width: 50px;
+}
+
+#maps {
+	margin: 15px 10px;
+}
+
+/*Page galerie photos*/
+#galerie {
+	display: block;
+
+}
+
+#galerie_photo {
+	display: block;
+	margin-left: 50px;
+	margin-right: 50px;
+	text-align: justify;
+}
+
+.videos {
+	height: 134px;
+}
+
+.photo_criterium {
+	width: 200px;
+	height: 133px;
+}
+
+.titre_photos {
+	text-align: center;
+	font-style: italic;
+}
+
+.photo {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.photo a {
+	margin: 10px;
+}
+
+.photo img {
+	width: 200px;
+}
+
+/*page championnat*/
+#classement {
+	min-width: 300px;
+}
+
+#classement>tr,
+#classement>td {
+	border: none;
+	padding: 20px 5px 2px 5px;
+}
+
+.h2_championnat {
+	text-align: center;
+	font-family: 'Open Sans', sans-serif;
+	background-color: var(--secondary-color);
+	padding: 5px;
+}
+
+.ufolep {
+	width: 300px;
+	display: block;
+	margin: 0 auto 0 auto;
+}
+
+#select_poule {
+	display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 20px 0 20px auto;
+    padding: 5px 10px;
+    position: absolute;
+    right: 20px;
+    top: 40px;
+    font-family: Arial, sans-serif;
+	/* position: relative; */
+	/* right: 10px; */
+}
+
+#classement {
+	text-align: center;
+	width: 50%;
+	margin: auto;
+	border: none;
+}
+
+.club {
+	text-align: left;
+}
+
+.tabtitre {
+	background-color: var(--secondary-color);
+	color: var(--fifth-color);
+}
+
+.tabcouleur1 {
+	background-color: var(--fourth-color);
+}
+
+.tabcouleur2 {
+	background-color: var(--primary-color);
+}
+
+#rencontres_championnat {
+	display: flex;
+	justify-content: center;
+	margin: 0 26em;
+	font-size: 14px;
+	flex-wrap: wrap;
+}
+
+.journees_championnat {
+	max-width: 240px;
+	border-collapse: collapse;
+	border: 2px solid var(--fifth-color);
+	justify-content: space-between;
+	flex-wrap: wrap;
+	margin: 9px 11px;
+	padding: 0;
+}
+
+.journees_championnat>tbody>tr>td {
+	width: 260px;
+	border-collapse: collapse;
+	border-width: 2px;
+	border-style: solid;
+	color: var(--fifth-color);
+}
+
+.points {
+	text-align: center;
+}
+
+.journee-wrapper {
+	margin-bottom: 30px;
+}
+
+.exempter_match {
+	background: var(--fourth-color);
+}
+
+.poule-select {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 20px 0 20px auto;
+    padding: 5px 10px;
+    position: absolute;
+    right: 20px;
+    top: 100px;
+    font-family: Arial, sans-serif;
+}
+/* ***************** */
+.lienShowPopup {
+        display: flex;
+        justify-content: center;
+        padding: 5px;
+        margin: 5px;
+        border-radius: 5px;
+        background-color: #f4c430;
+        color: black;
+        cursor: pointer;
+    }
+
+
+.title-bar {
+    background-color: #f2b600;
+    color: black;
+    font-weight: bold;
+    font-size: 1.5em;
+    padding: 10px 0;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+table.classement,
+table.calendrier {
+    border-collapse: collapse;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+table.classement th,
+table.classement td,
+table.calendrier th,
+table.calendrier td {
+    border: 1px solid black;
+    padding: 5px 10px;
+    text-align: center;
+}
+
+table.classement th {
+    background-color: #0b3d91;
+    color: white;
+}
+
+table.classement tr:nth-child(even) {
+    background-color: #d3d3d3;
+}
+
+table.calendrier th {
+    background-color: #0b3d91;
+    color: white;
+    font-size: 0.9em;
+}
+
+table.calendrier td {
+    font-size: 0.85em;
+}
+
+.calendrier-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    max-width: 1000px;
+    margin: 0 auto 40px auto;
+    justify-items: center;
+    position: relative;
+}
+
+.aller-column,
+.retour-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.aller-column h3,
+.retour-column h3 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    color: #0b3d91;
+}
+
+.aller-column .journee-wrapper,
+.retour-column .journee-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.journee-wrapper {
+    position: relative;
+    /* display: inline-block; */
+}
+
+.journee-table {
+    border-collapse: collapse;
+    width: 368px;
+    /* max-width: 220px; */
+    height: 177px;
+}
+
+.journee-table thead tr:first-child th {
+    background-color: #0b3d91;
+    color: white;
+    font-weight: bold;
+    font-size: 0.95em;
+    text-align: center;
+    padding: 6px 10px;
+}
+
+.journee-table th,
+.journee-table td {
+    border: 1px solid black;
+    padding: 4px 8px;
+    height: 15px;
+    text-align: center;
+}
+
+.journee-table th {
+    background-color: #0b3d91;
+    color: white;
+    font-size: 0.9em;
+}
+
+.journee-table td:empty {
+    background-color: #f0f0f0;
+}
+
+.titreJour {
+    position: relative;
+}
+
+.delete-icons {
+    position: absolute;
+    top: 14.5%;
+    right: 15px;
+    transform: translateY(-50%);
+    width: 26px;
+    cursor: pointer;
+}
+/* .delete-icons {
+    position: relative;
+    bottom: 169px;
+    right: 15px;
+    width: 26px;
+    height: 20px;
+    cursor: pointer;
+} */
+/* Positionner l'icône de suppression à droite du th */
+/* .delete-icons {
+position: absolute;
+right: 15px;
+top: 50%;
+transform: translateY(-50%);
+cursor: pointer;
+width: 26px; Ajustez selon la taille souhaitée
+height: 20px;
+transition: opacity 0.2s ease;
+} */
+
+.buttons-container {
+    position: fixed;
+    right: 20px;
+    top: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.buttons-container button {
+    padding: 8px 12px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+/* .poule-select {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 20px 0 20px auto;
+    padding: 5px 10px;
+    position: absolute;
+    right: 20px;
+    top: 100px;
+    font-family: Arial, sans-serif;
+} */
+
+.poule-select select {
+    padding: 4px 6px;
+    font-size: 1em;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    width: 90px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: space-between;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.form-ajout {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.numJournée {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dateDebut,
+.dateFin {
+    width: 7.1em;
+}
+
+.Journée {
+    width: 6em;
+}
+
+.matchs {
+    display: flex;
+    justify-content: space-between;
+}
+
+.score {
+    width: 2.3em;
+}
+
+.matchs>.selectEquipes {
+    width: 8em;
+}
+
+.tabJourn {
+    background: #fff;
+    width: 1em;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.buttons-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.ajoutRencontreBtn,
+.supRencontreBtn,
+.type-btn {
+    width: 50%;
+}
+
+.selected{
+    background-color: #cfcfcf;
+    box-shadow: inset 1px 1px 1px 1px #cfcfcf;;
+}
+/* *************** */
+
+/* ********************* */
+/* .poule-select select {
+    padding: 4px 6px;
+    font-size: 1em;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    width: 90px;
+} */
+
+/*page classement*/
+th {
+	background-color: var(--sixth-color);
+	color: var(--primary-color);
+}
+
+.classement_joueurs {
+	text-align: center;
+	font-family: 'Open Sans', sans-serif;
+	background-color: var(--secondary-color);
+	padding: 5px;
+}
+
+#clas_joueurs {
+	position: relative;
+	top: -23px;
+}
+
+#tabjoueurs {
+	text-align: center;
+	width: 100%;
+	margin: auto;
+	border: none;
+	border-collapse: collapse;
+}
+
+#bareme {
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	width: 50%;
+	margin: auto;
+}
+
+#tabpoints tr {
+	border-collapse: collapse;
+	border: var(--fifth-color) 1px solid;
+}
+
+#tabpoints tr th {
+	background-color: var(--sixth-color);
+	color: var(--primary-color);
+	padding: 5px;
+}
+
+#tabpoints tr td {
+	padding: 5px;
+}
+
+.tabcouleur3 {
+	background-color: var(--fourth-color);
+}
+
+.tabcouleur4 {
+	background-color: var(--seventh-color);
+}
+
+.pointsgagne {
+	color: var(--ninth-color);
+}
+
+.pointsperdu {
+	color: var(--eighth-color);
+}
+
+/*page critérium*/
+#criterium {
+	background-color: var(--primary-color);
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#crit {
+	font-style: italic;
+	color: var(--secondary-color);
+	font-family: Geneva, Tahoma, sans-serif;
+	font-weight: bold;
+	font-size: 30px;
+	text-align: center;
+	padding: 0;
+	top: 2px;
+	text-shadow: none;
+	-webkit-text-decoration: underline dotted var(--eighth-color);
+	text-decoration: underline dotted var(--eighth-color);
+}
+
+#criterium h2 {
+	-webkit-text-decoration: underline dotted var(--fourth-color);
+	text-decoration: underline dotted var(--fourth-color);
+}
+
+#criterium section {
+	display: flex;
+	flex-direction: column;
+	width: 40em;
+	text-align: justify;
+	margin-bottom: 10px;
+}
+
+#criterium section a:visited {
+	color: #3869cd;
+}
+
+#criterium img {
+	margin: auto;
+	width: 400px;
+}
+
+/* page connexion */
+#connexion {
+	position: relative;
+	bottom: 23px;
+	padding: 10.5px;
+	background: var(--secondary-color);
+}
+
+.connect {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 29.2em;
+	margin-bottom: 11px;
+}
+
+.connect>form {
+	border: 2px solid #000;
+	border-radius: 15px;
+	margin: 15px;
+	padding: 10px;
+	background: var(--secondary-color);
+	width: 300px;
+	margin-left: auto;
+	margin-right:auto;
+}
+
+/* .connect>form {
+	
+	margin: 100em 50px;
+} */
+
+.encad {
+	width: 200px;
+	margin: auto;
+	padding: 15px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.connect-input {
+	width: 200px;
+	height: 35px;
+	margin: 5px 0;
+	border-radius: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.mdp {
+	height: 50px;
+}
+
+.fa-eye {
+	position: relative;
+	bottom: 2em;
+	left: 11em;
+	cursor: pointer;
+}
+
+.fa-eye.active::before {
+	content: "\f070";
+}
+
+.mdp_oublie {
+	font-size: 16px;
+	font-weight: 400;
+	padding: 5px;
+	position: relative;
+	cursor: pointer;
+}
+
+.envoiMail {
+	color: var(--primary-color);
+	margin: 0 auto;
+	text-align: center;
+	border-radius: 15px;
+	background: var(--ninth-color);
+	padding: 5px;
+	width: 230px;
+}
+
+.Error {
+	color: red;
+	margin: 10px 0;
+	text-align: center;
+}
+
+.error-message {
+	padding-bottom: 10px;
+	color:red;
+}
+
+a:visited {
+	color: var(--tenth-color);
+}
+
+.connect-submit {
+	background: var(--primary-color);
+	width: 200px;
+	padding: 10px;
+	margin-top: 5px;
+	cursor: pointer;
+	border: none;
+	border-radius: 7px;
+	margin: 10px auto 0px auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 2px solid var(--fifth-color);
+}
+
+.connect-submit:hover {
+	color: var(--sixth-color);
+
+}
+
+.connect-submit:active {
+	background: var(--secondary-color);
+	color: var(--sixth-color);
+	box-shadow: 1px 1px 1px, inset 1px 1px 1px;
+}
+
+/* Page reset_password */
+#h3_reset {
+	text-align: center; 
+	margin-top:0;
+	margin-bottom: 0;
+}
+
+
+.form-group #email {
+	margin: 10px 0;
+    padding: 5px 6px;
+    border-radius: 10px;
+    border: none;
+    width: 289px;
+}
+
+.form-submit-btn{
+	color: var(--third-color);
+	background:var(--fifth-color);
+	width:300px;
+	padding: 5px 0;
+	border-radius: 15px;
+	border: none;
+	cursor: pointer;
+}
+
+
+
+/***** Tablette *****/
+/*@media screen and (max-width:1024px) {
+	header {
+		max-width: 100%;
+		height: 60.1px;
+	}
+	h1{
+		font-size: 10px;
+	}
+	
+	#content {
+		max-width: 1024px;
+	}
+
+	#menu .icon-hamburger .fa-solid {
+		position: absolute;
+		top: 0;
+		width:50em;
+	}
+
+	#menu {
+		display: none;
+	}
+	
+	h3 {
+		font-size: medium;
+	}
+
+	#container {
+		padding: 10px 0;
+	}
+	
+	#gymnase{
+		width: 100%;
+	}
+
+	.img_criterium{
+		width: 18em; 
+	}
+	
+	#criterium1>article,
+	#criterium2>article {
+		width: 44em;
+		height: 10%;
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		align-items: center;
+		margin:0 10px;
+	}
+
+	#criterium1>article>aside,
+	#criterium2>article>aside {
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.title_article{
+		padding: 0;
+		margin: 0;
+	}
+	hr {
+		width: 21em;
+		clear: left;
+	}
+
+	iframe {
+		width: 400px;
+		height: 250px;
+		margin: 10px;
+	}
+
+	#info_club {
+		width: 70%;
+	}
+
+	#infocontact {
+		display: flex;
+		justify-content: center;
+	}
+
+	#info_contact {
+		width: 44em;
+	}
+
+
+	#tarifs tr td {
+		border: 1px solid var(--fifth-color);
+		padding: 2px 5px;
+	}
+
+	#crit {
+		margin: 10px;
+	}
+
+	#criterium {
+		width: 100%;
+	}
+
+	#criterium h2 {
+		font-size: 20px;
+		margin: 1em 5em 1em 5em;
+	}
+
+	#criterium section {
+		width: 35em;
+		text-align: justify;
+	}
+
+	#criterium img {
+		width: 350px;
+		margin: auto;
+	}
+
+	.hr_criterium {
+		width: 35em;
+	}
+
+	#maps {
+		margin: 0 10px 10px 10px;
+	}
+	
+	#title-contact {
+	background-color: var(--fourth-color);
+	padding-top: 1em;
+	margin-bottom: 0;
+	width: 100%;
+}
+
+#contact {
+	background-color: var(--fourth-color);
+	padding-top: 10px 10px 15px 10px;
+	height: 400px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#hours {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#rencontres_championnat {
+	display: flex;
+	justify-content: center;
+ 	margin: 0;
+	font-size: 15px;
+	flex-wrap: wrap;
+}*/
+
+/* classement */
+/* #bareme {
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	width: 50%;
+}
+
+} */
+
+
+/***** Mobile *****/
+/* Styles pour le mode mobile */
+@media (max-width: 376px) {
+
+	/* *{
+		border: 1px solid red;
+		
+	} */
+	body {
+		width: 100%;
+		height: auto;
+		padding: 0;
+		margin: 0;
+	}
+
+	h1 {
+		font-size: 20px;
+	}
+
+	h2 {
+		font-size: 15px;
+		box-sizing: border-box;
+	}
+
+	h3 {
+		font-size: 15px;
+	}
+
+	header {
+		max-width: 100%;
+		height: 100%;
+	}
+
+	.main {
+		margin: 48px auto 85px;
+	}
+
+	#main_info_club {
+		height: 55em;
+		margin: 7px;
+	}
+
+	footer {
+		background: var(--fifth-color);
+		/* position: absolute; */
+		/* bottom: 0; */
+		padding: 10px;
+		/* padding: auto 100%; */
+	}
+
+	footer p {
+		color: #fff;
+		padding: 0;
+		margin: 0;
+		/* padding: 36px 10px 21px 10px; */
+	}
+
+	.loader {
+		position: absolute;
+		background: #fff;
+		top: 50%;
+		left: auto;
+		margin:auto;
+		z-index: 1;
+		width: 72px;
+		height: 72px;
+		border-radius: 50%;
+	}
+	
+	.loader.fondu-out {
+		opacity: 0;
+		transition: opacity 0.2s ease-out;
+		z-index: -1;
+	}
+	
+	nav {
+		position: relative;
+		z-index: 1;
+	}
+
+	#menu {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		display: none;
+		background-color: #f9f9f9;
+		/* padding: 10px; */
+		/* border: 2px solid red; */
+		/* height: 400px; */
+	}
+
+	.sousmenu li a {
+		background: var(--third-color);
+		font-size: 20px;
+		padding: 20px 10px;
+		width: 100%;
+	}
+
+	.toggle {
+		display: block;
+		font-size: 2rem;
+		cursor: pointer;
+		position: absolute;
+		top: -12px;
+		right: 35px;
+		z-index: 20;
+		color: #000;
+	}
+
+	.ouvrir {
+		display: block;
+	}
+
+	.fermer {
+		display: none;
+	}
+
+	.open .ouvrir {
+		display: none;
+	}
+
+	.open .fermer {
+		display: block;
+	}
+
+	.no-scroll {
+		overflow: hidden;
+	}
+
+	#menu.open {
+		display: block;
+		width: 100vw;
+		height: 100vh;
+		position: relative;
+		padding: 50px 0;
+		top: -23px;
+		background: var(--secondary-color);
+		overflow-y: hidden !important;
+		/* border: 1px solid red; */
+	}
+
+
+	#menu.open li a {
+		background: var(--secondary-color);
+		font-size: 20px;
+		padding: 20px 0;
+		width: 100%;
+	}
+
+	#menu.open li a:hover {
+		background: var(--fifth-color);
+		color: var(--secondary-color);
+	}
+
+	#menu li {
+		width: 100%;
+		text-align: center;
+		background: var(--secondary-color);
+	}
+
+	/* Style de la flèche */
+	.sousMenu::after {
+		content: "▼";
+		/* Utilisez le caractère de flèche de votre choix */
+		position: absolute;
+		right: 40px;
+	}
+
+	/* Style au survol de l'élément parent (menu avec sous-menu) */
+	/* .sousMenu:hover::after { */
+	/* content: "▲"; */
+	/* Changez la flèche pour indiquer qu'il peut être replié */
+	/* } */
+	/* .toggle i {
+		font-size: 20px;
+	} */
+
+
+
+	main {
+		position: relative;
+		top: 30px;
+		margin-bottom: 2em;
+	}
+
+	#main_index {
+		position: relative;
+		top: 0;
+		margin: 0;
+	}
+
+	/* index */
+	#gymnase {
+		position: relative;
+		top: 3em;
+		width: 23em;
+		height: 11em;
+	}
+
+	#container {
+		display: flex;
+		flex-direction: column;
+		width: 285px;
+		position: relative;
+		top: 3em;
+		height: 60em;
+	}
+
+	.img_criterium {
+		width: 275px;
+		padding: 0;
+	}
+
+	a {
+		display: flex;
+		/* justify-content: center; */
+	}
+
+	#criterium {
+		/* border: #000 2px solid; */
+		height: auto;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.title_article {
+		font-size: 12px;
+	}
+
+	#container>aside {
+		display: flex;
+		flex-direction: column;
+	}
+
+	#container>aside>p {
+		font-size: 11px;
+		text-align: justify;
+	}
+
+	article>article {
+		display: flex;
+		flex-direction: column;
+		width: 200px;
+	}
+
+	#abtn {
+		text-decoration: none;
+	}
+
+	#contact {
+		width: 100%;
+	}
+
+	form {
+		width: 90%;
+	}
+
+	/* fin index */
+
+	#infoclub,
+	#info_contact {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	#hours {
+		margin: 0;
+	}
+
+	#hours>p {
+		width: 260px;
+		margin-bottom: 1em;
+		position: relative;
+		/* border: 1px solid red; */
+		right: 74px;
+	}
+
+	#info_contact {
+		display: flex;
+		flex-direction: column-reverse;
+		width: 341px;
+		margin: 25px auto;
+	}
+
+	#maps {
+		width: 100%;
+	}
+
+	iframe {
+		display: flex;
+		justify-content: center;
+		width: 340px;
+	}
+
+	#galerie {
+		position: relative;
+		top: 30px;
+	}
+
+	#galerie_photos {
+		position: relative;
+		top: 30px;
+		height: 298em;
+	}
+
+	#criterium img {
+		margin: auto;
+		width: 260px;
+	}
+
+	#criterium1>article,
+	#criterium2>article {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		height: 325px;
+		width: 290px;
+		padding: 10px;
+	}
+
+	hr {
+		width: 17em;
+		clear: left;
+	}
+
+	#rencontres_championnat {
+		display: flex;
+		justify-content: center;
+		margin: 0;
+		font-size: 12px;
+		flex-wrap: wrap;
+	}
+
+	#classement {
+		text-align: center;
+		width: 29em;
+		margin: auto;
+		border: none;
+		font-size: 12px;
+	}
+
+
+	#clas_joueurs {
+		position: relative;
+		top: 40px;
+		margin-bottom: 50px;
+	}
+
+	.classement_joueurs {
+		width: 100%;
+	}
+
+	.td_nom {
+		text-align: start;
+		padding-left: 2px;
+	}
+
+	#bareme {
+		display: flex;
+		justify-content: center;
+		text-align: center;
+		/* width: 50%; */
+		margin: auto;
+		font-size: 10px;
+	}
+
+	#tabjoueurs {
+		text-align: center;
+		width: 10em;
+		margin: auto;
+		border: none;
+		border-collapse: collapse;
+		font-size: 11px;
+	}
+
+	#criterium section {
+		display: flex;
+		flex-direction: column;
+		width: 17em;
+		text-align: justify;
+		margin-bottom: 10px;
+	}
+
+	.lien_crit {
+		display: flex;
+		justify-content: flex-start;
+	}
+
+.connect {
+		display: flex;
+		/* flex-direction: column; */
+		justify-content: center;
+		align-items: center;
+		height: 23em;
+	}
+
+.connect > form {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+}
