@@ -59,15 +59,15 @@ if (isset($_GET['id'])) {
             <form action="" method="POST" class="form encad">
                 <div>
                     <label for="firstName">Prénom:</label>
-                    <input type="text" name="firstName" placeholder="First Name" value="<?= htmlspecialchars($user['firstName']) ?>" required>
+                    <input type="text" name="firstName" id="firstName" placeholder="First Name" value="<?= htmlspecialchars($user['firstName']) ?>" required>
                     <label for="lastName">Nom:</label>
-                    <input type="text" name="lastName" placeholder="Last Name" value="<?= htmlspecialchars($user['lastName']) ?>" required>
+                    <input type="text" name="lastName" id="lastName" placeholder="Last Name" value="<?= htmlspecialchars($user['lastName']) ?>" required>
                     <label for="email">Email:</label>
-                    <input type="email" name="email" placeholder="Email" value="<?= htmlspecialchars($user['email']) ?>" required>
+                    <input type="email" name="email" id="email" placeholder="Email" value="<?= htmlspecialchars($user['email']) ?>" required>
                     
                     
                     <label for="role">Rôle:</label>
-                    <select name="role" required>
+                    <select name="role" id="role" required>
                         <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
                         <option value="superAdmin" <?= $user['role'] === 'superAdmin' ? 'selected' : '' ?>>Super Admin</option>
                     </select>

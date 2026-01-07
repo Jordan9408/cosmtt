@@ -1,5 +1,7 @@
 /* ==================== GENERAL STYLES ==================== */
 
+@import url('./colors_group.css');
+
 #clas_joueurs {
     margin: 20px auto;
     max-width: 1200px;
@@ -60,23 +62,23 @@
 }
 
 .tabcouleur1 {
-    background-color: #ddd;
+    background-color: var(--fourth-color);
 }
 
 .tabcouleur2 {
-    background-color: #d2e9ff;
+    background-color: var(--seventh-color);
 }
 
 .pointsgagne {
-    color: #1b6e31;
+    color: var(--ninth-color);
 }
 
 .pointsperdu {
-    color: #FF3028;
+    color: var(--eighth-color);
 }
 
 .neutre {
-    color: #000;
+    color: var(--fifth-color);
 }
 
 .td_nom {
@@ -94,7 +96,7 @@
 .edit-input {
     box-sizing: border-box;
     padding: 2px;
-    border: 1px solid #000;
+    border: 1px solid var(--fifth-color);
     border-radius: 2px;
 }
 
@@ -111,8 +113,8 @@
 }
 
 #tabpoints tr th {
-    background-color: #036;
-    color: #f9f9f9;
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
     padding: 5px;
 }
 
@@ -126,11 +128,11 @@
 }
 
 .tabcouleur3 {
-    background-color: #ddd;
+    background-color: var(--fourth-color);
 }
 
 .tabcouleur4 {
-    background-color: #d2e9ff;
+    background-color: var(--seventh-color);
 }
 
 .edit-input-classement {
@@ -147,7 +149,7 @@
 }
 
 .error-message {
-    color: red;
+    color: var(--eighth-color);
     font-size: 12px;
     margin-top: 5px;
     font-weight: bold;
@@ -155,11 +157,11 @@
 
 /* Style pour les inputs en mode édition afin d'éviter le changement de fond par l'autofill du navigateur */
 input.edit-input-nom:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px white inset;
-    -webkit-text-fill-color: #2b66dd;
+    -webkit-box-shadow: 0 0 0px 1000px var(--primary-color) inset;
+    -webkit-text-fill-color: var(--tenth-color);
 }
 
 input.edit-input-nom:-moz-autofill {
-    box-shadow: 0 0 0px 1000px white inset;
-    color: #2b66dd !important;
+    box-shadow: 0 0 0px 1000px var(--primary-color) inset;
+    color: var(--tenth-color) !important;
 }

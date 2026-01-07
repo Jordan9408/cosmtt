@@ -29,7 +29,7 @@ if (isset($_GET['action'], $_GET['id']) && $_GET['action'] === 'delete') {
     if ($equipe_id && $equipe_id > 0) {
         $equipeManager->supprimerEquipe($equipe_id);
     } else {
-        header("Location: showEquipe.php?message=InvalidRequest");
+        header("Location: /showEquipe.php?message=InvalidRequest");
         exit;
     }
 }
@@ -67,7 +67,6 @@ if (isset($_GET['message'])) {
         <div class="popup" id="teamPopup">
             <div class="popup-card">
                 <div class="popup-content">
-                    <button id="closePopup" title="Fermer">&times;</button>
                     <h3>AJOUTER UNE ÉQUIPE</h3>
                     <form method="POST" action="" class="form-ajout">
                         <div class="form-group">
@@ -80,6 +79,7 @@ if (isset($_GET['message'])) {
                             </select>
                         </div>
                         <input type="submit" value="Ajouter" class="input-submit" name="send">
+                        <input type="button" id="cancelPopup" class="input-submit" value="Annuler">
                     </form>
                 </div>
             </div>
@@ -102,13 +102,8 @@ if (isset($_GET['message'])) {
 
     <?php if ($message): ?>
         <script>
-            // Affichage du message d'erreur/succès en alert
-            alert(<?php echo json_encode($message, JSON_HEX_APOS | JSON_HEX_QUOT); ?>);
-
-            // Nettoyage de l'URL pour éviter la réaffichage du message au refresh
-            if (window.history.replaceState) {
-                window.history.replaceState(null, null, window.location.pathname);
-            }
+            // Affichage du message d'erreur/succès en alert,
+            alert("<?= addslashes($message); ?>");
         </script>
     <?php endif; ?>
     <?php

@@ -55,15 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send'])) {
         <form action="" method="POST" class="form encad">
             <div>
                 <label for="firstName">Prénom:</label>
-                <input type="text" name="firstName" placeholder="First Name" value="<?= $firstNameValue ?>">
+                <input type="text" name="firstName" id="firstName" placeholder="First Name" value="<?= $firstNameValue ?>">
                 <label for="lastName">Nom:</label>
-                <input type="text" name="lastName" placeholder="Last Name" value="<?= $lastNameValue ?>">
+                <input type="text" name="lastName" placeholder="Last Name" id="lastName" value="<?= $lastNameValue ?>">
                 <label for="email">Email:</label>
-                <input type="email" name="email" placeholder="Email" value="<?= $emailValue ?>">
+                <input type="email" name="email" placeholder="Email" id="email" value="<?= $emailValue ?>">
                 <label for="password">Mot de passe :</label>
-                <input type="password" name="password" placeholder="Password">
+                <input type="password" name="password" id="password" placeholder="Password">
                 <label for="confPassword">Confirmer le mot de passe :</label>
-                <input type="password" name="confPassword" placeholder="Confirm Password">
+                <input type="password" name="confPassword" id="confPassword" placeholder="Confirm Password">
                 <label for="role">Rôle:</label>
                 <select name="role">
                     <option value="admin" <?= $roleValue === 'admin' ? 'selected' : '' ?>>Admin</option>
