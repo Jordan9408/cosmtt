@@ -62,7 +62,7 @@ $userManager = new UserManager($conn);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des utilisateurs</title>
-    <link rel="stylesheet" href="../style_admin.css">
+    <link rel="stylesheet" href="/cosmtt/admin/css/style_admin.css">
 </head>
 
 <body>
