@@ -1,0 +1,73 @@
+#------------------------------------------------------------
+#        Script MySQL.
+#------------------------------------------------------------
+
+
+#------------------------------------------------------------
+# Table: rôle
+#------------------------------------------------------------
+
+CREATE TABLE role(
+        id         Int NOT NULL ,
+        admin      Bool NOT NULL ,
+        superAdmin Bool NOT NULL
+	,CONSTRAINT role_PK PRIMARY KEY (id)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: user
+#------------------------------------------------------------
+
+CREATE TABLE user(
+        id             Int NOT NULL ,
+        email___pseudo Varchar (50) NOT NULL ,
+        password       Varchar (255) NOT NULL ,
+        id_role        Int NOT NULL
+	,CONSTRAINT user_PK PRIMARY KEY (id)
+
+	,CONSTRAINT user_role_FK FOREIGN KEY (id_role) REFERENCES role(id)
+	,CONSTRAINT user_role_AK UNIQUE (id_role)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: admin
+#------------------------------------------------------------
+
+CREATE TABLE admin(
+        id       Int NOT NULL ,
+        Ajouter  Varchar (0) NOT NULL ,
+        Modifier Varchar (1) NOT NULL
+	,CONSTRAINT admin_PK PRIMARY KEY (id)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: superAdmin
+#------------------------------------------------------------
+
+CREATE TABLE superAdmin(
+        id        Int NOT NULL ,
+        Ajouter   Varchar (0) NOT NULL ,
+        Modifier  Varchar (1) NOT NULL ,
+        Supprimer Varchar (2) NOT NULL
+	,CONSTRAINT superAdmin_PK PRIMARY KEY (id)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: autoriser
+#------------------------------------------------------------
+
+CREATE TABLE autoriser(
+        id            Int NOT NULL ,
+        id_superAdmin Int NOT NULL ,
+        id_admin      Int NOT NULL
+	,CONSTRAINT autoriser_PK PRIMARY KEY (id,id_superAdmin,id_admin)
+
+	,CONSTRAINT autoriser_role_FK FOREIGN KEY (id) REFERENCES role(id)
+	,CONSTRAINT autoriser_superAdmin0_FK FOREIGN KEY (id_superAdmin) REFERENCES superAdmin(id)
+	,CONSTRAINT autoriser_admin1_FK FOREIGN KEY (id_admin) REFERENCES admin(id)
+)ENGINE=InnoDB;
+

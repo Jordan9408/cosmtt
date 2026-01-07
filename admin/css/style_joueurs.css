@@ -1,0 +1,165 @@
+/* ==================== GENERAL STYLES ==================== */
+
+#clas_joueurs {
+    margin: 20px auto;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+/* ==================== POPUP STYLES ==================== */
+
+.Joueur {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.Joueur > * {
+    width: 50%;
+}
+
+.niveauJoueur {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.niveauJoueur > * {
+    width: 98px;
+}
+
+.niveauJoueur > :nth-child(1) {
+    width: 60px;
+}
+
+.buttons-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ==================== CLASSEMENT STYLES ==================== */
+
+#tabjoueurs {
+    text-align: center;
+    width: 1200px;
+    margin: auto;
+    border: none;
+    border-collapse: collapse;
+}
+
+#tabjoueurs th,
+#tabjoueurs td {
+    height: 44px;
+    vertical-align: middle;
+}
+
+.tabcouleur1 {
+    background-color: #ddd;
+}
+
+.tabcouleur2 {
+    background-color: #d2e9ff;
+}
+
+.pointsgagne {
+    color: #1b6e31;
+}
+
+.pointsperdu {
+    color: #FF3028;
+}
+
+.neutre {
+    color: #000;
+}
+
+.td_nom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+}
+
+.edit-input-nom {
+    justify-content: start;
+    width: 7rem;
+}
+
+.edit-input {
+    box-sizing: border-box;
+    padding: 2px;
+    border: 1px solid #000;
+    border-radius: 2px;
+}
+
+#bareme {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 50%;
+    margin: auto;
+}
+
+#tabpoints {
+    margin-bottom: 1em;
+}
+
+#tabpoints tr th {
+    background-color: #036;
+    color: #f9f9f9;
+    padding: 5px;
+}
+
+#tabpoints tr td {
+    padding: 5px;
+}
+
+#tabpoints tr {
+    border-collapse: collapse;
+    border: var(--fifth-color) 1px solid;
+}
+
+.tabcouleur3 {
+    background-color: #ddd;
+}
+
+.tabcouleur4 {
+    background-color: #d2e9ff;
+}
+
+.edit-input-classement {
+    width: 150px;
+}
+
+.edit-input-pts-debut-saison,
+.edit-input-pts-mensuel {
+    width: 180px;
+}
+
+.evolution {
+    width: 200px;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* Style pour les inputs en mode édition afin d'éviter le changement de fond par l'autofill du navigateur */
+input.edit-input-nom:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+    -webkit-text-fill-color: #2b66dd;
+}
+
+input.edit-input-nom:-moz-autofill {
+    box-shadow: 0 0 0px 1000px white inset;
+    color: #2b66dd !important;
+}

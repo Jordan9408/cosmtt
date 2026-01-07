@@ -1,0 +1,91 @@
+<?php
+session_start();
+require_once('./connect_ddb.php');
+require_once('../../config/config.php');
+
+// Incluez le fichier d'en-tête si nécessaire
+include_once('../html_partials/header.php');
+
+class Photo {
+    private $db; // L'objet PDO pour la connexion à la base de données
+
+    public function __construct($db) {
+        $this->db = $db;
+    }
+
+    // Méthode pour ajouter une photo
+    public function addPhoto($section_id, $photo_title, $photo_url) {
+        $stmt = $this->db->prepare("INSERT INTO photos (section_id, photo_title, photo_url) VALUES (:section_id, :photo_title, :photo_url)");
+        $stmt->bindParam(':section_id', $section_id);
+        $stmt->bindParam(':photo_title', $photo_title);
+        $stmt->bindParam(':photo_url', $photo_url);
+        return $stmt->execute();
+    }
+
+    // Méthode pour récupérer les photos d'une section spécifique
+    public function getPhotosBySection($section_id) {
+        $stmt = $this->db->prepare("SELECT * FROM photos WHERE section_id = :section_id");
+        $stmt->bindParam(':section_id', $section_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Méthode pour mettre à jour le titre d'une photo
+    public function updatePhotoTitle($photo_id, $new_title) {
+        $stmt = $this->db->prepare("UPDATE photos SET photo_title = :new_title WHERE id = :photo_id");
+        $stmt->bindParam(':new_title', $new_title);
+        $stmt->bindParam(':photo_id', $photo_id);
+        return $stmt->execute();
+    }
+
+    // Méthode pour supprimer une photo
+    public function deletePhoto($photo_id) {
+        $stmt = $this->db->prepare("DELETE FROM photos WHERE id = :photo_id");
+        $stmt->bindParam(':photo_id', $photo_id);
+        return $stmt->execute();
+    }
+}
+
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ajouter des photos et des vidéos</title>
+</head>
+<body>
+    <form action="upload.php" method="post" enctype="multipart/form-data">
+        <div id="sections">
+            <div class="section">
+                <label for="section_title">Titre de la section :</label>
+                <input type="text" name="section_title[]" required>
+                <label for="photos[]">Ajouter des photos :</label>
+                <input type="file" name="photos[]" accept="image/jpeg, image/jpg" multiple>
+                <label for="videos[]">Ajouter des vidéos :</label>
+                <input type="file" name="videos[]" accept="video/mp4, video/avi" multiple>
+            </div>
+        </div>
+        <button type="button" id="add_section">+</button>
+        <button type="submit" name="submit">Envoyer</button>
+    </form>
+
+    <script>
+        document.getElementById('add_section').addEventListener('click', function() {
+            const sections = document.getElementById('sections');
+            const newSection = document.createElement('div');
+            newSection.innerHTML = `
+                <div class="section">
+                    <label for="section_title">Titre de la section :</label>
+                    <input type="text" name="section_title[]" required>
+                    <label for="photos[]">Ajouter des photos :</label>
+                    <input type="file" name="photos[]" accept="image/jpeg, image/jpg" multiple>
+                    <label for="videos[]">Ajouter des vidéos :</label>
+                    <input type="file" name="videos[]" accept="video/mp4, video/avi" multiple>
+                </div>
+            `;
+            sections.appendChild(newSection);
+        });
+    </script>
+</body>
+</html>
+
