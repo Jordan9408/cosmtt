@@ -49,8 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveEdits'])) {
     $errors = $result['errors'];
     $successMessage = $result['success'];
     if (empty($errors)) {
-        header("Location: ?poule=" . urlencode($poule));
+        // Succès : rediriger sans edit=1 pour revenir en mode affichage
+        header("Location: ?poule=" . urlencode($poule) . "&successMessage=" . urlencode($successMessage));
         exit;
+    } else {
+        // Rester en mode édition si erreurs
+        $_GET['edit'] = '1';
     }
 }
 
@@ -62,7 +66,7 @@ if (isset($_GET['delete_journee_id']) && $role === 'superAdmin') {
             // Créer le manager pour l'opération de suppression
             $journeeManagerDelete = new JourneeManager($conn);
             $journeeManagerDelete->supprimerJourneeEtRencontres($deleteJourneeId);
-            $successMessage = "La journée et ses rencontres ont été supprimées avec succès.";
+            $successMessage = "";
 
             // Rediriger pour nettoyer l'URL et éviter la resoumission du GET
             header("Location: ?poule=" . urlencode($poule) . "&edit=1&successMessage=" . urlencode($successMessage));
@@ -83,6 +87,15 @@ if (isset($_GET['successMessage']) && empty($errors)) {
 
 // Mode édition
 $isEditMode = isset($_GET['edit']) && $_GET['edit'] == '1';
+
+// Garder les données POST en cas d'erreur lors de la validation
+$postedScores = [];
+if (!empty($_POST['score1'])) {
+    $postedScores['score1'] = $_POST['score1'];
+}
+if (!empty($_POST['score2'])) {
+    $postedScores['score2'] = $_POST['score2'];
+}
 
 // Récupération des données
 $championnatManager = new ChampionnatManager($conn);
@@ -301,8 +314,10 @@ function escapeHtml(string $string): string
 
                                             if (in_array($role, ['admin', 'superAdmin'])) {
                                                 // Scores - Modifiables par admin ou superAdmin
-                                                echo '<td><input type="number" name="score1[' . $match['id'] . ']" value="' . ($match['score1'] !== null ? $match['score1'] : '') . '" min="0" max="14" class="score"></td>';
-                                                echo '<td><input type="number" name="score2[' . $match['id'] . ']" value="' . ($match['score2'] !== null ? $match['score2'] : '') . '" min="0" max="14" class="score"></td>';
+                                                $score1Value = isset($postedScores['score1'][$match['id']]) ? $postedScores['score1'][$match['id']] : ($match['score1'] !== null ? $match['score1'] : '');
+                                                $score2Value = isset($postedScores['score2'][$match['id']]) ? $postedScores['score2'][$match['id']] : ($match['score2'] !== null ? $match['score2'] : '');
+                                                echo '<td><input type="number" name="score1[' . $match['id'] . ']" value="' . htmlspecialchars($score1Value) . '" min="0" max="14" class="score"></td>';
+                                                echo '<td><input type="number" name="score2[' . $match['id'] . ']" value="' . htmlspecialchars($score2Value) . '" min="0" max="14" class="score"></td>';
                                             } else {
                                                 // Scores - Non modifiables
                                                 echo '<td>' . ($match['score1'] !== null ? $match['score1'] : '') . '</td>';
@@ -392,8 +407,10 @@ function escapeHtml(string $string): string
 
                                             if (in_array($role, ['admin', 'superAdmin'])) {
                                                 // Scores - Modifiables par admin ou superAdmin
-                                                echo '<td><input type="number" name="score1[' . $match['id'] . ']" value="' . ($match['score1'] !== null ? $match['score1'] : '') . '" min="0" max="14" class="score"></td>';
-                                                echo '<td><input type="number" name="score2[' . $match['id'] . ']" value="' . ($match['score2'] !== null ? $match['score2'] : '') . '" min="0" max="14" class="score"></td>';
+                                                $score1Value = isset($postedScores['score1'][$match['id']]) ? $postedScores['score1'][$match['id']] : ($match['score1'] !== null ? $match['score1'] : '');
+                                                $score2Value = isset($postedScores['score2'][$match['id']]) ? $postedScores['score2'][$match['id']] : ($match['score2'] !== null ? $match['score2'] : '');
+                                                echo '<td><input type="number" name="score1[' . $match['id'] . ']" value="' . htmlspecialchars($score1Value) . '" min="0" max="14" class="score"></td>';
+                                                echo '<td><input type="number" name="score2[' . $match['id'] . ']" value="' . htmlspecialchars($score2Value) . '" min="0" max="14" class="score"></td>';
                                             } else {
                                                 // Scores - Non modifiables
                                                 echo '<td>' . ($match['score1'] !== null ? $match['score1'] : '') . '</td>';
@@ -446,9 +463,17 @@ function escapeHtml(string $string): string
     <script src="/cosmtt/admin/js/championnat.js"></script>
 
     <script>
-        // 1. Gestion des alertes PHP
+        // 1. Affichage des alertes sans fermer le mode édition
         <?php if (!empty($errors)): ?>
-            alert("<?= addslashes(implode("\n", $errors)); ?>");
+            window.addEventListener('DOMContentLoaded', function() {
+                alert("<?= addslashes(implode("\n", $errors)); ?>");
+            });
+        <?php endif; ?>
+
+        <?php if (!empty($successMessage)): ?>
+            window.addEventListener('DOMContentLoaded', function() {
+                alert("<?= addslashes($successMessage); ?>");
+            });
         <?php endif; ?>
 
         // 2. Transmission des variables PHP vers JS

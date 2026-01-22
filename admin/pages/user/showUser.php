@@ -39,7 +39,7 @@ class UserManager
                 echo "<td>********</td>"; // Ne pas afficher le mot de passe
                 echo "<td>" . htmlspecialchars($user['role']) . "</td>";
                 echo "<td><a class='image' href='modifyUser.php?id=" . htmlspecialchars($user['user_id']) . "'><img src='../../../img/icones/write.png' alt='Modifier'></a></td>";
-                echo "<td><a class='image' href='deleteUser.php?id=" . htmlspecialchars($user['user_id']) . "'><img src='../../../img/icones/remove.png' alt='Supprimer'></a></td>";
+                echo "<td><a class='image' href='deleteUser.php?id=" . htmlspecialchars($user['user_id']) . "' onclick=\"return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');\"><img src='../../../img/icones/remove.png' alt='Supprimer'></a></td>";
                 echo "</tr>";
             }
         } else {
@@ -94,6 +94,16 @@ $userManager = new UserManager($conn);
             </section>
         </div>
     </main>
+    <script>
+        // Vérifier les paramètres GET pour afficher les messages
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get('message');
+        if (message === 'DeleteFail') {
+            alert('Erreur lors de la suppression de l\'utilisateur.');
+        } else if (message === 'InvalidRequest') {
+            alert('Requête invalide.');
+        }
+    </script>
 </body>
 
 </html>

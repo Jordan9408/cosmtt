@@ -5,6 +5,17 @@ const loader = document.querySelector('.loader');
 function hideLoader() {
     if (loader) {
         loader.classList.add('fondu-out');
+        // Attendre la fin de la transition avant d'afficher l'alerte
+        setTimeout(function() {
+            if (window.errorToAlert) {
+                alert(window.errorToAlert);
+                window.errorToAlert = null; // Réinitialiser pour éviter de répéter
+            }
+            if (window.successToAlert) {
+                alert(window.successToAlert);
+                window.successToAlert = null; // Réinitialiser pour éviter de répéter
+            }
+        }, 300); // Délai pour la transition de fondu-out (0.2s + marge)
     }
 }
 
