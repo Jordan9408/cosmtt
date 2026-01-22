@@ -7,7 +7,7 @@ $firstNameValue = "";
 $lastNameValue = "";
 $emailValue = "";
 $roleValue = "";
-$errorMessage = "";
+$alertMessage = ""; // Variable pour stocker le message d'alerte
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send'])) {
     // Récupération et assainissement des données
@@ -26,46 +26,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send'])) {
 
     // Vérification de la correspondance des mots de passe
     if ($password !== $confPassword) {
-        $errorMessage = "Le mot de passe doit être identique à la confirmation.";
+        $alertMessage = "Le mot de passe doit être identique à la confirmation.";
     } else {
         try {
+            // Formatage du nom et prénom
+            $firstName = ucwords(strtolower($firstName), " -'"); // Première lettre en majuscule après espaces, tirets et apostrophes 
+            $lastName = strtoupper($lastName); // Tout en majuscule
+            
             $user = new User($conn);
             if ($user->addUser($firstName, $lastName, $email, $password, $role)) {
-                header("Location: ./showUser.php");
+                // Redirection avec succès
+                header("Location: ./showUser.php?message=AddSuccess");
                 exit();
             } else {
-                $errorMessage = "Échec de l'ajout de l'utilisateur.";
+                $alertMessage = "Échec de l'ajout de l'utilisateur.";
             }
         } catch (InvalidArgumentException $e) {
-            $errorMessage = $e->getMessage();
+            $alertMessage = $e->getMessage();
         } catch (Exception $e) {
-            $errorMessage = "Une erreur est survenue : " . $e->getMessage();
+            $alertMessage = "Une erreur est survenue : " . $e->getMessage();
         }
     }
 }
 ?>
 
-<body>
     <h2>Ajouter un utilisateur</h2>
     <main>
-        <?php if ($errorMessage): ?>
-            <div class="error-message"><?= htmlspecialchars($errorMessage) ?></div>
-        <?php endif; ?>
-
         <form action="" method="POST" class="form encad">
             <div>
                 <label for="firstName">Prénom:</label>
-                <input type="text" name="firstName" id="firstName" placeholder="First Name" value="<?= $firstNameValue ?>">
+                <input type="text" name="firstName" id="firstName" placeholder="First Name" value="<?= $firstNameValue ?>" autocomplete="given-name" required>
                 <label for="lastName">Nom:</label>
-                <input type="text" name="lastName" placeholder="Last Name" id="lastName" value="<?= $lastNameValue ?>">
+                <input type="text" name="lastName" placeholder="Last Name" id="lastName" value="<?= $lastNameValue ?>" autocomplete="family-name" required>
                 <label for="email">Email:</label>
-                <input type="email" name="email" placeholder="Email" id="email" value="<?= $emailValue ?>">
+                <input type="email" name="email" placeholder="Email" id="email" value="<?= $emailValue ?>" autocomplete="email" required>
                 <label for="password">Mot de passe :</label>
-                <input type="password" name="password" id="password" placeholder="Password">
+                <input type="password" name="password" id="password" placeholder="Password" autocomplete="new-password" required>
                 <label for="confPassword">Confirmer le mot de passe :</label>
-                <input type="password" name="confPassword" id="confPassword" placeholder="Confirm Password">
+                <input type="password" name="confPassword" id="confPassword" placeholder="Confirm Password" autocomplete="new-password" required>
                 <label for="role">Rôle:</label>
-                <select name="role">
+                <select name="role" id="role" required>
                     <option value="admin" <?= $roleValue === 'admin' ? 'selected' : '' ?>>Admin</option>
                     <option value="superAdmin" <?= $roleValue === 'superAdmin' ? 'selected' : '' ?>>Super Admin</option>
                 </select>
@@ -73,5 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send'])) {
             </div>
         </form>
     </main>
+
+    <?php if (!empty($alertMessage)): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            alert(<?= json_encode($alertMessage) ?>);
+        });
+    </script>
+    <?php endif; ?>
 </body>
 </html>

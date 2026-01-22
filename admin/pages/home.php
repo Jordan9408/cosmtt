@@ -40,7 +40,7 @@ if ($role === 'superAdmin') {
 
 if ($role == 'admin' || $role == 'superAdmin') {
     $links[] = '<li><a href="./article/addArticle.php">Article</a></li>';
-    $links[] = '<li><a href="./adminPage/photos/showGalerie.php">Galerie Photos</a></li>';
+    $links[] = '<li><a href="./adminPage/galeriePhotos/showGalerie.php">Galerie Photos</a></li>';
     $links[] = '<li><a href="./adminPage/championnat/homeChampionnat.php">Championnat</a></li>';
     $links[] = '<li><a href="./adminPage/joueurs/showClassement.php">Classements</a></li>';
 }

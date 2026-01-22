@@ -136,6 +136,10 @@ class RencontreManager
                 'new_score2'  => $current['score2'],
             ];
 
+            // Récupérer les équipes pour les messages d'erreur
+            $e1 = $current['equipe1'] ?? 'Équipe 1';
+            $e2 = $current['equipe2'] ?? 'Équipe 2';
+
             // 🔹 Gestion des équipes (superAdmin uniquement)
             if ($role === 'superAdmin') {
                 $e1 = trim($postData['equipe1'][$id] ?? '');
@@ -173,7 +177,7 @@ class RencontreManager
                         ]);
 
                         if ($filtered === false) {
-                            $errors[] = ucfirst($s) . " invalide pour le match $id (0 à 14).";
+                            $errors[] = ucfirst($s) . " invalide pour le match entre $e1 et $e2 (entre 0 à 14).";
                         } else {
                             $update["new_$s"] = $filtered;
                         }

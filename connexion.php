@@ -7,30 +7,36 @@ session_start();
 
 $auth = new Auth();
 $error = "";
+$success_message = "";
+$email = '';
+$recup_email = '';
+$show_reset_form = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Nettoyage et validation des entrées
     if (isset($_POST['valid-button'])) {
-        $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
+        $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        if (!$email) {
-            $error = "Adresse email invalide.";
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "L'adresse email n'est pas valide.";
         } elseif (empty($password)) {
-            $error = "Le mot de passe est requis.";
+            $error = "Le mot de passe ne peut pas être vide.";
         } else {
             // Tentative de connexion
             if ($auth->login($email, $password)) {
                 header("Location: ./admin/pages/home.php");
                 exit();
             } else {
-                $error = "Adresse Mail ou Mot de passe incorrect !";
+                $error = "Email ou mot de passe incorrect.";
             }
         }
     } elseif (isset($_POST['recup-submit'])) {
-        $recup_email = filter_var($_POST['recup_mail'] ?? '', FILTER_VALIDATE_EMAIL);
-        if (!$recup_email) {
+        $recup_email = $_POST['recup_mail'] ?? '';
+
+        if (!filter_var($recup_email, FILTER_VALIDATE_EMAIL)) {
             $error = "Adresse email invalide pour la réinitialisation.";
+            $show_reset_form = true;
         } else {
             $user = $auth->findUserByEmail($recup_email);
             if ($user) {
@@ -38,18 +44,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $token = $auth->generateResetToken();
                     if ($auth->savePasswordResetRequest($user['user_id'], $token)) {
                         if ($auth->sendResetEmail($recup_email, $token)) {
-                            $error = "";
+                            $success_message = "Si un compte est associé à cet e-mail, un lien de réinitialisation a été envoyé.";
                         } else {
                             $error = "Erreur lors de l'envoi de l'email de réinitialisation.";
+                            $show_reset_form = true;
                         }
                     } else {
                         $error = "Erreur lors de la sauvegarde de la demande de réinitialisation.";
+                        $show_reset_form = true;
                     }
                 } catch (Exception $e) {
                     $error = "Erreur interne : " . $e->getMessage();
+                    $show_reset_form = true;
                 }
             } else {
-                $error = "Aucun utilisateur trouvé avec cet email.";
+                // Pour des raisons de sécurité, on ne confirme pas si l'utilisateur existe.
+                $success_message = "Si un compte est associé à cet e-mail, un lien de réinitialisation a été envoyé.";
             }
         }
     }
@@ -57,16 +67,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <main>
-    <div class="main-connect">
+    <?php if (!empty($error)) : ?>
+        <script>window.errorToAlert = '<?= addslashes(htmlspecialchars($error)) ?>';</script>
+    <?php endif; ?>
+    <?php if (!empty($success_message)) : ?>
+        <script>window.successToAlert = '<?= addslashes(htmlspecialchars($success_message)) ?>';</script>
+    <?php endif; ?>
+    <div class="main-connect" style="<?= $show_reset_form ? 'display:none;' : 'display:block;' ?>">
         <h2 id="connexion">Connexion</h2>
         <div class="connect">
-            <?php if (!empty($error)) : ?>
-                <p class="Error"><?= htmlspecialchars($error) ?></p>
-            <?php endif; ?>
             <form action="" method="POST" enctype="multipart/form-data" class="login-form">
                 <div class="encad form-recup">
                     <label>Email :</label>
-                    <input type="email" class="connect-input email" name="email" required>
+                    <input type="email" class="connect-input email" name="email" value="<?= htmlspecialchars($email) ?>" required>
 
                     <label for="password">Mot de passe :</label>
                     <div class="mdp">
@@ -80,16 +93,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-    <div class="main-change-password" style="display:none;">
+    <div class="main-change-password" style="<?= $show_reset_form ? 'display:block;' : 'display:none;' ?>">
         <h2 id="connexion">Mot de passe oublié</h2>
         <div class="connect">
-            <?php if (!empty($error)) : ?>
-                <p class="Error"><?= htmlspecialchars($error) ?></p>
-            <?php endif; ?>
             <form action="" method="POST" enctype="multipart/form-data" class="login-form">
                 <div class="encad form-recup">
                     <label>Email :</label>
-                    <input type="email" class="connect-input email" name="recup_mail" placeholder="Votre adresse e-mail" required>
+                    <input type="email" class="connect-input email" name="recup_mail" required>
 
                     <input type="submit" class="connect-submit" name="recup-submit" value="Réinitialiser">
                     <input type="submit" class="connect-submit" name="annuler" value="Annuler">

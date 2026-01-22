@@ -20,6 +20,10 @@ if (isset($_GET['id'])) {
         $role = $_POST['role'] ?? '';
 
         try {
+            // Formatage du nom et prénom
+            $firstName = ucwords(strtolower($firstName), " -'"); // Première lettre en majuscule après espaces, tirets
+            $lastName = strtoupper($lastName); // Tout en majuscule
+
             if ($userClass->updateUser($user_id, $firstName, $lastName, $email, $password, $role)) {
                 header("Location: showUser.php");
                 exit();
@@ -53,19 +57,14 @@ if (isset($_GET['id'])) {
     <?php if ($user): ?>
         <h2>Modifier un utilisateur</h2>
         <main>
-            <?php if ($errorMessage): ?>
-            <div class="error-message"><?= htmlspecialchars($errorMessage) ?></div>
-            <?php endif; ?>
             <form action="" method="POST" class="form encad">
                 <div>
                     <label for="firstName">Prénom:</label>
-                    <input type="text" name="firstName" id="firstName" placeholder="First Name" value="<?= htmlspecialchars($user['firstName']) ?>" required>
+                    <input type="text" name="firstName" id="firstName" placeholder="First Name" value="<?= htmlspecialchars($user['firstName']) ?>" autocomplete="given-name" required>
                     <label for="lastName">Nom:</label>
-                    <input type="text" name="lastName" id="lastName" placeholder="Last Name" value="<?= htmlspecialchars($user['lastName']) ?>" required>
+                    <input type="text" name="lastName" id="lastName" placeholder="Last Name" value="<?= htmlspecialchars($user['lastName']) ?>" autocomplete="family-name" required>
                     <label for="email">Email:</label>
-                    <input type="email" name="email" id="email" placeholder="Email" value="<?= htmlspecialchars($user['email']) ?>" required>
-                    
-                    
+                    <input type="email" name="email" id="email" placeholder="Email" value="<?= htmlspecialchars($user['email']) ?>" autocomplete="email" required>                   
                     <label for="role">Rôle:</label>
                     <select name="role" id="role" required>
                         <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
@@ -80,6 +79,14 @@ if (isset($_GET['id'])) {
         <p>Utilisateur non trouvé.</p>
     <?php else: ?>
         <p>ID de l'utilisateur non spécifié.</p>
+    <?php endif; ?>
+
+    <?php if (!empty($errorMessage)): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            alert(<?= json_encode($errorMessage) ?>);
+        });
+    </script>
     <?php endif; ?>
 </body>
 

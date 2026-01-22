@@ -35,6 +35,9 @@ body {
 	margin: 0;
 	background-color: var(--primary-color);
 	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 	/* box-sizing: border-box; */
 }
 
@@ -260,24 +263,7 @@ footer {
 	text-align: center;
 	font-size: 14px;
 	color: var(--primary-color);
-}
-
-@media screen and (max-width: 1024px) {
-	footer {
-		position: fixed;
-		bottom: 0;
-		width: 100%;
-		z-index: 1000;
-	}
-}
-
-@media screen and (max-width: 376px) {
-	footer {
-		position: fixed;
-		bottom: 0;
-		width: 100%;
-		z-index: 1000;
-	}
+	margin-top: auto;
 }
 
 
@@ -1438,11 +1424,13 @@ a:visited {
 
 	footer {
 		background: var(--fifth-color);
-		/* position: absolute; */
-		/* bottom: 0; */
+		position: absolute;
+		bottom: 0;
+		left: 0; right: 0;
 		padding: 10px;
 		/* padding: auto 100%; */
 	}
+	
 
 	footer p {
 		color: #fff;
