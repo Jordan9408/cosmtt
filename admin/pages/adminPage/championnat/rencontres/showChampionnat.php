@@ -1,19 +1,13 @@
 <?php
 
 // Inclusion des fichiers nécessaires pour la connexion à la base de données et l'en-tête
-// dirname(__DIR__, 3) remonte directement 3 niveaux au-dessus du dossier courant et évite les ../ ou ./
 require_once dirname(__DIR__, 3) . '/connect_ddb.php';
 require_once dirname(__DIR__, 3) . '/parts/header.php';
 
 // Inclusion du fichier de sécurité
 require_once dirname(__DIR__, 4) . '/includes/security.php';
 
-
-// Initialisation des variables pour les erreurs et les messages de succès
-$errors = [];
-$successMessage = '';
-
-// Appel des Classe
+// Appel des Classes
 define('CLASSPAGES_PATH', dirname(__DIR__, 3) . '/classPages/competition/');
 
 require_once CLASSPAGES_PATH . 'JourneeValidator.php';
@@ -22,113 +16,37 @@ require_once CLASSPAGES_PATH . 'JourneeController.php';
 require_once CLASSPAGES_PATH . 'EquipeManager.php';
 require_once CLASSPAGES_PATH . 'RencontreManager.php';
 require_once CLASSPAGES_PATH . 'ChampionnatManager.php';
+require_once CLASSPAGES_PATH . 'ChampionnatViewController.php';
 
+// Initialisation du contrôleur
+$viewController = new ChampionnatViewController($conn, $role);
 
-// Gestion de la sélection de la poule
-// On vérifie d'abord le POST (validation formulaire), sinon le GET (navigation), sinon défaut
-$poule = $_POST['poule'] ?? $_GET['poule'] ?? 'pouleA';
+// Traitement des requêtes
+$viewController->handleRequests();
 
-if (!in_array($poule, ['pouleA', 'pouleB'])) {
-    $poule = 'pouleA';
-}
+// Chargement des données
+$viewController->loadData();
 
-// Gestion de l'ajout d'une journée
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send'])) {
-    $controller = new JourneeController($conn);
-    $result = $controller->handlePost($_POST);
-    $errors = $result['errors'];
-    $successMessage = $result['success'];
-}
+// Récupération des données pour l'affichage
+$poule = $viewController->getPoule();
+$isEditMode = $viewController->isEditMode();
+$errors = $viewController->getErrors();
+$successMessage = $viewController->getSuccessMessage();
+$classement = $viewController->getClassement();
+$rencontres = $viewController->getRencontres();
+$equipes = $viewController->getEquipes();
+$postedScores = $viewController->getPostedScores();
+$isOddNumberOfTeams = $viewController->isOddNumberOfTeams();
 
-// Gestion de la modification des rencontres
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveEdits'])) {
-    $rencontreManager = new RencontreManager($conn);
-    $equipeManager = new EquipeManager($conn);
-    $equipesList = $equipeManager->getEquipesByPoule($poule);
-    $result = $rencontreManager->mettreAJourRencontres($_POST, $equipesList, $poule, $role);
-    $errors = $result['errors'];
-    $successMessage = $result['success'];
-    if (empty($errors)) {
-        // Succès : rediriger sans edit=1 pour revenir en mode affichage
-        header("Location: ?poule=" . urlencode($poule) . "&successMessage=" . urlencode($successMessage));
-        exit;
-    } else {
-        // Rester en mode édition si erreurs
-        $_GET['edit'] = '1';
-    }
-}
+// Séparation des journées Aller/Retour
+$journeesParType = $viewController->getJourneesByType();
+$journeesAller = $journeesParType['aller'];
+$journeesRetour = $journeesParType['retour'];
 
-// Gestion de la suppression d'une journée
-if (isset($_GET['delete_journee_id']) && $role === 'superAdmin') {
-    $deleteJourneeId = (int)$_GET['delete_journee_id'];
-    if ($deleteJourneeId > 0) {
-        try {
-            // Créer le manager pour l'opération de suppression
-            $journeeManagerDelete = new JourneeManager($conn);
-            $journeeManagerDelete->supprimerJourneeEtRencontres($deleteJourneeId);
-            $successMessage = "";
-
-            // Rediriger pour nettoyer l'URL et éviter la resoumission du GET
-            header("Location: ?poule=" . urlencode($poule) . "&edit=1&successMessage=" . urlencode($successMessage));
-            exit;
-        } catch (PDOException $e) {
-            $errors[] = "Erreur lors de la suppression de la journée : " . $e->getMessage();
-        }
-    } else {
-        $errors[] = "ID de journée invalide pour la suppression.";
-    }
-}
-// *************************************************************************************************
-// Récupérer un message de succès après redirection
-if (isset($_GET['successMessage']) && empty($errors)) {
-    $successMessage = $_GET['successMessage'];
-}
-// *****************************************************************************************************
-
-// Mode édition
-$isEditMode = isset($_GET['edit']) && $_GET['edit'] == '1';
-
-// Garder les données POST en cas d'erreur lors de la validation
-$postedScores = [];
-if (!empty($_POST['score1'])) {
-    $postedScores['score1'] = $_POST['score1'];
-}
-if (!empty($_POST['score2'])) {
-    $postedScores['score2'] = $_POST['score2'];
-}
-
-// Récupération des données
-$championnatManager = new ChampionnatManager($conn);
-$classement = $championnatManager->calculerClassement($poule);
-$rencontreManager = new RencontreManager($conn);
-$journees = $rencontreManager->getJourneesByPoule($poule);
-$rencontres = $rencontreManager->getRencontresByPoule($poule);
-$equipeManager = new EquipeManager($conn);
-$equipes = $equipeManager->getEquipesByPoule($poule);
-
-// Détecter si le nombre d'équipes est impair
-$isOddNumberOfTeams = (count($equipes) % 2) !== 0;
-
-// NOUVEAU : Séparation des journées "Aller" et "Retour"
-// ***************************************************************
-$journeesAller = [];
-$journeesRetour = [];
-foreach ($journees as $journee) {
-    if (isset($journee['type_journee']) && $journee['type_journee'] === 'retour') {
-        $journeesRetour[] = $journee;
-    } else {
-        // Par défaut, ou si 'aller'
-        $journeesAller[] = $journee;
-    }
-}
-
-
-/**
- * Fonction pour échapper le HTML
- */
+// Fonction d'échappement HTML
 function escapeHtml(string $string): string
 {
-    return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    return ChampionnatViewController::escapeHtml($string);
 }
 
 ?>
@@ -262,7 +180,6 @@ function escapeHtml(string $string): string
             <div class="deux-colonnes-calendrier">
 
                 <div class="colonne-aller">
-                    <!-- <h3 class="colonne-titre">Matchs Aller</h3> -->
                     <?php foreach ($journeesAller as $journee): ?>
                         <div class="journee-wrapper">
                             <table class="journee-table">
@@ -355,7 +272,6 @@ function escapeHtml(string $string): string
                 </div>
 
                 <div class="colonne-retour">
-                    <!-- <h3 class="colonne-titre">Matchs Retour</h3> -->
                     <?php foreach ($journeesRetour as $journee): ?>
                         <div class="journee-wrapper">
                             <table class="journee-table">
@@ -463,26 +379,47 @@ function escapeHtml(string $string): string
     <script src="/cosmtt/admin/js/championnat.js"></script>
 
     <script>
-        // 1. Affichage des alertes sans fermer le mode édition
+        // 1. Affichage des alertes avec le nouveau format groupé
         <?php if (!empty($errors)): ?>
             window.addEventListener('DOMContentLoaded', function() {
-                alert("<?= addslashes(implode("\n", $errors)); ?>");
+                const errors = <?= json_encode($errors, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); ?>;
+                let alertMessage = '';
+                
+                console.log('=== DEBUG ERREURS ===');
+                console.log('Structure des erreurs PHP:', errors);
+                
+                for (const journeeName in errors) {
+                    // Ajoute un saut de ligne avant la nouvelle journée, sauf pour la première
+                    if (alertMessage !== '') {
+                        alertMessage += '\n';
+                    }
+                    alertMessage += `Dans la ${journeeName}:\n`;
+                    errors[journeeName].forEach(error => {
+                        alertMessage += `- ${error}\n`;
+                    });
+                }
+                
+                // Enlever le dernier '\n' pour un affichage plus propre
+                if (alertMessage.endsWith('\n')) {
+                    alertMessage = alertMessage.slice(0, -1);
+                }
+
+                console.log('Message d\'alerte final:\n', alertMessage);
+                console.log('===================');
+
+                alert(alertMessage);
             });
         <?php endif; ?>
 
         <?php if (!empty($successMessage)): ?>
             window.addEventListener('DOMContentLoaded', function() {
-                alert("<?= addslashes($successMessage); ?>");
+                alert(<?= json_encode($successMessage, JSON_UNESCAPED_UNICODE); ?>);
             });
         <?php endif; ?>
 
         // 2. Transmission des variables PHP vers JS
         window.isEditMode = <?= $isEditMode ? 'true' : 'false' ?>;
     </script>
-    <?php
-        // Inclusion du footer
-        // include_once dirname(__DIR__, 4) . '/html_partials/footer.php';
-    ?>
 </body>
 
 </html>

@@ -3,50 +3,9 @@
  * Vérifie les doublons d'équipes avant de soumettre le formulaire d'édition
  */
 function checkAndSubmit() {
-    const journeeWrappers = document.querySelectorAll('.journee-wrapper');
-    let hasDuplicate = false;
-    let duplicateMessage = '';
-
-    journeeWrappers.forEach(wrapper => {
-        const equipe1Selects = wrapper.querySelectorAll('select[name^="equipe1["]');
-        const equipe2Selects = wrapper.querySelectorAll('select[name^="equipe2["]');
-        const teamsInJournee = [];
-
-        equipe1Selects.forEach(select => {
-            const value = select.value.trim();
-            if (value && value !== 'Aucune équipe') {
-                teamsInJournee.push(value);
-            }
-        });
-
-        equipe2Selects.forEach(select => {
-            const value = select.value.trim();
-            if (value && value !== 'Aucune équipe') {
-                teamsInJournee.push(value);
-            }
-        });
-
-        const teamCounts = {};
-        teamsInJournee.forEach(team => {
-            teamCounts[team] = (teamCounts[team] || 0) + 1;
-        });
-        const duplicatedTeams = Object.keys(teamCounts).filter(team => teamCounts[team] > 1);
-        if (duplicatedTeams.length > 0) {
-            hasDuplicate = true;
-            const journeeTitle = wrapper.querySelector('th[colspan="4"]').textContent.trim();
-            const journeeId = journeeTitle.split(' (')[0];
-            const teamsStr = duplicatedTeams.join(', ');
-            const verb = duplicatedTeams.length === 1 ? 'joue' : 'jouent';
-            duplicateMessage += `\nDans la ${journeeId}, ${teamsStr} ${verb} plusieurs matchs.\n`;
-        }
-    });
-
-    if (hasDuplicate) {
-        alert("Erreur : " + duplicateMessage + "Une équipe ne peut disputer qu'un seul match par journée.");
-        return false;
-    } else {
-        const form = document.getElementById('editForm');
-        if (form) form.submit();
+    const form = document.getElementById('editForm');
+    if (form) {
+        form.submit();
     }
 }
 
