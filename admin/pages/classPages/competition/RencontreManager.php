@@ -13,7 +13,7 @@ class RencontreManager
 
     public function getRencontresByPoule(string $poule): array
     {
-        // Ajout de j.type_journee au SELEC
+        // Ajout de j.type_journee au SELECT
         $sql = "SELECT r.id, r.journee_id, r.equipe1, r.score1, r.score2, r.equipe2, j.dateDebut, j.dateFin, j.type_journee
                 FROM rencontres r
                 INNER JOIN journeesChampionnat j ON r.journee_id = j.id
@@ -96,11 +96,14 @@ class RencontreManager
         $errors = [];
         $rencontres = $this->getRencontresByPoule($poule);
         $matchUpdates = [];
+        $journeesEquipes = [];
 
-        // Associer les équipes valides
         $equipesAssoc = array_column($equipes, 'NomEquipe', 'NomEquipe');
+        $mapMatchIdToJourneeId = array_column($rencontres, 'journee_id', 'id');
+        $journeesFromDb = $this->getJourneesByPoule($poule);
+        $mapJourneeIdToJourneeName = array_column($journeesFromDb, 'journee_id', 'id');
 
-        // Identifier les matchs à mettre à jour
+        // 1. Identifier les correspondances à mettre à jour
         $matchIds = [];
         $arraysToCheck = ['score1', 'score2'];
         if ($role === 'superAdmin') {
@@ -117,82 +120,123 @@ class RencontreManager
             }
         }
 
-        // Préparer les mises à jour
+        // 2. Validation individuelle de chaque correspondance et collecte de données
         foreach (array_keys($matchIds) as $id) {
             $current = array_filter($rencontres, fn($r) => $r['id'] == $id);
             $current = reset($current);
 
             if (!$current) {
-                $errors[] = "Match avec ID $id non trouvé.";
+                $errors['Général'][] = "Match avec ID $id non trouvé.";
                 continue;
             }
 
+            $journeeId = $current['journee_id'];
+            $journeeName = $mapJourneeIdToJourneeName[$journeeId] ?? "Inconnue";
+
             $update = [
                 'id' => $id,
-                'journee_id' => $current['journee_id'],
                 'new_equipe1' => $current['equipe1'],
                 'new_equipe2' => $current['equipe2'],
                 'new_score1'  => $current['score1'],
                 'new_score2'  => $current['score2'],
             ];
 
-            // Récupérer les équipes pour les messages d'erreur
-            $e1 = $current['equipe1'] ?? 'Équipe 1';
-            $e2 = $current['equipe2'] ?? 'Équipe 2';
-
-            // 🔹 Gestion des équipes (superAdmin uniquement)
+            // Gestion d'équipe (superAdmin)
             if ($role === 'superAdmin') {
                 $e1 = trim($postData['equipe1'][$id] ?? '');
                 $e2 = trim($postData['equipe2'][$id] ?? '');
-
                 $update['new_equipe1'] = ($e1 === '' || $e1 === 'Aucune équipe') ? null : $e1;
                 $update['new_equipe2'] = ($e2 === '' || $e2 === 'Aucune équipe') ? null : $e2;
 
                 if ($update['new_equipe1'] && !isset($equipesAssoc[$update['new_equipe1']])) {
-                    $errors[] = "Équipe domicile invalide pour le match $id.";
+                    $errors[$journeeName][] = "Équipe domicile invalide pour le match " . $id;
                 }
                 if ($update['new_equipe2'] && !isset($equipesAssoc[$update['new_equipe2']])) {
-                    $errors[] = "Équipe extérieure invalide pour le match $id.";
+                    $errors[$journeeName][] = "Équipe extérieure invalide pour le match " . $id;
                 }
                 if ($update['new_equipe1'] && $update['new_equipe1'] === $update['new_equipe2']) {
-                    $errors[] = "Les équipes du match $id doivent être différentes.";
+                    $errors[$journeeName][] = "Les équipes doivent être différentes pour le match " . $id;
                 }
             }
+            
+            $equipe1ForCheck = $update['new_equipe1'];
+            $equipe2ForCheck = $update['new_equipe2'];
 
-            // 🔹 Gestion des scores (admin + superAdmin)
+            // Gestion des scores (admin + superAdmin)
             if (in_array($role, ['admin', 'superAdmin'])) {
-                foreach (['score1', 'score2'] as $s) {
+                $score1_val_str = trim($postData['score1'][$id] ?? '');
+                $score2_val_str = trim($postData['score2'][$id] ?? '');
 
-                    // 1. Récupération de la valeur (trim pour gérer les espaces blancs)
-                    $val = trim($postData[$s][$id] ?? '');
+                $e1_name = $equipe1ForCheck ?? 'Equipe1';
+                $e2_name = $equipe2ForCheck ?? 'Equipe2';
 
-                    // 2. LOGIQUE MODIFIÉE : Si la valeur est vide après nettoyage
-                    if ($val === '') {
-                        // L'utilisateur a vidé le champ => on force la valeur à NULL pour la BDD
-                        $update["new_$s"] = null;
-                    } else {
-                        // 3. LOGIQUE EXISTANTE : Si une valeur est présente, on la valide
-                        $filtered = filter_var($val, FILTER_VALIDATE_INT, [
-                            'options' => ['min_range' => 0, 'max_range' => 14]
-                        ]);
+                if (($score1_val_str !== '' || $score2_val_str !== '') && ($equipe1ForCheck === null || $equipe2ForCheck === null)) {
+                    $errors[$journeeName][] = "Les scores ne peuvent pas être saisis si une équipe est manquante pour le match entre $e1_name et $e2_name.";
+                    $score1_ok = false;
+                    $score2_ok = false;
+                } else {
+                    $score1_ok = $score1_val_str === '' || filter_var($score1_val_str, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 14]]) !== false;
+                    $score2_ok = $score2_val_str === '' || filter_var($score2_val_str, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 14]]) !== false;
 
-                        if ($filtered === false) {
-                            $errors[] = ucfirst($s) . " invalide pour le match entre $e1 et $e2 (entre 0 à 14).";
-                        } else {
-                            $update["new_$s"] = $filtered;
+                    if (!$score1_ok && !$score2_ok) {
+                        $errors[$journeeName][] = "Score1 et Score2 sont invalides pour le match entre $e1_name et $e2_name (entre 0 à 14).";
+                    } else if (!$score1_ok) {
+                        $errors[$journeeName][] = "Score1 invalide pour le match entre $e1_name et $e2_name (entre 0 à 14).";
+                    } else if (!$score2_ok) {
+                        $errors[$journeeName][] = "Score2 invalide pour le match entre $e1_name et $e2_name (entre 0 à 14).";
+                    }
+
+                    if ($score1_ok && $score2_ok && $score1_val_str !== '' && $score2_val_str !== '') {
+                        $score1_int = (int)$score1_val_str;
+                        $score2_int = (int)$score2_val_str;
+                        if (($score1_int + $score2_int) > 14) {
+                            $errors[$journeeName][] = "La somme des scores pour le match entre $e1_name et $e2_name ne peut pas dépasser 14.";
                         }
                     }
                 }
+                
+                if($score1_ok) $update['new_score1'] = ($score1_val_str === '') ? null : (int)$score1_val_str;
+                if($score2_ok) $update['new_score2'] = ($score1_val_str === '') ? null : (int)$score2_val_str;
+            }
+
+            if ($equipe1ForCheck && $equipe1ForCheck !== 'Aucune équipe') {
+                $journeesEquipes[$journeeId][] = $equipe1ForCheck;
+            }
+            if ($equipe2ForCheck && $equipe2ForCheck !== 'Aucune équipe') {
+                $journeesEquipes[$journeeId][] = $equipe2ForCheck;
             }
 
             $matchUpdates[$id] = $update;
         }
 
+        // 3. Validation des équipes en double par journée
+        foreach ($journeesEquipes as $journeeId => $equipesInJournee) {
+            $counts = array_count_values($equipesInJournee);
+            $duplicates = [];
+            foreach ($counts as $equipe => $count) {
+                if ($count > 1) {
+                    $duplicates[] = $equipe;
+                }
+            }
+            if (!empty($duplicates)) {
+                $journeeName = $mapJourneeIdToJourneeName[$journeeId] ?? "Inconnue";
+                $equipesStr = implode(', ', $duplicates);
+                $verb = count($duplicates) > 1 ? 'jouent' : 'joue';
+                $errorMessage = "$equipesStr $verb plusieurs matchs. Une équipe ne peut disputer qu'un seul match par journée.";
+
+                $errors[$journeeName][] = $errorMessage;
+            }
+        }
+        
+        // 4. Décision finale : valider ou renvoyer avec des erreurs
         if (!empty($errors)) {
+            foreach ($errors as &$journeeErrors) {
+                $journeeErrors = array_unique($journeeErrors);
+            }
             return ['errors' => $errors, 'success' => null];
         }
 
-        // 🔹 Exécution en transaction
+        // 5. Exécuter dans la transaction s'il n'y a pas d'erreurs
         try {
             $this->conn->beginTransaction();
             $sql = "UPDATE rencontres SET 
@@ -203,20 +247,22 @@ class RencontreManager
                 WHERE id = :id";
             $stmt = $this->conn->prepare($sql);
 
-            foreach ($matchUpdates as $update) {
-                $stmt->bindValue(':equipe1', $update['new_equipe1'], $update['new_equipe1'] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
-                $stmt->bindValue(':score1', $update['new_score1'], $update['new_score1'] === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
-                $stmt->bindValue(':score2', $update['new_score2'], $update['new_score2'] === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
-                $stmt->bindValue(':equipe2', $update['new_equipe2'], $update['new_equipe2'] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
-                $stmt->bindValue(':id', $update['id'], PDO::PARAM_INT);
-                $stmt->execute();
+            foreach ($matchUpdates as $id => $update) {
+                if (isset($matchUpdates[$id])) {
+                    $stmt->bindValue(':equipe1', $update['new_equipe1'], $update['new_equipe1'] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+                    $stmt->bindValue(':score1', $update['new_score1'], $update['new_score1'] === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+                    $stmt->bindValue(':score2', $update['new_score2'], $update['new_score2'] === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+                    $stmt->bindValue(':equipe2', $update['new_equipe2'], $update['new_equipe2'] === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+                    $stmt->bindValue(':id', $update['id'], PDO::PARAM_INT);
+                    $stmt->execute();
+                }
             }
 
             $this->conn->commit();
-            return ['errors' => [], 'success'=>''];
+            return ['errors' => [], 'success' => 'Mises à jour enregistrées avec succès.'];
         } catch (PDOException $e) {
             $this->conn->rollBack();
-            return ['errors' => ["Erreur base de données : " . $e->getMessage()], 'success' => null];
+            return ['errors' => ['Général' => ["Erreur base de données : " . $e->getMessage()]], 'success' => null];
         }
     }
 }

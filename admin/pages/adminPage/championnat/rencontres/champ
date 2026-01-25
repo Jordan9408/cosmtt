@@ -147,7 +147,6 @@ function escapeHtml(string $string): string
 
     <div class="title-bar">CHAMPIONNAT</div>
 
-    
     <div class="poule-select">
         <form method="get" action="">
             <label for="poule">&nbsp;</label>
