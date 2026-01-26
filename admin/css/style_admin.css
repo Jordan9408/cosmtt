@@ -321,7 +321,7 @@ table tr {
 .journee-table {
     border-collapse: collapse;
     width: 220px;
-    margin: 0 10px 20px 10px;
+    margin-bottom: 20px;
 }
 
 .journee-table thead tr:first-child th {
@@ -352,8 +352,8 @@ table tr {
 
 .lienPopup {
     display: flex;
-    justify-content: center;
-    margin: 10px 0px;
+    justify-content: space-around;
+    margin: 10px 23em;
 }
 
 .lienShowPopup {

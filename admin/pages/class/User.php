@@ -58,10 +58,7 @@ class User
 
         // Liste des domaines autorisés
         $allowedDomains = [
-            'gmail.com', 'hotmail.fr', 'outlook.fr', 'outlook.com',
-            'yahoo.fr', 'wanadoo.fr', 'orange.fr', 'sfr.fr',
-            'bouyguestelecom.fr', 'free.fr', 'laposte.net',
-            'protonmail.com', 'aliceadsl.fr', 'mailo.com'
+            'gmail.com', 'googlemail.com', 'hotmail.fr', 'hotmail.com', 'outlook.fr', 'outlook.com', 'live.com', 'live.fr', 'windowslive.com', 'msn.com', 'orange.fr', 'orange.com', 'wanadoo.fr', 'wanadoo.com', 'sfr.fr', 'bbox.fr', 'free.fr', 'alicepro.fr', 'aliceadsl.fr', 'mailo.com', 'laposte.net', 'yahoo.com', 'yahoo.fr', 'proton.me', 'protonmail.com', 'pm.me', 'icloud.com', 'me.com', 'mac.com'
         ];
         $domain = substr(strrchr($email, '@'), 1);
         if (!in_array(strtolower($domain), $allowedDomains, true)) {
@@ -147,10 +144,7 @@ class User
 
         // Liste des domaines autorisés
         $allowedDomains = [
-            'gmail.com', 'hotmail.fr', 'outlook.fr', 'outlook.com',
-            'yahoo.fr', 'wanadoo.fr', 'orange.fr', 'sfr.fr',
-            'bouyguestelecom.fr', 'free.fr', 'laposte.net',
-            'protonmail.com', 'aliceadsl.fr', 'mailo.com'
+            'gmail.com', 'googlemail.com', 'hotmail.fr', 'hotmail.com', 'outlook.fr', 'outlook.com', 'live.com', 'live.fr', 'windowslive.com', 'msn.com', 'orange.fr', 'orange.com', 'wanadoo.fr', 'wanadoo.com', 'sfr.fr', 'bbox.fr', 'free.fr', 'alicepro.fr', 'aliceadsl.fr', 'mailo.com', 'laposte.net', 'yahoo.com', 'yahoo.fr', 'proton.me', 'protonmail.com', 'pm.me', 'icloud.com', 'me.com', 'mac.com'
         ];
         $domain = substr(strrchr($email, '@'), 1);
         if (!in_array(strtolower($domain), $allowedDomains, true)) {
@@ -192,6 +186,18 @@ class User
         $stmt->execute(['user_id' => $user_id]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         return $user ?: null;
+    }
+
+    /**
+     * Supprime un utilisateur par son ID
+     * @param int $user_id
+     * @return bool true si suppression réussie, false sinon
+     */
+    public function deleteUser(int $user_id): bool
+    {
+        $sql = "DELETE FROM users WHERE user_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$user_id]);
     }
 }
 ?>

@@ -46,3 +46,8 @@ if ($role == 'admin' || $role == 'superAdmin') {
 }
 
 echo '<div id="menu_btn"><ul>' . implode('', $links) . '</ul></div>';
+?>
+<?php
+// Inclusion du footer
+include_once dirname(__DIR__, 1) . '/html_partials/footer.php';
+?>
