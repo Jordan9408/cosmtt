@@ -66,17 +66,20 @@ include_once 'html_partials/header.php';
     /* Mise en page du calendrier en 2 colonnes */
     .deux-colonnes-calendrier {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 20px;
-        margin: 20px 19em;
+        gap: 8em;
+        margin: 20px auto;
+        /* width: 90%; */
+        /* max-width: 1200px; */
     }
 
     .colonne-aller,
     .colonne-retour {
-        flex: 1;
-        min-width: 45%;
+        display: flex;
+        flex-direction: column;
+        /* min-width: 45%; */
         margin-bottom: 10px;
     }
 

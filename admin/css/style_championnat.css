@@ -141,16 +141,25 @@ table.calendrier td {
 
 .deux-colonnes-calendrier {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
-    margin: 20px 20em;
+    gap: 8em;
+    margin: 20px margin;
+    /* display: flex;
+        justify-content: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8em;
+        margin: 20px auto; */
 }
 
 .colonne-aller,
 .colonne-retour {
-    flex: 1;
-    min-width: 45%;
+    display: flex;
+    flex-direction: column;
+    /* min-width: 45%; */
+    margin-bottom: 10px;
 }
 
 .colonne-titre {
@@ -203,6 +212,7 @@ table.calendrier td {
     border-collapse: collapse;
     width: 368px;
     height: 177px;
+    /* margin: 0px; */
 }
 
 .journee-table thead tr:first-child th {

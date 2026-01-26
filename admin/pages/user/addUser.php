@@ -2,52 +2,16 @@
 include_once('../parts/header.php');
 require_once('../connect_ddb.php');
 require_once('../class/User.php');
+require_once('../classPages/users/AddUserController.php');
 
-$firstNameValue = "";
-$lastNameValue = "";
-$emailValue = "";
-$roleValue = "";
-$alertMessage = ""; // Variable pour stocker le message d'alerte
+$controller = new AddUserController($conn);
+$controller->handlePost();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send'])) {
-    // Récupération et assainissement des données
-    $firstName = trim($_POST['firstName'] ?? '');
-    $lastName = trim($_POST['lastName'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confPassword = $_POST['confPassword'] ?? '';
-    $role = $_POST['role'] ?? '';
-
-    // Conserver les valeurs pour réaffichage en cas d'erreur
-    $firstNameValue = htmlspecialchars($firstName);
-    $lastNameValue = htmlspecialchars($lastName);
-    $emailValue = htmlspecialchars($email);
-    $roleValue = htmlspecialchars($role);
-
-    // Vérification de la correspondance des mots de passe
-    if ($password !== $confPassword) {
-        $alertMessage = "Le mot de passe doit être identique à la confirmation.";
-    } else {
-        try {
-            // Formatage du nom et prénom
-            $firstName = ucwords(strtolower($firstName), " -'"); // Première lettre en majuscule après espaces, tirets et apostrophes 
-            $lastName = strtoupper($lastName); // Tout en majuscule
-            
-            $user = new User($conn);
-            if ($user->addUser($firstName, $lastName, $email, $password, $role)) {
-                // Redirection avec succès
-                header("Location: ./showUser.php?message=AddSuccess");
-                exit();
-            } else {
-                $alertMessage = "Échec de l'ajout de l'utilisateur.";
-            }
-        } catch (InvalidArgumentException $e) {
-            $alertMessage = $e->getMessage();
-        } catch (Exception $e) {
-            $alertMessage = "Une erreur est survenue : " . $e->getMessage();
-        }
-    }
-}
+$firstNameValue = $controller->getFirstNameValue();
+$lastNameValue = $controller->getLastNameValue();
+$emailValue = $controller->getEmailValue();
+$roleValue = $controller->getRoleValue();
+$alertMessage = $controller->getAlertMessage();
 ?>
 
     <h2>Ajouter un utilisateur</h2>

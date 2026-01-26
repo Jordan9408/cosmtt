@@ -33,5 +33,5 @@ echo '<div id="menu_btn"><ul>' . implode('', $links) . '</ul></div>';
 
 <?php
 // Inclusion du footer
-// include_once dirname(__DIR__, 3) . '/html_partials/footer.php';
+include_once dirname(__DIR__, 3) . '/html_partials/footer.php';
 ?>
