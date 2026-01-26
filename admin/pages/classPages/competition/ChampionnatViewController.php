@@ -211,7 +211,7 @@ class ChampionnatViewController
         return (count($this->equipes) % 2) !== 0;
     }
     
-    // Getters
+    // Getters pour les propriétés privées
     public function getPoule(): string { return $this->poule; }
     public function isEditMode(): bool { return $this->isEditMode; }
     public function getErrors(): array { return $this->errors; }

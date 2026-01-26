@@ -1,6 +1,6 @@
 /* ==================== GENERAL STYLES ==================== */
 
-@import url('./colors_group.css');
+@import url('/cosmtt/admin/css/colors_group.css');
 
 #clas_joueurs {
     margin: 20px auto;

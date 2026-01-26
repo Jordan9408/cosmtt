@@ -155,7 +155,7 @@ class RencontreManager
                     $errors[$journeeName][] = "Équipe extérieure invalide pour le match " . $id;
                 }
                 if ($update['new_equipe1'] && $update['new_equipe1'] === $update['new_equipe2']) {
-                    $errors[$journeeName][] = "Les équipes doivent être différentes pour le match " . $id;
+                    $errors[$journeeName][] = "Pour un match, l'équipe domicile et l'équipe extérieure ne peuvent pas être identiques.";
                 }
             }
             
@@ -259,7 +259,7 @@ class RencontreManager
             }
 
             $this->conn->commit();
-            return ['errors' => [], 'success' => 'Mises à jour enregistrées avec succès.'];
+            return ['errors' => [], 'success' => ''];
         } catch (PDOException $e) {
             $this->conn->rollBack();
             return ['errors' => ['Général' => ["Erreur base de données : " . $e->getMessage()]], 'success' => null];

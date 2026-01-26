@@ -1,4 +1,4 @@
-@import url('./colors_group.css');
+@import url('/cosmtt/admin/css/colors_group.css');
 
 /* ==================== POPUP STYLES ==================== */
 
@@ -53,6 +53,11 @@
     width: 1em;
     font-size: 14px;
     white-space: nowrap;
+}
+
+.team-error {
+    color: red;
+    font-weight: bold;
 }
 
 .buttons-row {
