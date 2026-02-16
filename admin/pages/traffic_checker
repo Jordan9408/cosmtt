@@ -1,0 +1,364 @@
+<?php
+// Inclusion des fichiers nécessaires
+require_once __DIR__ . '/connect_ddb.php';
+require_once __DIR__ . '/parts/header.php';
+
+// Inclusion du fichier de sécurité et de vérification de session
+require_once dirname(__DIR__, 1) . '/includes/security.php';
+require_once dirname(__DIR__, 1) . '/includes/session_check.php';
+
+if (!isset($_SESSION['firstName'])) {
+    header('Location: ../../connexion.php');
+    exit;
+}
+
+$userFirstName = $_SESSION['firstName'];
+?>
+
+<style>
+    .stats-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        font-family: Arial, sans-serif;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
+    
+    .stat-card {
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 28px;
+        font-weight: bold;
+        color: #333;
+        margin: 10px 0;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+    }
+    
+    table thead {
+        background: #333;
+        color: white;
+    }
+    
+    table th, table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    table tbody tr:hover {
+        background: #f9f9f9;
+    }
+    
+    .form-filters {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 20px 0;
+    }
+    
+    .form-filters label {
+        display: inline-block;
+        margin-right: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .form-filters input, .form-filters select {
+        padding: 5px 10px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+    }
+    
+    .form-filters button {
+        padding: 5px 15px;
+        background: #333;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    
+    .form-filters button:hover {
+        background: #555;
+    }
+    
+    h1, h2 {
+        color: #333;
+    }
+    
+    .pie-chart-container {
+        display: flex;
+        justify-content: center;
+        margin: 30px 0;
+        position: relative;
+    }
+    
+    .pie-chart {
+        width: 350px;
+        height: 350px;
+        position: relative;
+    }
+    
+    .pie-slice {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    .tooltip {
+        position: absolute;
+        background: #333;
+        color: #666;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 13px;
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .pie-slice:hover .tooltip {
+        opacity: 1;
+    }
+    
+    .legend {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-left: 30px;
+        justify-content: center;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 2px;
+    }
+</style>
+
+<div class="stats-container">
+    <h1>Statistiques de Trafic</h1>
+    
+    <?php
+    // Détection Appareil
+$ua = $_SERVER['HTTP_USER_AGENT'];
+$device = 'PC';
+if (preg_match('/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i', $ua)) $device = 'Tablette';
+elseif (preg_match('/(up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|android|iemobile)/i', $ua)) $device = 'Mobile';
+elseif (preg_match('/(smart-tv|googletv|appletv|hbbtv|povw|netcast)/i', $ua)) $device = 'TV';
+
+// Détection Navigateur
+$browser = 'Autre';
+if (preg_match('/Edge|Edg/i', $ua)) $browser = 'Edge';
+elseif (preg_match('/Firefox/i', $ua)) $browser = 'Firefox';
+elseif (preg_match('/Qwant/i', $ua)) $browser = 'Qwant';
+elseif (preg_match('/Chrome/i', $ua)) $browser = 'Chrome';
+elseif (preg_match('/Safari/i', $ua)) $browser = 'Safari';
+
+$ip = $_SERVER['REMOTE_ADDR'];
+
+// INSERTION OU MISE À JOUR (si l'IP/Date existe déjà)
+$sql = "INSERT INTO stats_visites (ip, date_visite, heure_visite, appareil, navigateur) 
+        VALUES (:ip, CURDATE(), CURTIME(), :device, :browser)
+        ON DUPLICATE KEY UPDATE 
+        heure_visite = CURTIME(), 
+        appareil = :device, 
+        navigateur = :browser";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+    ':ip' => $ip,
+    ':device' => $device,
+    ':browser' => $browser
+]);
+?><?php
+    // Fonction pour hasher l'IP
+    function hashIP($ip) {
+        return hash('sha256', $ip);
+    }
+
+    // Récupérer les statistiques globales
+    $today = date('Y-m-d');
+    $month = date('Y-m');
+    $week_start = date('Y-m-d', strtotime('monday this week'));
+
+    // Visites aujourd'hui
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM statistiques_visites WHERE DATE(date_visite) = ?");
+    $stmt->execute([$today]);
+    $today_visits = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Visites cette semaine
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM statistiques_visites WHERE date_visite >= ?");
+    $stmt->execute([$week_start . ' 00:00:00']);
+    $week_visits = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Visites ce mois
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM statistiques_visites WHERE DATE_FORMAT(date_visite, '%Y-%m') = ?");
+    $stmt->execute([$month]);
+    $month_visits = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Total général
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM statistiques_visites");
+    $stmt->execute();
+    $total_visits = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Visiteurs uniques aujourd'hui
+    $stmt = $conn->prepare("SELECT COUNT(DISTINCT ip) AS total FROM statistiques_visites WHERE DATE(date_visite) = ?");
+    $stmt->execute([$today]);
+    $today_unique = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Visiteurs uniques cette semaine
+    $stmt = $conn->prepare("SELECT COUNT(DISTINCT ip) AS total FROM statistiques_visites WHERE date_visite >= ?");
+    $stmt->execute([$week_start . ' 00:00:00']);
+    $week_unique = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Visiteurs uniques ce mois
+    $stmt = $conn->prepare("SELECT COUNT(DISTINCT ip) AS total FROM statistiques_visites WHERE DATE_FORMAT(date_visite, '%Y-%m') = ?");
+    $stmt->execute([$month]);
+    $month_unique = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Total visiteurs uniques
+    $stmt = $conn->prepare("SELECT COUNT(DISTINCT ip) AS total FROM statistiques_visites");
+    $stmt->execute();
+    $total_unique = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    <h2>Résumé Général</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Visites d'aujourd'hui</div>
+            <div class="stat-number"><?php echo $today_visits; ?></div>
+            <small><?php echo $today_unique; ?> visiteur(s) unique(s)</small>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-label">Visites cette semaine</div>
+            <div class="stat-number"><?php echo $week_visits; ?></div>
+            <small><?php echo $week_unique; ?> visiteur(s) unique(s)</small>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-label">Visites ce mois</div>
+            <div class="stat-number"><?php echo $month_visits; ?></div>
+            <small><?php echo $month_unique; ?> visiteur(s) unique(s)</small>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-label">Total général</div>
+            <div class="stat-number"><?php echo $total_visits; ?></div>
+            <small><?php echo $total_unique; ?> visiteur(s) unique(s)</small>
+        </div>
+    </div>
+    
+    
+    <h2>Détail des Visites</h2>
+    
+    <div class="form-filters">
+        <form method="GET" action="">
+            <label>
+                Filtrer par date :
+                <input type="date" name="filter_date" value="<?php echo $_GET['filter_date'] ?? $today; ?>">
+            </label>
+            <label>
+                Type d'appareil :
+                <select name="filter_device">
+                    <option value="">Tous</option>
+                    <option value="Desktop" <?php echo ($_GET['filter_device'] ?? '') === 'Desktop' ? 'selected' : ''; ?>>Desktop</option>
+                    <option value="Mobile" <?php echo ($_GET['filter_device'] ?? '') === 'Mobile' ? 'selected' : ''; ?>>Mobile</option>
+                    <option value="Tablette" <?php echo ($_GET['filter_device'] ?? '') === 'Tablette' ? 'selected' : ''; ?>>Tablette</option>
+                    <option value="TV" <?php echo ($_GET['filter_device'] ?? '') === 'TV' ? 'selected' : ''; ?>>TV</option>
+                </select>
+            </label>
+            <button type="submit">Filtrer</button>
+        </form>
+    </div>
+    
+    <?php
+    // Récupérer les visites avec filtres
+    $filter_date = $_GET['filter_date'] ?? $today;
+    $filter_device = $_GET['filter_device'] ?? '';
+    
+    $query = "SELECT * FROM statistiques_visites WHERE DATE(date_visite) = ?";
+    $params = [$filter_date];
+
+    if ($filter_device) {
+        $query .= " AND appareil = ?";
+        $params[] = $filter_device;
+    }
+    
+    $query .= " ORDER BY date_visite DESC LIMIT 100";
+    
+    $stmt = $conn->prepare($query);
+    $stmt->execute($params);
+    $visits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    echo '<p>Dernières ' . count($visits) . ' visite(s) du ' . $filter_date;
+    if ($filter_device) {
+        echo ' (Type: ' . htmlspecialchars($filter_device) . ')';
+    }
+    echo '</p>';
+    ?>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Date & Heure</th>
+                <th>IP</th>
+                <th>Appareil</th>
+                <th>Navigateur</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (count($visits) > 0): ?>
+                <?php foreach ($visits as $visit): ?>
+                    <tr>
+                        <td><?php echo date('d/m/Y H:i:s', strtotime($visit['date_visite'] . ' ' . $visit['heure_visite'])); ?></td>
+                        <td><?php echo htmlspecialchars($visit['ip']); ?></td>
+                        <td><?php echo htmlspecialchars($visit['appareil']); ?></td>
+                        <td><small><?php echo htmlspecialchars($visit['navigateur']); ?></small></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 20px;">Aucune visite enregistrée</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+
+</div>
+
+<?php
+// Inclusion du footer
+// include_once dirname(__DIR__, 1) . '/html_partials/footer.php';
+?>

@@ -78,12 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="connect">
             <form action="" method="POST" enctype="multipart/form-data" class="login-form">
                 <div class="encad form-recup">
-                    <label>Email :</label>
-                    <input type="email" class="connect-input email" name="email" value="<?= htmlspecialchars($email) ?>" required>
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" class="connect-input email" name="email" value="<?= htmlspecialchars($email) ?>" autocomplete="email" required>
 
                     <label for="password">Mot de passe :</label>
                     <div class="mdp">
-                        <input type="password" id="password" class="connect-input" name="password" required>
+                        <input type="password" id="password" class="connect-input" name="password" autocomplete="current-password" required>
                         <i class="fa-solid fa-eye"></i>
                     </div>
                     <a href="#" id="forgot" class="mdp_oublie" title="Oublie ou modification du mot de passe.">Mot de passe oublié</a>
@@ -98,8 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="connect">
             <form action="" method="POST" enctype="multipart/form-data" class="login-form">
                 <div class="encad form-recup">
-                    <label>Email :</label>
-                    <input type="email" class="connect-input email" name="recup_mail" required>
+                    <label for="recup_mail">Email :</label>
+                    <input type="email" id="recup_mail" class="connect-input email" name="recup_mail" autocomplete="email" required>
 
                     <input type="submit" class="connect-submit" name="recup-submit" value="Réinitialiser">
                     <input type="submit" class="connect-submit" name="annuler" value="Annuler">

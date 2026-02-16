@@ -228,7 +228,7 @@ class JoueurManager
 
     /**
      * Mettre à jour l'évolution mensuelle pour tous les joueurs
-     * (Utile pour synchroniser la colonne EvolutionMensuelle)
+     * (Synchroniser la colonne EvolutionMensuelle)
      */
     public function updateEvolutionMensuelle()
     {

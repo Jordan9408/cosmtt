@@ -159,7 +159,7 @@ function escapeHtml(string $string): string
                                 <button type="button" id="typeAllerBtn" class="type-btn selected">Aller</button>
                                 <button type="button" id="typeRetourBtn" class="type-btn">Retour</button>
                             </div>
-                            <input type="submit" value="Ajouter" class="input-submit" name="send">
+                            <input type="submit"class="input-submit" name="send" value="Ajouter">
                             <input type="button" id="cancelPopup" class="input-submit" value="Annuler">
                         </div>
                     </form>

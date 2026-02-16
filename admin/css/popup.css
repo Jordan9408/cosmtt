@@ -4,6 +4,9 @@
     padding: 5px;
     border-radius: 5px;
     background: var(--secondary-color);
+    color: var(--fifty-color);
+    text-align: center;
+    cursor: pointer;
 }
 
 /* Styles pour la popup */
@@ -26,6 +29,21 @@
     padding: 20px;
     border-radius: 5px;
 }
+
+.popup-card-galerie {
+    background-color: var(--secondary-color);
+    width: 400px;
+    margin: 100px auto;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.input-popup-galerie {
+    padding: 5px;
+    margin-bottom: 6px;
+    width: 160px;
+}
+
 
 /* Styles pour centrer la popup */
 .popup-content {
@@ -52,5 +70,9 @@
     cursor: pointer;
     /* font-weight: bold; */
     margin: 3px auto;
+}
+
+.input-submit:active {
+    background-color: var(--secondary-color);
 }
 

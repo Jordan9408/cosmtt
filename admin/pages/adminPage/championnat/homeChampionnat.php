@@ -27,7 +27,17 @@ if ($role == 'admin' || $role == 'superAdmin') {
     $links[] = '<li><a href="./equipes/showEquipe.php">Les Equipes</a></li>';
     $links[] = '<li><a href="./rencontres/showChampionnat.php">Championnat</a></li>';
 }
-
+echo '<style>
+    #menu_btn ul {
+        display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-top: 20px;
+    list-style: none;
+    gap: 28px;
+    }
+</style>';
 echo '<div id="menu_btn"><ul>' . implode('', $links) . '</ul></div>';
 ?>
 
