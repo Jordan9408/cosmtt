@@ -58,7 +58,7 @@ class User
 
         // Liste des domaines autorisés
         $allowedDomains = [
-            'gmail.com', 'googlemail.com', 'hotmail.fr', 'hotmail.com', 'outlook.fr', 'outlook.com', 'live.com', 'live.fr', 'windowslive.com', 'msn.com', 'orange.fr', 'orange.com', 'wanadoo.fr', 'wanadoo.com', 'sfr.fr', 'bbox.fr', 'free.fr', 'alicepro.fr', 'aliceadsl.fr', 'mailo.com', 'laposte.net', 'yahoo.com', 'yahoo.fr', 'proton.me', 'protonmail.com', 'pm.me', 'icloud.com', 'me.com', 'mac.com'
+            'gmail.com', 'gmail.fr', 'hotmail.fr', 'hotmail.com', 'outlook.fr', 'outlook.com', 'live.com', 'live.fr', 'windowslive.com', 'msn.com', 'orange.fr', 'orange.com', 'wanadoo.fr', 'wanadoo.com', 'sfr.fr',  'neuf.fr', 'bbox.fr', 'free.fr', 'aliceadsl.fr', 'mailo.com', 'laposte.net', 'yahoo.com', 'yahoo.fr', 'proton.me', 'protonmail.com'
         ];
         $domain = substr(strrchr($email, '@'), 1);
         if (!in_array(strtolower($domain), $allowedDomains, true)) {

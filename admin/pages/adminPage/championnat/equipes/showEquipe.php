@@ -58,10 +58,10 @@ if (isset($_GET['message'])) {
 </head>
 
 <body>
-    <h2>Liste des équipes</h2>
+    <div class="title-bar">Liste des équipes</div>
 
     <main>
-        <a href="javascript:void(0);" id="showPopup">Ajouter une équipe</a>
+        <a href="javascript:void(0);" class="lienPopup" id="showPopup">Ajouter une équipe</a>
 
         <!-- Popup d'ajout d'équipe -->
         <div class="popup" id="teamPopup">

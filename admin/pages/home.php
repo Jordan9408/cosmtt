@@ -45,7 +45,49 @@ if ($role == 'admin' || $role == 'superAdmin') {
     $links[] = '<li><a href="./adminPage/joueurs/showClassement.php">Classements</a></li>';
 }
 
+echo '<style>
+    #menu_btn ul {
+        display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-top: 20px;
+    list-style: none;
+    gap: 28px;
+    }
+</style>';
 echo '<div id="menu_btn"><ul>' . implode('', $links) . '</ul></div>';
+
+// Afficher les statistiques de visites
+try {
+    $today = date('Y-m-d');
+    $month = date('Y-m');
+    $week_start = date('Y-m-d', strtotime('monday this week'));
+
+    // Visites aujourd'hui
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM statistiques_visites WHERE DATE(date_visite) = ?");
+    $stmt->execute([$today]);
+    $todayVisits = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Visites cette semaine
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM statistiques_visites WHERE date_visite >= ?");
+    $stmt->execute([$week_start . ' 00:00:00']);
+    $weekVisits = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Visites ce mois
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM statistiques_visites WHERE DATE_FORMAT(date_visite, '%Y-%m') = ?");
+    $stmt->execute([$month]);
+    $monthVisits = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+} catch (PDOException $e) {
+    $todayVisits = 0;
+    $weekVisits = 0;
+    $monthVisits = 0;
+}
+if ($role === 'superAdmin') {
+    echo '<div style="display: flex; justify-content: center; gap: 30px; margin-top: 50px; color: grey; font-style: italic;">';
+    echo '<a href="./stats.php" style="color: inherit; text-decoration: none;">Nbres de visites mois : ' . $monthVisits . '</a>';
+    echo '</div>';
+}
 ?>
 <?php
 // Inclusion du footer

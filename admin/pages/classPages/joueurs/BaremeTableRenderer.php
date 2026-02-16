@@ -23,7 +23,7 @@ class BaremeTableRenderer
     public function render(): void
     {
         ?>
-        <h2 class="title-bar">Barème de points</h2>
+        <div class="title-bar">Barème de points</div>
         <main class="clas_joueurs">
             <table id="bareme">
                 <tbody id="tabpoints">

@@ -53,19 +53,19 @@
 			<form action="" method="POST" enctype="multipart/form-data">
 				<div>
 					<label for="last_name">Nom :</label><br>
-					<input type="text" id="last_name" name="last_name" placeholder="Martin" required>
+					<input type="text" id="last_name" name="last_name" placeholder="Martin" autocomplete="family-name" required>
 				</div>
 				<div>
 					<label for="first_name">Prénom :</label><br>
-					<input type="text" id="first_name" name="first_name" placeholder="Pierre" required>
+					<input type="text" id="first_name" name="first_name" placeholder="Pierre" autocomplete="given-name" required>
 				</div>
 				<div>
 					<label for="mail">Mail:</label><br>
-					<input type="email" id="mail" name="mail" placeholder="cosmarcillytennisdetable@laposte.net" required>
+					<input type="email" id="mail" name="mail" placeholder="cosmarcillytennisdetable@laposte.net" autocomplete="email" required>
 				</div>
 				<div>
 					<label for="phone">Téléphone:</label><br>
-					<input type="tel" id="phone" name="phone" placeholder="Numero" required>
+					<input type="tel" id="phone" name="phone" placeholder="Numero" autocomplete="tel" required>
 				</div>
 				<div>
 					<label for="message">Message :</label><br>

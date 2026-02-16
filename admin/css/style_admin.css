@@ -55,7 +55,7 @@ li {
     /* padding: 6px 0px; */
     width: 250px;
     text-align: center;
-    margin-top: 20px;
+    /* margin-top: 20px; */
     color: var(--fifth-color);
     background-color: var(--secondary-color);
 	/* display:flex; */
@@ -152,7 +152,7 @@ a:visited {
 	color: var(--primary-color);
 } */
 
-.connect-submit {
+/* .connect-submit {
 	background: var(--primary-color);
 	width: 200px;
 	padding: 10px;
@@ -178,6 +178,30 @@ a:visited {
 	box-shadow: 1px 1px 1px, inset 1px 1px 1px;
 }
 
+input[type="submit"] {
+	background: var(--primary-color);
+	padding: 10px;
+	margin-top: 5px;
+	cursor: pointer;
+	border: none;
+	border-radius: 7px;
+	margin: 10px auto 0px auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 2px solid var(--fifth-color);
+}
+
+input[type="submit"]:hover {
+	color: var(--sixth-color);
+}
+
+input[type="submit"]:active {
+	background: var(--secondary-color);
+	color: var(--sixth-color);
+	box-shadow: 1px 1px 1px, inset 1px 1px 1px;
+} */
+
 .form input {
 	width: 200px;
 	height: 35px;
@@ -194,15 +218,11 @@ a:visited {
 	padding: 5px;
 }
 
-
-
 .poule-select > select {
 	width: 90px;
 	margin-bottom: 5px;
 }
 
-
-/* t */
 .link_container {
 	margin-bottom: 20px;
 }
@@ -226,7 +246,7 @@ body {
 
 #container {
 	position: absolute;
-	margin: 10em 15%;
+	margin: 5em 15%;
 }
 
 img,
@@ -255,9 +275,10 @@ table tr {
 
 #menu_btn {
 	/* width: 200px; */
-	/* display: flex; */
-	/* justify-content: center; */
+	display: flex;
+	justify-content: space-around;
 	margin: 0 25em;
+	
 }
 
 /* POPUP */
@@ -302,6 +323,21 @@ table tr {
 .popup-content {
 	text-align: center;
 }
+
+/* .input-submit {
+    width: 229px;
+	width: 300px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 3px auto;
+} */
+
+/* .input-submit:active {
+    background-color: var(--secondary-color);
+	border: 1px solid #000000;
+	border-radius: 5px;
+	box-shadow: inset 1px 1px #000000;
+} */
 
 .form-group {
 	text-align: left;
@@ -353,7 +389,7 @@ table tr {
 .lienPopup {
     display: flex;
     justify-content: space-around;
-    margin: 10px 23em;
+    margin: 15px 23em;
 }
 
 .lienShowPopup {
@@ -375,7 +411,7 @@ table tr {
     font-size: 1.5em;
     padding: 10px 0;
     text-align: center;
-    margin-top: 20px;
+    /* margin-top: 10px; */
     margin-bottom: 10px;
 }
 /* championnat */

@@ -82,8 +82,7 @@
 
 table.classement {
     border-collapse: collapse;
-    margin: 0 auto;
-    margin-bottom: 30px;
+    margin: 30px auto;
 }
 
 table.classement th,
@@ -145,13 +144,7 @@ table.calendrier td {
     flex-direction: row;
     flex-wrap: wrap;
     gap: 8em;
-    margin: 20px margin;
-    /* display: flex;
-        justify-content: center;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 8em;
-        margin: 20px auto; */
+    margin: 0 auto; ;
 }
 
 .colonne-aller,
@@ -274,11 +267,11 @@ table.calendrier td {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    margin: 20px 0 20px auto;
+    /* margin: 20px 0 20px auto; */
     padding: 5px 10px;
     position: absolute;
     right: 20px;
-    top: 100px;
+    top: 80px;
     font-family: Arial, sans-serif;
 }
 
