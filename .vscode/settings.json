@@ -1,4 +1,5 @@
 {
     "claudeCodeChat.permissions.yoloMode": false,
-    "workbench.editor.showTabIndex": true
+    "workbench.editor.showTabIndex": true,
+    "markdown.validate.enabled": true
 }

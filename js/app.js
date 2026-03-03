@@ -7,13 +7,16 @@ function hideLoader() {
         loader.classList.add('fondu-out');
         // Attendre la fin de la transition avant d'afficher l'alerte
         setTimeout(function() {
-            if (window.errorToAlert) {
-                alert(window.errorToAlert);
-                window.errorToAlert = null; // Réinitialiser pour éviter de répéter
-            }
-            if (window.successToAlert) {
-                alert(window.successToAlert);
-                window.successToAlert = null; // Réinitialiser pour éviter de répéter
+            const main = document.querySelector('main');
+            if (main) {
+                const error = main.dataset.error;
+                const success = main.dataset.success;
+                if (error) {
+                    alert(error);
+                }
+                if (success) {
+                    alert(success);
+                }
             }
         }, 300); // Délai pour la transition de fondu-out (0.2s + marge)
     }

@@ -21,6 +21,7 @@ $controller = new ShowUserController($conn);
 </head>
 
 <body>
+        <div class="title-bar">Gestion des utilisateurs</div>
     <main>
         <div id="container">
             <div class="link_container">

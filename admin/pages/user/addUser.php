@@ -14,7 +14,8 @@ $roleValue = $controller->getRoleValue();
 $alertMessage = $controller->getAlertMessage();
 ?>
 
-    <h2>Ajouter un utilisateur</h2>
+    <div class="title-bar">Ajouter un utilisateur</div>
+    
     <main>
         <form action="" method="POST" class="form encad">
             <div>
