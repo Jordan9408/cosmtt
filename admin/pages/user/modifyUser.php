@@ -55,7 +55,7 @@ if (isset($_GET['id'])) {
 
 <body>
     <?php if ($user): ?>
-        <h2>Modifier un utilisateur</h2>
+        <div class="title-bar">Modifier un utilisateur</div>
         <main>
             <form action="" method="POST" class="form encad">
                 <div>

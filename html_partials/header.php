@@ -1,3 +1,17 @@
+<?php
+require_once('./config/config.php');
+
+// Tracking des visiteurs
+require_once('./admin/pages/connect_ddb.php');
+$ip = $_SERVER['REMOTE_ADDR'];
+$date = date('Y-m-d H:i:s');
+try {
+    $stmt = $conn->prepare("INSERT INTO visitors (ip_address, visit_date) VALUES (?, ?)");
+    $stmt->execute([$ip, $date]);
+} catch (PDOException $e) {
+    // Consignez les erreurs si nécessaire
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -5,6 +19,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://fonts.googleapis.com;">
     <title>COSMVTT</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/animation.css">
@@ -58,5 +73,6 @@
 
         </nav>
         <a href="/index.php"><img src="./img/logo_COSM.webp" alt="Logo COSMVTT" class="logo-cosmtt"></a>
+        
 
     </header>

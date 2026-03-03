@@ -21,8 +21,28 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // 3. Vérification de l'authentification (supposant que $_SESSION['user_id'] est initialisé ailleurs)
 if (!isset($_SESSION['user_id'])) {
-    header('HTTP/1.1 403 Forbidden');
-    die('Accès non autorisé');
+    echo '<script>alert("Vous n\'avez pas les autorisations pour accéder cette page. \nMerci de vous connecter."); window.location.href = "/cosmtt/connexion.php";</script>';
+    exit;
+}
+
+// Optionnel : Vérification de l'inactivité
+$inactiveLimit = 1800; // 30 minutes
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $inactiveLimit)) {
+    session_unset();
+    session_destroy();
+    echo '<script>alert("Votre session a expiré en raison d\'inactivité. \nVeuillez vous reconnecter."); window.location.href = "/cosmtt/connexion.php";</script>';
+    exit;
+}
+$_SESSION['last_activity'] = time(); // Met à jour le timestamp de la dernière activité
+
+// Optionnel : Vérification du rôle de l'utilisateur
+if (isset($_SESSION['role']) && !in_array($_SESSION['role'], ['admin', 'superAdmin'])) {
+    echo '<script>alert("Vous n\'avez pas les autorisations pour accéder cette page."); window.location.href = "/cosmtt/connexion.php";</script>';
+    exit;
+} elseif (!isset($_SESSION['role'])) {
+    // Si le rôle n'est pas défini, rediriger vers la page de connexion
+    echo '<script>alert("Rôle utilisateur non défini. \nVeuillez vous connecter."); window.location.href = "/cosmtt/connexion.php";</script>';
+    exit;
 }
 
 // 4. Génération d'un token CSRF

@@ -82,11 +82,16 @@ class ClassementView
                         <h3>Ajouter un Joueur</h3>
                         <form method="POST" action="" class="form-ajout">
                             <div class="form-group">
-                                <input type="text" name="nom" class="input-popup" placeholder="Nom" required>
-                                <input type="text" name="prenom" class="input-popup" placeholder="Prénom" required>
-                                <input type="number" name="classement" class="input-popup" placeholder="Classement" required min="5" max="20">
-                                <input type="number" name="points_debut_saison" class="input-popup" placeholder="Points début saison" required min="500">
-                                <input type="number" name="points_mensuels" class="input-popup" placeholder="Points mensuels" required min="500">
+                                <label for="nom">Nom :</label>
+                                <input type="text" id="nom" name="nom" class="input-popup" placeholder="Nom" required>
+                                <label for="prenom">Prénom :</label>
+                                <input type="text" id="prenom" name="prenom" class="input-popup" placeholder="Prénom" required>
+                                <label for="classement">Classement :</label>
+                                <input type="number" id="classement" name="classement" class="input-popup" placeholder="Classement" required min="5" max="20">
+                                <label for="points_debut_saison">Points début saison :</label>
+                                <input type="number" id="points_debut_saison" name="points_debut_saison" class="input-popup" placeholder="Points début saison" required min="500">
+                                <label for="points_mensuels">Points mensuels :</label>
+                                <input type="number" id="points_mensuels" name="points_mensuels" class="input-popup" placeholder="Points mensuels" required min="500">
                                 <input type="submit" value="Ajouter" class="input-submit" name="saveJoueur">
                                 <input type="button" id="cancelPopup" class="input-submit" value="Annuler">
                             </div>
@@ -134,12 +139,19 @@ class ClassementView
         ?>
         <script src="/cosmtt/admin/js/app.js"></script>
         <script src="/cosmtt/admin/js/classement.js"></script>
-        <script>
-            // Gestion des alertes
-            <?php if ($data->hasErrors()): ?>
-                alert("<?= addslashes(implode("\n", $data->errors)); ?>");
-            <?php endif; ?>
-        </script>
+        <?php if ($data->hasErrors()): ?>
+            <script>
+                const errorMessages = <?= json_encode($data->errors); ?>;
+                document.addEventListener('DOMContentLoaded', function() {
+                    errorMessages.forEach(msg => {
+                        const div = document.createElement('div');
+                        div.className = 'error-notification';
+                        div.textContent = msg;
+                        document.body.prepend(div);
+                    });
+                });
+            </script>
+        <?php endif; ?>
         <?php
     }
 

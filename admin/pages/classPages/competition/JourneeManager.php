@@ -38,7 +38,7 @@ class JourneeManager
         $stmt->bindValue(':poule', $poule, PDO::PARAM_STR);
         $stmt->bindValue(':type_journee', $typeJournee, PDO::PARAM_STR); // Ajout
         $stmt->execute();
-        return $this->conn->lastInsertId();
+        return (int)$this->conn->lastInsertId();
     }
 
     /**
@@ -64,7 +64,8 @@ class JourneeManager
 
             $this->conn->commit();
             return true;
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             $this->conn->rollBack();
             // Relancer l'exception pour que le contrôleur puisse la gérer et afficher l'erreur
             throw $e;
