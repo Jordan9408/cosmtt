@@ -11,6 +11,9 @@ if (!isset($_SESSION['firstName'])) {
 
 $userFirstName = $_SESSION['firstName'];
 echo '<h1>Bonjour ' . ucfirst($userFirstName) . '</h1>';
+echo '<main>'; 
+
+echo '<div class="flex-container"">';
 
 $role = ''; // Initialisez la variable $role à une valeur par défaut
 
@@ -28,6 +31,13 @@ if ($role == 'admin' || $role == 'superAdmin') {
     $links[] = '<li><a href="./rencontres/showChampionnat.php">Championnat</a></li>';
 }
 echo '<style>
+    .flex-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+    }
+
     #menu_btn ul {
         display: flex;
     justify-content: center;
@@ -38,7 +48,7 @@ echo '<style>
     gap: 28px;
     }
 </style>';
-echo '<div id="menu_btn"><ul>' . implode('', $links) . '</ul></div>';
+echo '<div id="menu_btn"><ul>' . implode('', $links) . '</ul></div></div>';
 ?>
 
 <?php

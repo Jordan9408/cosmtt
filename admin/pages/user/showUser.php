@@ -50,6 +50,10 @@ $controller = new ShowUserController($conn);
             </section>
         </div>
     </main>
+    <?php
+        // Inclusion du footer
+        include_once dirname(__DIR__, 3) . '/html_partials/footer.php';
+    ?>
     <script>
         // Vérifier les paramètres GET pour afficher les messages
         const urlParams = new URLSearchParams(window.location.search);
@@ -63,4 +67,4 @@ $controller = new ShowUserController($conn);
 </body>
 
 </html>
-<!-- <?php include_once('../parts/footer.php') ?> -->
+

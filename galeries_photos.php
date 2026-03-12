@@ -85,9 +85,9 @@ foreach ($mediaByEvent as $eventId => $mediaItems) {
 
         <?php if ($totalPages > 1) : ?>
             <div class="pagination">
-                <a href="<?= $currentPage > 1 ? '?page=' . ($currentPage - 1) : 'javascript:void(0)' ?>" class="btn-pagination <?= $currentPage <= 1 ? 'disabled' : '' ?>">◄ Précédent</a>
+                <a href="<?= $currentPage > 1 ? '?page=' . ($currentPage - 1) : 'javascript:void(0)' ?>" class="btn-pagination <?= $currentPage <= 1 ? 'disabled' : '' ?>">◄</a>
                 <span class="pagination-info"><?= $currentPage ?> / <?= $totalPages ?></span>
-                <a href="<?= $currentPage < $totalPages ? '?page=' . ($currentPage + 1) : 'javascript:void(0)' ?>" class="btn-pagination <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">Suivant ►</a>
+                <a href="<?= $currentPage < $totalPages ? '?page=' . ($currentPage + 1) : 'javascript:void(0)' ?>" class="btn-pagination <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">►</a>
             </div>
         <?php endif; ?>
 
@@ -197,23 +197,17 @@ foreach ($mediaByEvent as $eventId => $mediaItems) {
         display: inline-block;
         padding: 10px 20px;
         margin: 0 10px;
-        background-color: #3f51b5;
-        color: white;
+        
+        color: #000;
         text-decoration: none;
         border-radius: 5px;
         transition: background-color 0.3s;
     }
 
-    .btn-pagination:hover {
-        background-color: #303f9f;
+    a:visited.btn-pagination {
+        color: #000;
     }
-
-    .btn-pagination.disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-        pointer-events: none;
-    }
-
+    
     .pagination-info {
         display: inline-block;
         vertical-align: middle;

@@ -58,6 +58,7 @@ if (isset($_GET['message'])) {
 </head>
 
 <body>
+    
     <div class="title-bar">Liste des équipes</div>
 
     <main>
@@ -84,9 +85,7 @@ if (isset($_GET['message'])) {
                 </div>
             </div>
         </div>
-    </main>
 
-    <main>
         <!-- Affichage des équipes -->
         <div class="table-container">
             <section class="show-tab">
@@ -108,7 +107,7 @@ if (isset($_GET['message'])) {
     <?php endif; ?>
     <?php
         // Inclusion du footer
-        // include_once dirname(__DIR__, 4) . '/html_partials/footer.php';
+        include_once dirname(__DIR__, 4) . '/html_partials/footer.php';
     ?>
 </body>
 

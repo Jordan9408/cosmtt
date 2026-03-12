@@ -374,7 +374,10 @@ function escapeHtml(string $string): string
     <?php if (empty($journeesAller) && empty($journeesRetour)): ?>
         <p style="text-align: center;">Aucune journée n'a été programmée pour le moment.</p>
     <?php endif; ?>
-
+    <?php
+        // Inclusion du footer
+        include_once dirname(__DIR__, 4) . '/html_partials/footer.php';
+    ?>
     <script src="/cosmtt/admin/js/app.js"></script>
     <script src="/cosmtt/admin/js/championnat.js"></script>
 

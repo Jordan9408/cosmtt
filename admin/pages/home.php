@@ -21,6 +21,9 @@ if (!isset($_SESSION['firstName'])) {
 
 $userFirstName = $_SESSION['firstName'];
 echo '<h1>Bonjour ' . ucfirst($userFirstName) . '</h1>';
+echo '<main>'; 
+
+// echo '<div style="flex: 1; display: flex; flex-direction: column; justify-content: center;"></div>';
 
 $role = ''; // Initialisez la variable $role à une valeur par défaut
 
@@ -48,12 +51,12 @@ if ($role == 'admin' || $role == 'superAdmin') {
 echo '<style>
     #menu_btn ul {
         display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding-left: 0;
-    margin-top: 20px;
-    list-style: none;
-    gap: 28px;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding-left: 0;
+        margin-top: 20px;
+        list-style: none;
+        gap: 28px;
     }
 </style>';
 echo '<div id="menu_btn"><ul>' . implode('', $links) . '</ul></div>';
@@ -89,6 +92,10 @@ if ($role === 'superAdmin') {
     echo '</div>';
 }
 ?>
+<?php
+echo '</main>';
+?>
+
 <?php
 // Inclusion du footer
 include_once dirname(__DIR__, 1) . '/html_partials/footer.php';
