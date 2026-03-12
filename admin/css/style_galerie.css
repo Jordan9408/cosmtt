@@ -35,7 +35,8 @@ body {
     border-radius: 5px;
     width: 90%;
     max-width: 800px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }
 
 .popup-content {
@@ -691,8 +692,9 @@ body {
     text-decoration: none;
 }
 
-.pagination a.btn_fleche:active {
+.pagination a.btn_fleche {
     background-color: var(--primary-color);
+    box-shadow: none;
 }
 
 .pagination span.btn {
