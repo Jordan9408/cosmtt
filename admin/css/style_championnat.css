@@ -56,7 +56,7 @@
 }
 
 .team-error {
-    color: red;
+    color: var(--eighth-color);
     font-weight: bold;
 }
 

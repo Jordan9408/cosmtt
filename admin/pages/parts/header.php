@@ -6,7 +6,6 @@
     <title>COSMVTT</title>
     <!-- <link rel="stylesheet" href="../../../css/style.css"> -->
     <link rel="stylesheet" href="/cosmtt/admin/css/style_admin.css">
-    <link rel="stylesheet" href="/cosmtt/admin/includes/session_check.php">
     <!-- <link rel="stylesheet" href="/cosmtt/admin/css/popup.css"> -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
