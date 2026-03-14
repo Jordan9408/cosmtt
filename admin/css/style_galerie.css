@@ -94,6 +94,16 @@ body {
     opacity: 1;
 }
 
+.titre_photos {
+    font-style: italic;
+    font-size: 1.8em;
+}
+.event-date-display {
+    font-size: 0.9em;
+    color: var(--thirteenth-color);
+    font-weight: normal;
+}
+
 
 /* ========================================
    FILE UPLOAD
