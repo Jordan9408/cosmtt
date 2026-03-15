@@ -38,7 +38,10 @@ $alertMessage = $controller->getAlertMessage();
             </div>
         </form>
     </main>
-
+    <?php
+        // Inclusion du footer
+        include_once dirname(__DIR__, 3) . '/html_partials/footer.php';
+    ?>
     <?php if (!empty($alertMessage)): ?>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

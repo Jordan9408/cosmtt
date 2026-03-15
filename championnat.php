@@ -64,33 +64,7 @@ include_once 'html_partials/header.php';
 <link rel="stylesheet" href="./css/animation.css"> -->
 <style>
     /* Mise en page du calendrier en 2 colonnes */
-    .deux-colonnes-calendrier {
-        display: flex;
-        justify-content: center;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 8em;
-        margin: 20px auto;
-        /* width: 90%; */
-        /* max-width: 1200px; */
-    }
-
-    .colonne-aller,
-    .colonne-retour {
-        display: flex;
-        flex-direction: column;
-        /* min-width: 45%; */
-        margin-bottom: 10px;
-    }
-
-    .colonne-titre {
-        text-align: center;
-        background-color: #3f51b5;
-        color: white;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-    }
+    
 
     @media (max-width: 768px) {
         .deux-colonnes-calendrier {
