@@ -20,3 +20,5 @@ spl_autoload_register(function ($className) {
 // Initialisation et exécution du contrôleur
 $controller = new ClassementController($conn, $role);
 $controller->handleRequest();
+
+require_once dirname(__DIR__, 2) . '/parts/footer.php';

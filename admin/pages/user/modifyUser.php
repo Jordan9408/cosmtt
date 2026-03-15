@@ -80,6 +80,10 @@ if (isset($_GET['id'])) {
     <?php else: ?>
         <p>ID de l'utilisateur non spécifié.</p>
     <?php endif; ?>
+    <?php
+        // Inclusion du footer
+        include_once dirname(__DIR__, 3) . '/html_partials/footer.php';
+    ?>
 
     <?php if (!empty($errorMessage)): ?>
     <script>

@@ -72,7 +72,7 @@ try {
             </ul>
 
         </nav>
-        <a href="/index.php"><img src="./img/logo_COSM.webp" alt="Logo COSMVTT" class="logo-cosmtt"></a>
+        <a href="./index.php"><img src="./img/logo_COSM.webp" alt="Logo COSMVTT" class="logo-cosmtt"></a>
         
 
     </header>

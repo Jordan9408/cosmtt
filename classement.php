@@ -31,7 +31,7 @@ $viewData = new ClassementViewData(
 ?>
 
 <main id="clas_joueurs">
-    <h2 class="classement_joueurs">Classement des joueurs du club</h2>
+    <h2 class="title-bar classement_joueurs">Classement des joueurs du club</h2>
     <?php
     // Rendu du tableau des joueurs
     $tableRenderer = new JoueurTableRenderer();

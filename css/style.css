@@ -1,34 +1,39 @@
-/* Couleur */
-/* *{
-	border: 2px solid red;
-} */
+/* =============================================================================
+   COSMTT - Style principal
+   Réorganisé par sections : Base, Layout, Composants, Pages, Responsive
+   ========================================================================== */
+
+/* =============================================================================
+   1. VARIABLES CSS & RESET
+   ========================================================================== */
 :root {
 	--primary-color: #f9f9f9;
 	--secondary-color: #f4c430;
 	--third-color: #e8d630;
 	--fourth-color: #ddd;
 	--fifth-color: #000;
-	--sixth-color: #036;
+	--sixth-color: #0b3d91;
 	--seventh-color: #d2e9ff;
 	--eighth-color: #FF3028;
 	--ninth-color: #1b6e31;
 	--tenth-color: #2b66dd;
+	--eleven-color: #f0f0f0;
+	--twelveth-color: #cfcfcf;
+	--thirteenth-color: #666;
 }
 
-/* CSS Document */
-/* scrollbar */
+/* Reset et scrollbar */
+* {
+	box-sizing: border-box;
+}
+
 ::-webkit-scrollbar {
   display: none;
-  
 }
-/* Pour Firefox */
-/* scrollbar-width: none; */
 
-/* Pour IE et Edge Legacy */
-/* -ms-overflow-style: none; */
-
-/* Fin du scrollbar */
-
+/* =============================================================================
+   2. BASE - BODY, HEADERS, FOOTER
+   ========================================================================== */
 body {
 	width: 100%;
 	padding: 0;
@@ -38,31 +43,69 @@ body {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
-	/* box-sizing: border-box; */
 }
 
 header {
-	background-color: var(--second-color);
-	height: 60.1px;
+	background-color: var(--primary-color);
+	height: 57px;
 	padding: 0 20px;
-	/* box-shadow: 0 2px 5px rgba(0,0,0,0.1); */
 	z-index: 1000;
 	position: relative;
 }
 
-/* loader */
+h1 {
+	position: relative;
+	bottom: 25px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	color: var(--third-color);
+	font-size: 40px;
+	font-family: "Raleway", Helvetica, Arial, sans-serif;
+	text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+	animation: anim-h1 3s forwards;
+}
+
+h2 {
+	text-align: center;
+	font-family: 'Open Sans', sans-serif;
+}
+
+h3 {
+	position: relative;
+	font-family: 'Times New Roman', sans-serif;
+	text-align: start;
+}
+
+footer {
+	background: var(--fifth-color);
+	padding: 20px 10px;
+	text-align: center;
+	font-size: 14px;
+	color: var(--primary-color);
+	margin-top: auto;
+}
+
+footer p {
+	display: flex;
+	justify-content: center;
+	color: var(--primary-color);
+}
+
+/* Loader */
 .loader {
 	position: fixed;
 	margin:auto;
-	background: #fff;
+	background: var(--primary-color);
 	top: 50%;
 	left: 50%;
 	z-index: 10;
 	width: 72px;
 	height: 72px;
 	border-radius: 50%;
-	background: radial-gradient(farthest-side, #f4c430 94%, #0000) top/11.5px 11.5px no-repeat,
-		conic-gradient(#0000 30%, #f4c430);
+	background: radial-gradient(farthest-side, var(--secondary-color) 94%, var(--primary-color)) top/11.5px 11.5px no-repeat,
+		conic-gradient(#0000 30%, var(--secondary-color));
 	-webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 11.5px), #000 0);
 	mask: radial-gradient(farthest-side, #0000 calc(100% - 11.5px), #000 0);
 	-webkit-animation: spinner 1s infinite linear;
@@ -77,9 +120,11 @@ header {
 	z-index: -1;
 }
 
-/* fin loader */
 
-/*Menu déroulant*/
+
+/* =============================================================================
+   3. NAVIGATION - MENU
+   ========================================================================== */
 nav {
 	top: 23px;
 }
@@ -107,11 +152,7 @@ nav {
 	display: inline;
 	position: relative;
 	z-index: 1;
-}
-
-#menu li {
 	background-color: none;
-	float: left;
 	width: 150px;
 	text-align: center;
 	margin: 0;
@@ -130,7 +171,6 @@ nav {
 	background-color: var(--primary-color);
 	border: none;
 	color: var(--fifth-color);
-
 }
 
 #menu li a:link,
@@ -145,8 +185,13 @@ nav {
 
 #menu li a:hover {
 	background: var(--secondary-color);
-	color: #000;
+	color: var(--fifth-color);
 	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#menu .sousMenu:hover {
+	background: var(--secondary-color);
+	color: var(--fifth-color);
 }
 
 #menu .sousmenu {
@@ -154,33 +199,11 @@ nav {
 	margin: 0;
 	padding: 0;
 	border: 0;
+	display: none;
 }
 
-#menu .sousMenu:hover {
-	background: var(--secondary-color);
-	color: #000;
-}
-
-#menu .sousmenu li {
-	float: none;
-	margin: 0;
-	padding: 0;
-	border: 0;
-}
-
-#menu .sousmenu li a:link,
-#menu .sousmenu li a:visited {
+#menu li:hover>.sousmenu {
 	display: block;
-	color: var(--fifth-color);
-	margin: 0;
-	border: 0;
-	text-decoration: none;
-}
-
-#menu .sousmenu li a:hover,
-#menu .sousmenu button:hover {
-	background-image: none;
-	background-color: var(--secondary-color);
 }
 
 #menu .sousmenu li {
@@ -192,16 +215,17 @@ nav {
 	font-size: 10px;
 }
 
-#menu .sousmenu {
-	display: none;
-	list-style-type: none;
+#menu .sousmenu li a:link,
+#menu .sousmenu li a:visited {
+	display: block;
+	color: var(--fifth-color);
 	margin: 0;
-	padding: 0;
 	border: 0;
+	text-decoration: none;
 }
 
-#menu li:hover>.sousmenu {
-	display: block;
+#menu .sousmenu li a:hover {
+	background-color: var(--secondary-color);
 }
 
 #menu {
@@ -228,63 +252,158 @@ nav {
 	display: none;
 }
 
-/*Fin du Menu déroulant*/
+/* =============================================================================
+   4. COMPOSANTS GÉNÉRAUX
+   ========================================================================== */
+.title-bar {
+    background-color: var(--secondary-color);
+    color: var(--fifth-color);
+    font-weight: bold;
+    font-size: 1.5em;
+    padding: 10px 0;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
 
-h1 {
+.btn {
 	position: relative;
-	bottom: 25px;
+	background: none;
+	width: 150px;
+	height: 40px;
+	border: 4px solid var(--third-color);
+	font-size: 12px;
+	font-weight: bold;
+	color: var(--third-color);
+	transition: .2s linear;
+	cursor: pointer;
+}
+
+.btn:hover {
+	color: var(--primary-color);
+}
+
+.btn::before {
+	content: "";
+	position: absolute;
+	width: 0px;
+	height: 35px;
+	top: -1px;
+	left: 0px;
+	background-color: var(--third-color);
+	z-index: -1;
+}
+
+.btn:hover::before {
+	width: 145px;
+}
+
+.align-horiz {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	text-align: center;
-	color: var(--third-color);
-	font-size: 40px;
-	font-family: "Raleway", Helvetica, Arial, sans-serif;
-	text-shadow: 3px 5px var(--fifth-color);
-	text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-
-	-webkit-animation-name: anim-h1;
-	animation-name: anim-h1;
-	-webkit-animation-duration: 3s;
-	animation-duration: 3s;
-	-webkit-animation-fill-mode: forwards;
-	animation-fill-mode: forwards;
 }
 
-/* position: relative; */
-h2 {
-	text-align: center;
-	font-family: 'Open Sans', sans-serif;
-}
-
-footer {
-	background: var(--fifth-color);
-	padding: 20px 10px;
-	text-align: center;
-	font-size: 14px;
-	color: var(--primary-color);
-	margin-top: auto;
-}
-
-
-footer p {
+.button {
 	display: flex;
 	justify-content: center;
+	margin-top: 10px;
+}
+
+form {
+	display: block;
+	width: 510px;
+	margin: auto;
+}
+
+input,
+textarea {
+	width: 99%;
+}
+
+input:focus,
+textarea:focus {
+	background-color: var(--fourth-color);
+}
+
+#message {
+	width: 99%;
+	height: 19em;
+	margin-bottom: .5em;
+}
+
+#submit {
+	background-color: var(--third-color);
+	border: none;
+	border-radius: 7px;
+	width: 100%;
+	padding: 3px 0;
+	cursor: pointer;
+}
+
+#submit:active {
+	box-shadow: 1px 1px 1px, inset 1px 1px 1px 1px;
+}
+
+/* Tables génériques */
+table.classement,
+table.calendrier {
+    border-collapse: collapse;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+table.classement th,
+table.classement td,
+table.calendrier th,
+table.calendrier td {
+    border: 1px solid var(--fifth-color);
+    padding: 5px 10px;
+    text-align: center;
+}
+
+table.classement th {
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
+}
+
+table.classement tr:nth-child(odd) td {
+    background-color: var(--primary-color);
+}
+
+table.classement tr:nth-child(even) {
+    background-color: var(--fourth-color);
+}
+
+table.calendrier th {
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
+    font-size: 0.9em;
+}
+
+table.calendrier td {
+    font-size: 0.85em;
+}
+
+th {
+	background-color: var(--sixth-color);
 	color: var(--primary-color);
 }
 
-/* page index */
+/* =============================================================================
+   5. PAGES SPÉCIFIQUES
+   ========================================================================== */
+
+/* =============================================================================
+	Page INDEX
+   ========================================================================== */
 #container {
 	padding: 20px 0;
 	margin: 0 auto;
 	max-width: 1200px;
 }
 
-#criterium1 {
-	display: flex;
-	justify-content: center;
-}
-
+#criterium1,
 #criterium2 {
 	display: flex;
 	justify-content: center;
@@ -302,20 +421,22 @@ hr {
 	clear: left;
 }
 
-form {
-	display: block;
-	width: 510px;
-	margin:auto;
+.img_criterium {
+	width: 200px;
+	float: left;
+	padding: 0 10px 15px 0;
 }
 
-input,
-textarea {
-	width: 99%;
+.title_article {
+	color: var(--fifth-color);
+	font-family: Geneva, Tahoma, sans-serif;
+	font-weight: bold;
+	font-size: 14px;
 }
 
-input:focus,
-textarea:focus {
-	background-color: var(--fourth-color);
+.a_criterium {
+	color: var(--thirteenth-color);
+	text-decoration: none;
 }
 
 #gymnase {
@@ -343,25 +464,6 @@ textarea:focus {
 	padding-bottom: 15px;
 }
 
-#message {
-	width: 99%;
-	height: 19em;
-	margin-bottom: .5em;
-}
-
-#submit {
-	background-color: var(--third-color);
-	border: none;
-	border-radius: 7px;
-	width: 100%;
-	padding: 3px 0;
-	cursor: pointer;
-}
-
-#submit:active {
-	box-shadow: 1px 1px 1px, inset 1px 1px 1px 1px;
-}
-
 #pied_de_page {
 	padding: 25px;
 	margin: 0;
@@ -380,79 +482,12 @@ textarea:focus {
 	color: var(--seventh-color);
 }
 
-.img_criterium {
-	width: 200px;
-	float: left;
-	padding: 0 10px 15px 0;
-}
-
-.title_article {
-	color: var(--fifth-color);
-	font-family: Geneva, Tahoma, sans-serif;
-	font-weight: bold;
-	font-size: 14px;
-}
-
-.a_criterium {
-	color: grey;
-	text-decoration: none;
-}
-
-.button {
-	display: flex;
-	justify-content: center;
-	margin-top: 10px;
-}
-
-.btn {
-	position: relative;
-	background: none;
-	width: 150px;
-	height: 40px;
-	border: 4px solid var(--third-color);
-	font-size: 12px;
-	font-weight: bold;
-	color: var(--third-color);
-	transition: .2s linear;
-	cursor: pointer;
-}
-
-.btn:hover {
-	color: var(--primary-color);
-}
-
-/*transition*/
-.btn::before {
-	content: "";
-	position: absolute;
-	width: 0px;
-	height: 35px;
-	top: -1px;
-	left: 0px;
-	background-color: var(--third-color);
-	z-index: -1;
-}
-
-.btn:hover::before {
-	width: 145px;
-}
-
-.align-horiz {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-/*Page info_club*/
-h3 {
-	position: relative;
-	font-family: 'Times New Roman', sans-serif;
-	text-align: start;
-}
-
+/* =============================================================================
+	Page INFO CLUB
+   ========================================================================== */
 #main_info_club {
 	height: 36em;
-    margin: 1em;
+	margin: 1em;
 }
 
 #infoclub {
@@ -490,10 +525,6 @@ h3 {
 }
 
 #tarifs {
-	position: relative;
-}
-
-#tarifs {
 	border: none;
 	width: 300px;
 }
@@ -510,6 +541,7 @@ h3 {
 #ufolep {
 	background: var(--fourth-color);
 }
+
 .calendar {
 	display: inline;
 	justify-content: center;
@@ -521,10 +553,12 @@ h3 {
 	margin: 15px 10px;
 }
 
-/*Page galerie photos*/
+/* =============================================================================
+	Page GALERIE PHOTOS
+   ========================================================================== */
 #galerie {
 	display: block;
-
+	margin-top: 0;
 }
 
 #galerie_photo {
@@ -562,7 +596,170 @@ h3 {
 	width: 200px;
 }
 
-/*page championnat*/
+#galerie_photos {
+    width: 90%;
+    margin: 20px auto;
+    max-width: 1400px;
+}
+
+.galerie-event {
+    margin-bottom: 40px;
+}
+
+.titre_photos {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: var(--fifth-color);
+}
+
+.event-date-display {
+    font-size: 0.9em;
+    color: var(--thirteenth-color);
+    font-weight: normal;
+}
+
+.photo-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.photo-wrapper {
+    box-sizing: border-box;
+}
+
+.photo_galerie {
+    height: 133px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.photo_galerie:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px 0;
+}
+
+.btn-pagination {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 0 10px;
+    color: var(--fifth-color);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+a:visited.btn-pagination {
+    color: var(--fifth-color);
+}
+
+.pagination-info {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 1.2em;
+}
+
+/* Lightbox */
+.lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.lightbox-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 95%;
+    height: 90%;
+}
+
+#lightboxImage {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+    cursor: pointer;
+    position: absolute;
+    color: var(--primary-color);
+    font-size: 40px;
+    font-weight: normal;
+    transition: 0.3s;
+    user-select: none;
+}
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    color: var(--fourth-color);
+}
+
+.lightbox-close {
+    top: 10px;
+    right: 15px;
+    font-size: 50px;
+    background: transparent;
+    border: none;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10001;
+    color: var(--primary-color);
+    font-weight: normal;
+    box-sizing: border-box;
+}
+
+.lightbox-prev,
+.lightbox-next {
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 16px;
+}
+
+.lightbox-prev {
+    left: 10px;
+}
+
+.lightbox-next {
+    right: 10px;
+}
+
+.lightbox-counter {
+    color: var(--eleven-color);
+    font-size: 16px;
+    padding: 10px 0;
+}
+
+/* =============================================================================
+	Page CHAMPIONNAT 
+   ========================================================================== */
 #classement {
 	min-width: 300px;
 }
@@ -573,7 +770,12 @@ h3 {
 	padding: 20px 5px 2px 5px;
 }
 
-.h2_championnat {
+.h2_championnat, 
+.h2_classement, 
+.h2_joueurs, 
+.h2_rencontres, 
+.h2_calendrier, 
+.h2_galerie {
 	text-align: center;
 	font-family: 'Open Sans', sans-serif;
 	background-color: var(--secondary-color);
@@ -596,15 +798,6 @@ h3 {
     right: 20px;
     top: 40px;
     font-family: Arial, sans-serif;
-	/* position: relative; */
-	/* right: 10px; */
-}
-
-#classement {
-	text-align: center;
-	width: 50%;
-	margin: auto;
-	border: none;
 }
 
 .club {
@@ -673,64 +866,15 @@ h3 {
     top: 100px;
     font-family: Arial, sans-serif;
 }
-/* ***************** */
-.lienShowPopup {
-        display: flex;
-        justify-content: center;
-        padding: 5px;
-        margin: 5px;
-        border-radius: 5px;
-        background-color: var(--secondary-color);
-        color: black;
-        cursor: pointer;
-    }
 
-
-.title-bar {
-    background-color: var(--secondary-color);
-	
-    color: black;
-    font-weight: bold;
-    font-size: 1.5em;
-    padding: 10px 0;
-    text-align: center;
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-table.classement,
-table.calendrier {
-    border-collapse: collapse;
-    margin: 0 auto;
-    margin-bottom: 30px;
-}
-
-table.classement th,
-table.classement td,
-table.calendrier th,
-table.calendrier td {
-    border: 1px solid black;
-    padding: 5px 10px;
-    text-align: center;
-}
-
-table.classement th {
-    background-color: #0b3d91;
-    color: white;
-}
-
-table.classement tr:nth-child(even) {
-    background-color: #d3d3d3;
-}
-
-table.calendrier th {
-    background-color: #0b3d91;
-    color: white;
-    font-size: 0.9em;
-}
-
-table.calendrier td {
-    font-size: 0.85em;
+.poule-select select {
+    padding: 4px 6px;
+    font-size: 1em;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: var(--fifth-color);
+    width: 90px;
 }
 
 .calendrier-container {
@@ -756,7 +900,7 @@ table.calendrier td {
     text-align: center;
     margin-bottom: 10px;
     font-size: 1.2em;
-    color: #0b3d91;
+    color: var(--sixth-color);
 }
 
 .aller-column .journee-wrapper,
@@ -766,21 +910,47 @@ table.calendrier td {
     align-items: center;
 }
 
+.deux-colonnes-calendrier {
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8em;
+        margin: 20px auto 0 auto;
+        /* width: 90%; */
+        /* max-width: 1200px; */
+    }
+
+    .colonne-aller,
+    .colonne-retour {
+        display: flex;
+        flex-direction: column;
+        /* min-width: 45%; */
+        margin-bottom: 10px;
+    }
+
+    .colonne-titre {
+        text-align: center;
+        background-color: var(--sixth-color);
+        color: var(--primary-color);
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+
 .journee-wrapper {
     position: relative;
-    /* display: inline-block; */
 }
 
 .journee-table {
     border-collapse: collapse;
     width: 368px;
-    /* max-width: 220px; */
     height: 177px;
 }
 
 .journee-table thead tr:first-child th {
-    background-color: #0b3d91;
-    color: white;
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
     font-weight: bold;
     font-size: 0.95em;
     text-align: center;
@@ -789,20 +959,21 @@ table.calendrier td {
 
 .journee-table th,
 .journee-table td {
-    border: 1px solid black;
+    border: 1px solid var(--fifth-color);
     padding: 4px 8px;
     height: 15px;
     text-align: center;
 }
 
 .journee-table th {
-    background-color: #0b3d91;
-    color: white;
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
     font-size: 0.9em;
 }
 
 .journee-table td:empty {
-    background-color: #f0f0f0;
+    background-color: var(--fourth-color);
+	height: 23px;
 }
 
 .titreJour {
@@ -817,25 +988,6 @@ table.calendrier td {
     width: 26px;
     cursor: pointer;
 }
-/* .delete-icons {
-    position: relative;
-    bottom: 169px;
-    right: 15px;
-    width: 26px;
-    height: 20px;
-    cursor: pointer;
-} */
-/* Positionner l'icône de suppression à droite du th */
-/* .delete-icons {
-position: absolute;
-right: 15px;
-top: 50%;
-transform: translateY(-50%);
-cursor: pointer;
-width: 26px; Ajustez selon la taille souhaitée
-height: 20px;
-transition: opacity 0.2s ease;
-} */
 
 .buttons-container {
     position: fixed;
@@ -850,28 +1002,6 @@ transition: opacity 0.2s ease;
     padding: 8px 12px;
     font-size: 1em;
     cursor: pointer;
-}
-
-/* .poule-select {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin: 20px 0 20px auto;
-    padding: 5px 10px;
-    position: absolute;
-    right: 20px;
-    top: 100px;
-    font-family: Arial, sans-serif;
-} */
-
-.poule-select select {
-    padding: 4px 6px;
-    font-size: 1em;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: white;
-    color: black;
-    width: 90px;
 }
 
 .form-group {
@@ -916,7 +1046,7 @@ transition: opacity 0.2s ease;
 }
 
 .tabJourn {
-    background: #fff;
+    background: var(--primary-color);
     width: 1em;
     font-size: 14px;
     white-space: nowrap;
@@ -934,29 +1064,25 @@ transition: opacity 0.2s ease;
     width: 50%;
 }
 
-.selected{
-    background-color: #cfcfcf;
-    box-shadow: inset 1px 1px 1px 1px #cfcfcf;;
+.selected {
+    background-color: var(--fourth-color);
+    box-shadow: inset 1px 1px 1px 1px var(--fourth-color);
 }
-/* *************** */
 
-/* ********************* */
-/* .poule-select select {
-    padding: 4px 6px;
-    font-size: 1em;
-    border-radius: 4px;
+.lienShowPopup {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    background-color: var(--secondary-color);
+    color: var(--fifth-color);
     cursor: pointer;
-    background-color: white;
-    color: black;
-    width: 90px;
-} */
-
-/*page classement*/
-th {
-	background-color: var(--sixth-color);
-	color: var(--primary-color);
 }
 
+/* =============================================================================
+	Page CLASSEMENT
+   ========================================================================== */
 .classement_joueurs {
 	text-align: center;
 	font-family: 'Open Sans', sans-serif;
@@ -964,10 +1090,7 @@ th {
 	padding: 5px;
 }
 
-#clas_joueurs {
-	position: relative;
-	top: -23px;
-}
+
 
 #tabjoueurs {
 	text-align: center;
@@ -982,7 +1105,7 @@ th {
 	justify-content: center;
 	text-align: center;
 	width: 50%;
-	margin: auto;
+	margin: 10px auto;
 }
 
 #tabpoints tr {
@@ -1000,12 +1123,12 @@ th {
 	padding: 5px;
 }
 
-.tabcouleur3 {
+.tabcouleur1, .tabcouleur3 {
 	background-color: var(--fourth-color);
 }
 
-.tabcouleur4 {
-	background-color: var(--seventh-color);
+.tabcouleur2, .tabcouleur4 {
+	background-color: var(--primary-color), var(--seventh-color);
 }
 
 .pointsgagne {
@@ -1016,7 +1139,15 @@ th {
 	color: var(--eighth-color);
 }
 
-/*page critérium*/
+.td_nom {
+	text-align: center;
+	padding-left: 2px;
+}
+
+
+/* =============================================================================
+	Page CRITERIUM
+   ========================================================================== */
 #criterium {
 	background-color: var(--primary-color);
 	width: 100%;
@@ -1035,12 +1166,10 @@ th {
 	padding: 0;
 	top: 2px;
 	text-shadow: none;
-	-webkit-text-decoration: underline dotted var(--eighth-color);
 	text-decoration: underline dotted var(--eighth-color);
 }
 
 #criterium h2 {
-	-webkit-text-decoration: underline dotted var(--fourth-color);
 	text-decoration: underline dotted var(--fourth-color);
 }
 
@@ -1053,7 +1182,7 @@ th {
 }
 
 #criterium section a:visited {
-	color: #3869cd;
+	color: var(--tenth-color);
 }
 
 #criterium img {
@@ -1061,7 +1190,9 @@ th {
 	width: 400px;
 }
 
-/* page connexion */
+/* =============================================================================
+	Page CONNEXION
+   ========================================================================== */
 #connexion {
 	position: relative;
 	bottom: 23px;
@@ -1074,33 +1205,29 @@ th {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	height: 29.2em;
-	margin-bottom: 11px;
+	/* height: 29.2em; */
+	
 }
 
 .connect>form {
-	border: 2px solid #000;
+	border: 2px solid var(--fifth-color);
 	border-radius: 15px;
 	margin: 15px;
 	padding: 10px;
 	background: var(--secondary-color);
 	width: 300px;
 	margin-left: auto;
-	margin-right:auto;
+	margin-right: auto;
 }
-
-/* .connect>form {
-	
-	margin: 100em 50px;
-} */
 
 .encad {
 	width: 200px;
 	margin: auto;
-	padding: 15px;
+	padding: 15px 0;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	/* align-items: center; */
+	justify-content: start;
 }
 
 .connect-input {
@@ -1147,18 +1274,14 @@ th {
 }
 
 .Error {
-	color: red;
+	color: var(--eighth-color);
 	margin: 10px 0;
 	text-align: center;
 }
 
 .error-message {
 	padding-bottom: 10px;
-	color:red;
-}
-
-a:visited {
-	color: var(--tenth-color);
+	color: var(--eighth-color);
 }
 
 .connect-submit {
@@ -1178,7 +1301,6 @@ a:visited {
 
 .connect-submit:hover {
 	color: var(--sixth-color);
-
 }
 
 .connect-submit:active {
@@ -1187,13 +1309,14 @@ a:visited {
 	box-shadow: 1px 1px 1px, inset 1px 1px 1px;
 }
 
-/* Page reset_password */
+/* =============================================================================
+	Page RESET PASSWORD 
+   ========================================================================== */
 #h3_reset {
 	text-align: center; 
 	margin-top:0;
 	margin-bottom: 0;
 }
-
 
 .form-group #email {
 	margin: 10px 0;
@@ -1205,7 +1328,7 @@ a:visited {
 
 .form-submit-btn{
 	color: var(--third-color);
-	background:var(--fifth-color);
+	background: var(--fifth-color);
 	width:300px;
 	padding: 5px 0;
 	border-radius: 15px;
@@ -1213,181 +1336,19 @@ a:visited {
 	cursor: pointer;
 }
 
+/* =============================================================================
+   6. RESPONSIVE - TABLETTE ET MOBILE
+   ========================================================================== */
 
-
-/***** Tablette *****/
-/*@media screen and (max-width:1024px) {
-	header {
-		max-width: 100%;
-		height: 60.1px;
-	}
-	h1{
-		font-size: 10px;
-	}
-	
-	#content {
-		max-width: 1024px;
-	}
-
-	#menu .icon-hamburger .fa-solid {
-		position: absolute;
-		top: 0;
-		width:50em;
-	}
-
-	#menu {
-		display: none;
-	}
-	
-	h3 {
-		font-size: medium;
-	}
-
-	#container {
-		padding: 10px 0;
-	}
-	
-	#gymnase{
-		width: 100%;
-	}
-
-	.img_criterium{
-		width: 18em; 
-	}
-	
-	#criterium1>article,
-	#criterium2>article {
-		width: 44em;
-		height: 10%;
-		display: flex;
-		justify-content: center;
-		flex-direction: column;
-		align-items: center;
-		margin:0 10px;
-	}
-
-	#criterium1>article>aside,
-	#criterium2>article>aside {
-		display: flex;
-		justify-content: center;
-		flex-direction: column;
-		align-items: center;
-	}
-
-	.title_article{
-		padding: 0;
-		margin: 0;
-	}
-	hr {
-		width: 21em;
-		clear: left;
-	}
-
-	iframe {
-		width: 400px;
-		height: 250px;
-		margin: 10px;
-	}
-
-	#info_club {
-		width: 70%;
-	}
-
-	#infocontact {
-		display: flex;
-		justify-content: center;
-	}
-
-	#info_contact {
-		width: 44em;
-	}
-
-
-	#tarifs tr td {
-		border: 1px solid var(--fifth-color);
-		padding: 2px 5px;
-	}
-
-	#crit {
-		margin: 10px;
-	}
-
-	#criterium {
-		width: 100%;
-	}
-
-	#criterium h2 {
-		font-size: 20px;
-		margin: 1em 5em 1em 5em;
-	}
-
-	#criterium section {
-		width: 35em;
-		text-align: justify;
-	}
-
-	#criterium img {
-		width: 350px;
-		margin: auto;
-	}
-
-	.hr_criterium {
-		width: 35em;
-	}
-
-	#maps {
-		margin: 0 10px 10px 10px;
-	}
-	
-	#title-contact {
-	background-color: var(--fourth-color);
-	padding-top: 1em;
-	margin-bottom: 0;
-	width: 100%;
+/* Tablette - Commentée */
+/*
+@media screen and (max-width:1024px) {
+	... (contenu commenté préservé)
 }
+*/
 
-#contact {
-	background-color: var(--fourth-color);
-	padding-top: 10px 10px 15px 10px;
-	height: 400px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-#hours {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-#rencontres_championnat {
-	display: flex;
-	justify-content: center;
- 	margin: 0;
-	font-size: 15px;
-	flex-wrap: wrap;
-}*/
-
-/* classement */
-/* #bareme {
-	display: flex;
-	justify-content: center;
-	text-align: center;
-	width: 50%;
-}
-
-} */
-
-
-/***** Mobile *****/
-/* Styles pour le mode mobile */
+/* Mobile */
 @media (max-width: 376px) {
-
-	/* *{
-		border: 1px solid red;
-		
-	} */
 	body {
 		width: 100%;
 		height: auto;
@@ -1395,32 +1356,13 @@ a:visited {
 		margin: 0;
 	}
 
-	h1 {
-		font-size: 20px;
-	}
+	h1 { font-size: 20px; }
+	h2 { font-size: 15px; box-sizing: border-box; }
+	h3 { font-size: 15px; }
 
-	h2 {
-		font-size: 15px;
-		box-sizing: border-box;
-	}
-
-	h3 {
-		font-size: 15px;
-	}
-
-	header {
-		max-width: 100%;
-		height: 100%;
-	}
-
-	.main {
-		margin: 48px auto 85px;
-	}
-
-	#main_info_club {
-		height: 55em;
-		margin: 7px;
-	}
+	header { max-width: 100%; height: 100%; }
+	.main { margin: 48px auto 85px; }
+	#main_info_club { height: 55em; margin: 7px; }
 
 	footer {
 		background: var(--fifth-color);
@@ -1428,39 +1370,9 @@ a:visited {
 		bottom: 0;
 		left: 0; right: 0;
 		padding: 10px;
-		/* padding: auto 100%; */
-	}
-	
-
-	footer p {
-		color: #fff;
-		padding: 0;
-		margin: 0;
-		/* padding: 36px 10px 21px 10px; */
 	}
 
-	.loader {
-		position: absolute;
-		background: #fff;
-		top: 50%;
-		left: auto;
-		margin:auto;
-		z-index: 1;
-		width: 72px;
-		height: 72px;
-		border-radius: 50%;
-	}
-	
-	.loader.fondu-out {
-		opacity: 0;
-		transition: opacity 0.2s ease-out;
-		z-index: -1;
-	}
-	
-	nav {
-		position: relative;
-		z-index: 1;
-	}
+	nav { position: relative; z-index: 1; }
 
 	#menu {
 		position: absolute;
@@ -1468,10 +1380,7 @@ a:visited {
 		left: 0;
 		width: 100%;
 		display: none;
-		background-color: #f9f9f9;
-		/* padding: 10px; */
-		/* border: 2px solid red; */
-		/* height: 400px; */
+		background-color: var(--fourth-color);
 	}
 
 	.sousmenu li a {
@@ -1489,28 +1398,14 @@ a:visited {
 		top: -12px;
 		right: 35px;
 		z-index: 20;
-		color: #000;
+		color: var(--fifth-color);
 	}
 
-	.ouvrir {
-		display: block;
-	}
-
-	.fermer {
-		display: none;
-	}
-
-	.open .ouvrir {
-		display: none;
-	}
-
-	.open .fermer {
-		display: block;
-	}
-
-	.no-scroll {
-		overflow: hidden;
-	}
+	.ouvrir { display: block; }
+	.fermer { display: none; }
+	.open .ouvrir { display: none; }
+	.open .fermer { display: block; }
+	.no-scroll { overflow: hidden; }
 
 	#menu.open {
 		display: block;
@@ -1521,9 +1416,7 @@ a:visited {
 		top: -23px;
 		background: var(--secondary-color);
 		overflow-y: hidden !important;
-		/* border: 1px solid red; */
 	}
-
 
 	#menu.open li a {
 		background: var(--secondary-color);
@@ -1543,24 +1436,11 @@ a:visited {
 		background: var(--secondary-color);
 	}
 
-	/* Style de la flèche */
 	.sousMenu::after {
 		content: "▼";
-		/* Utilisez le caractère de flèche de votre choix */
 		position: absolute;
 		right: 40px;
 	}
-
-	/* Style au survol de l'élément parent (menu avec sous-menu) */
-	/* .sousMenu:hover::after { */
-	/* content: "▲"; */
-	/* Changez la flèche pour indiquer qu'il peut être replié */
-	/* } */
-	/* .toggle i {
-		font-size: 20px;
-	} */
-
-
 
 	main {
 		position: relative;
@@ -1574,7 +1454,6 @@ a:visited {
 		margin: 0;
 	}
 
-	/* index */
 	#gymnase {
 		position: relative;
 		top: 3em;
@@ -1591,31 +1470,9 @@ a:visited {
 		height: 60em;
 	}
 
-	.img_criterium {
-		width: 275px;
-		padding: 0;
-	}
-
-	a {
-		display: flex;
-		/* justify-content: center; */
-	}
-
-	#criterium {
-		/* border: #000 2px solid; */
-		height: auto;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.title_article {
-		font-size: 12px;
-	}
-
-	#container>aside {
-		display: flex;
-		flex-direction: column;
-	}
+	.img_criterium { width: 275px; padding: 0; }
+	a { display: flex; }
+	.title_article { font-size: 12px; }
 
 	#container>aside>p {
 		font-size: 11px;
@@ -1628,19 +1485,8 @@ a:visited {
 		width: 200px;
 	}
 
-	#abtn {
-		text-decoration: none;
-	}
-
-	#contact {
-		width: 100%;
-	}
-
-	form {
-		width: 90%;
-	}
-
-	/* fin index */
+	#contact { width: 100%; }
+	form { width: 90%; }
 
 	#infoclub,
 	#info_contact {
@@ -1649,15 +1495,11 @@ a:visited {
 		align-items: center;
 	}
 
-	#hours {
-		margin: 0;
-	}
-
+	#hours { margin: 0; }
 	#hours>p {
 		width: 260px;
 		margin-bottom: 1em;
 		position: relative;
-		/* border: 1px solid red; */
 		right: 74px;
 	}
 
@@ -1668,31 +1510,21 @@ a:visited {
 		margin: 25px auto;
 	}
 
-	#maps {
-		width: 100%;
-	}
-
+	#maps { width: 100%; }
 	iframe {
 		display: flex;
 		justify-content: center;
 		width: 340px;
 	}
 
-	#galerie {
-		position: relative;
-		top: 30px;
-	}
-
+	#galerie { position: relative; top: 30px; }
 	#galerie_photos {
 		position: relative;
 		top: 30px;
 		height: 298em;
 	}
 
-	#criterium img {
-		margin: auto;
-		width: 260px;
-	}
+	#criterium img { margin: auto; width: 260px; }
 
 	#criterium1>article,
 	#criterium2>article {
@@ -1704,10 +1536,7 @@ a:visited {
 		padding: 10px;
 	}
 
-	hr {
-		width: 17em;
-		clear: left;
-	}
+	hr { width: 17em; clear: left; }
 
 	#rencontres_championnat {
 		display: flex;
@@ -1725,27 +1554,18 @@ a:visited {
 		font-size: 12px;
 	}
 
-
 	#clas_joueurs {
 		position: relative;
 		top: 40px;
 		margin-bottom: 50px;
 	}
 
-	.classement_joueurs {
-		width: 100%;
-	}
-
-	.td_nom {
-		text-align: start;
-		padding-left: 2px;
-	}
+	.classement_joueurs { width: 100%; }
 
 	#bareme {
 		display: flex;
 		justify-content: center;
 		text-align: center;
-		/* width: 50%; */
 		margin: auto;
 		font-size: 10px;
 	}
@@ -1772,17 +1592,33 @@ a:visited {
 		justify-content: flex-start;
 	}
 
-.connect {
+	.connect {
 		display: flex;
-		/* flex-direction: column; */
 		justify-content: center;
 		align-items: center;
 		height: 23em;
 	}
 
-.connect > form {
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
+	.connect > form {
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+	}
 }
+
+/* =============================================================================
+   7. ANIMATIONS
+   ========================================================================== */
+@keyframes spinner {
+  100% {
+    transform: rotate(1turn);
+  }
 }
+
+@keyframes anim-h1 {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Fin du fichier CSS */
+

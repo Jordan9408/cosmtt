@@ -41,7 +41,7 @@ class JoueurRow
     {
         $id = $this->joueur['ID'];
         ?>
-        <td class="td_nom">
+        <div class="centrer_nom">
             <input type="hidden" name="joueur_id[<?= $id ?>]" value="<?= $id ?>">
             <input type="text" name="nom[<?= $id ?>]" value="<?= $this->escape($this->joueur['Nom']) ?>" class="edit-input edit-input-nom" placeholder="Nom">
             <input type="text" name="prenom[<?= $id ?>]" value="<?= $this->escape($this->joueur['Prenom']) ?>" class="edit-input edit-input-nom" placeholder="Prénom">
