@@ -376,7 +376,7 @@ function escapeHtml(string $string): string
     <?php endif; ?>
     <?php
         // Inclusion du footer
-        include_once dirname(__DIR__, 4) . '/html_partials/footer.php';
+        include_once dirname(__DIR__, 4) . '/pages/parts/footer.php';
     ?>
     <script src="/cosmtt/admin/js/app.js"></script>
     <script src="/cosmtt/admin/js/championnat.js"></script>

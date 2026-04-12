@@ -34,7 +34,7 @@ class ImageProcessor
     {
         $this->uploadDir = rtrim($uploadDir, '/') . '/';
         $this->thumbDir = rtrim($thumbDir, '/') . '/';
-        $this->maxImageSize = 4 * 1024 * 1024; // 4 Mo
+$this->maxImageSize = 10 * 1024 * 1024; // 10 Mo
         $this->thumbnailHeight = 400;
         $this->jpegQuality = 90;
         $this->webpQuality = 100;
@@ -165,7 +165,7 @@ class ImageProcessor
             $result = [
                 'success' => true,
                 'filename' => $webpFilename,
-                'filepath' => '/cosmtt/photos/' . $webpFilename,
+                'filepath' => '/cosmtt/docs/photos/' . $webpFilename,
                 'filesize' => filesize($webpPath),
                 'width' => $dimensions['width'],
                 'height' => $dimensions['height'],
@@ -329,7 +329,7 @@ class ImageProcessor
         if (imagewebp($newImage, $thumbPath, $this->webpQuality)) {
             $result = [
                 'success' => true,
-                'path' => '/cosmtt/photos/miniatures/' . $thumbFilename,
+                'path' => '/cosmtt/docs/photos/miniatures/' . $thumbFilename,
                 'width' => $newWidth,
                 'height' => $newHeight
             ];
@@ -387,7 +387,6 @@ class ImageProcessor
                 $success = false;
             }
         }
-
         // Supprimer la miniature
         if ($thumbPath) {
             $thumbFile = $this->thumbDir . basename($thumbPath);

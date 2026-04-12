@@ -57,15 +57,19 @@ try {
     ) ENGINE=InnoDB";
     $conn->exec($tab_password_reset_request);
 
-    // Création de la table "criteriums"
-    $tab_criteriums = "CREATE TABLE IF NOT EXISTS `criteriums` (
-        `id_crit` INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
-        `title_crit` VARCHAR(255) NOT NULL,
-        `image_crit` VARCHAR(255) NOT NULL,
-        `contenu_crit` TEXT NOT NULL,
-        `pdf_crit` LONGBLOB
+    // Création de la table "articles"
+    $tab_articles = "CREATE TABLE IF NOT EXISTS `articles` (
+        `id` INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
+        `title_article` VARCHAR(255) NOT NULL,
+        `date_evmt_article` DATE NOT NULL,
+        `date_creation_article` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        `img_article` VARCHAR(255) NULL,
+        `contenu_article` TEXT NOT NULL,
+        `pdf_article` VARCHAR(255) NULL,
+        INDEX (`date_evmt_article`),
+        INDEX (`date_creation_article`)
     ) ENGINE=InnoDB";
-    $conn->exec($tab_criteriums);
+    $conn->exec($tab_articles); 
 
         // Création de la table "galerie"
     $tab_galerie = "CREATE TABLE IF NOT EXISTS `section_Galerie` (

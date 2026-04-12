@@ -11,7 +11,6 @@ class FileSecurityValidator {
         'image/jpg' => [0xFF, 0xD8, 0xFF], // Alias pour jpg
         'image/png' => [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A], // PNG complet
         'image/webp' => [0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50], // RIFF + WEBP
-        'video/mp4' => [0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70], // MP4 complet
         'application/pdf' => [0x25, 0x50, 0x44, 0x46] // %PDF
     ];
 
@@ -150,6 +149,9 @@ class FileSecurityValidator {
 
     /**
      * Valide la sécurité des fichiers PDF
+     * NOTE: Ne lance pas d'exception car les menaces seront nettoyées par PDFSecurityProcessor
+     * Cette méthode vérifie juste la structure PDF valide
+     * 
      * @param string $filePath Chemin du fichier
      * @return bool
      * @throws Exception
@@ -163,24 +165,9 @@ class FileSecurityValidator {
             throw new Exception("PDF invalide : en-tête manquant");
         }
 
-        // Patterns dangereux dans les PDF
-        $dangerousPatterns = [
-            '/\/Launch/i',      // Lancer des applications
-            '/\/RI\s*\(/i',     // RichMedia/Flash
-            '/\/AS\s*\(/i',     // Actions
-            '/\/AA\s*\</i',     // Automatic actions
-            '/\/ObjStm/i',      // Object streams (obfuscation)
-            '/\/EmbeddedFile/i',// Fichiers embarqués
-            '/\/XObject/i',     // XObjects potentiellement dangereux
-            '/\/JavaScript/i',  // Code JavaScript
-            '/\/JS\s*\(/i'      // JavaScript exécutable
-        ];
-
-        foreach ($dangerousPatterns as $pattern) {
-            if (preg_match($pattern, $content)) {
-                throw new Exception("⚠️ Élément potentiellement dangereux détecté dans le PDF");
-            }
-        }
+        // Les patterns dangereux ne lancent pas d'exception ici
+        // car ils seront nettoyés par PDFSecurityProcessor
+        // Cette méthode effectue juste une validation structurelle basique
 
         return true;
     }
