@@ -107,15 +107,24 @@ class Auth
      * @param string $token
      * @return bool
      */
+        
     public function sendResetEmail(string $email, string $token): bool
     {
-        $resetLink = "http://localhost:8081/cosmtt/reset_password.php?token=$token"; // Adapter selon domaine
+        $resetLink = "http://localhost:8081/cosmtt/reset_password.php?token=$token";
+        // Adapter selon domaine
         $subject = "=?UTF-8?B?" . base64_encode("Réinitialisation de votre mot de passe") . "?=";
-        $message = "Cliquez sur ce lien pour réinitialiser votre mot de passe : $resetLink\nCe lien expirera dans 15 minutes.";
+        $message = "Cliquez sur ce lien pour réinitialiser votre mot de passe : 
+        $resetLink\nCe lien expirera dans 15 minutes.";
         $headers = "From: no-reply@cosmtt.fr\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/plain; charset=utf-8\r\n";
-        return mail($email, $subject, $message, $headers);
+        
+        $result = mail($email, $subject, $message, $headers);
+        
+        // Ajouter un log pour déboguer
+        error_log("Email reset - To: $email, Result: " . ($result ? "SUCCESS" : "FAILED"));
+        
+        return $result;
     }
 
     /**

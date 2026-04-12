@@ -42,7 +42,7 @@ if ($role === 'superAdmin') {
 }
 
 if ($role == 'admin' || $role == 'superAdmin') {
-    $links[] = '<li><a href="./article/addArticle.php">Article</a></li>';
+    $links[] = '<li><a href="./adminPage/article/showArticles.php">Articles Critérium</a></li>';
     $links[] = '<li><a href="./adminPage/galeriePhotos/showGalerie.php">Galerie Photos</a></li>';
     $links[] = '<li><a href="./adminPage/championnat/homeChampionnat.php">Championnat</a></li>';
     $links[] = '<li><a href="./adminPage/joueurs/showClassement.php">Classements</a></li>';
@@ -98,5 +98,5 @@ echo '</main>';
 
 <?php
 // Inclusion du footer
-include_once dirname(__DIR__, 1) . '/html_partials/footer.php';
+include_once dirname(__DIR__, 1) . '/pages/parts/footer.php';
 ?>

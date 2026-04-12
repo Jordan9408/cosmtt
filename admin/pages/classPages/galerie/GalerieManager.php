@@ -22,7 +22,7 @@ class GalerieManager
      * Constantes de configuration
      */
     public const EVENTS_PER_PAGE = 4;
-    public const MAX_IMAGE_SIZE = 4 * 1024 * 1024; // 4 Mo
+    public const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 Mo
 
     /**
      * Constructeur
@@ -32,8 +32,8 @@ class GalerieManager
     public function __construct(PDO $connection)
     {
         $this->conn = $connection;
-        $this->uploadDir = dirname(__DIR__, 4) . '/photos/';
-        $this->thumbDir = dirname(__DIR__, 4) . '/photos/miniatures/';
+        $this->uploadDir = dirname(__DIR__, 4) . '/docs/photos/';
+        $this->thumbDir = dirname(__DIR__, 4) . '/docs/photos/miniatures/';
         
         $this->createDirectories();
     }
@@ -67,8 +67,10 @@ class GalerieManager
         return $this->thumbDir;
     }
 
+
+
     // =========================================================================
-    // OPÉRATIONS SUR LES ÉVÉNEMENTS
+    // OPÉRATIONS SUR LES ÉVÉNEMENTS (EXISTANT - INCHANGÉ)
     // =========================================================================
 
     /**
@@ -245,7 +247,7 @@ class GalerieManager
             $result['exists'] = true;
             $result['id'] = (int)$eventExact['id'];
             $result['same_title_and_date'] = true;
-            $result['conflicts'][] = [
+            $result['conflicts'] = [
                 'type' => 'same_title_and_date',
                 'message' => 'Un événement avec ce titre et cette date existe déjà.'
             ];
@@ -435,7 +437,7 @@ class GalerieManager
     }
 
     // =========================================================================
-    // OPÉRATIONS SUR LES MÉDIAS
+    // OPÉRATIONS SUR LES MÉDIAS (INCHANGÉES)
     // =========================================================================
 
     /**
@@ -653,6 +655,123 @@ class GalerieManager
     // =========================================================================
 
     /**
+     * Cherche un événement par titre et date
+     * 
+     * Recherche intelligente:
+     * 1. Cherche d'abord exactement le titre ET la date
+     * 2. Si pas trouvé, cherche par titre similaire (approx. 80%) ET même date
+     * 3. Si pas trouvé, cherche par titre similaire ET même année
+     * 
+     * @param string $titre Titre de l'événement
+     * @param string $date Date au format YYYY-MM-DD
+     * @return array|null ['id' => int, 'titre' => string, 'date_evenement' => string] ou null
+     */
+    public function findEventByTitleAndDate(string $titre, string $date): ?array
+    {
+        if (empty($titre) || empty($date)) {
+            return null;
+        }
+
+        // Nettoyage des entrées
+        $titre = trim($titre);
+        $date = trim($date);
+
+        // Vérifier que la date est au format correct
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return null;
+        }
+
+        // 1. Chercher exactement: titre ET date
+        $stmt = $this->conn->prepare(
+            "SELECT id, titre, date_evenement FROM section_Galerie 
+             WHERE titre = :titre AND date_evenement = :date LIMIT 1"
+        );
+        $stmt->execute([':titre' => $titre, ':date' => $date]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result) {
+            return ['id' => (int)$result['id'], 'titre' => $result['titre'], 'date_evenement' => $result['date_evenement']];
+        }
+
+        // 2. Chercher par similitude de titre (80%+) ET même date
+        $stmt = $this->conn->prepare(
+            "SELECT id, titre, date_evenement FROM section_Galerie 
+             WHERE date_evenement = :date ORDER BY id DESC LIMIT 10"
+        );
+        $stmt->execute([':date' => $date]);
+        $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        foreach ($candidates as $candidate) {
+            $similarity = 0;
+            similar_text($titre, $candidate['titre'], $similarity);
+            if ($similarity >= 80) {
+                return ['id' => (int)$candidate['id'], 'titre' => $candidate['titre'], 'date_evenement' => $candidate['date_evenement']];
+            }
+        }
+
+        // 3. Chercher par similitude de titre (80%+) ET même année
+        $year = substr($date, 0, 4);
+        $stmt = $this->conn->prepare(
+            "SELECT id, titre, date_evenement FROM section_Galerie 
+             WHERE YEAR(date_evenement) = :year ORDER BY date_evenement DESC LIMIT 10"
+        );
+        $stmt->execute([':year' => (int)$year]);
+        $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        foreach ($candidates as $candidate) {
+            $similarity = 0;
+            similar_text($titre, $candidate['titre'], $similarity);
+            if ($similarity >= 80) {
+                return ['id' => (int)$candidate['id'], 'titre' => $candidate['titre'], 'date_evenement' => $candidate['date_evenement']];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Récupère le numéro de page d'un événement
+     * 
+     * Calcule la page sur laquelle se trouve un événement, en tenant compte
+     * du tri par date décroissante (plus récents en premier)
+     * 
+     * @param int $eventId ID de l'événement
+     * @return int Numéro de page (1 par défaut)
+     */
+    public function getEventPageById(int $eventId): int
+    {
+        // Chercher l'événement pour avoir sa date
+        $stmt = $this->conn->prepare(
+            "SELECT date_evenement FROM section_Galerie WHERE id = :id"
+        );
+        $stmt->execute([':id' => $eventId]);
+        $event = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$event) {
+            return 1;
+        }
+        
+        // Compter combien d'événements existent AVANT celui-ci
+        // (triés par date DESC: les plus récents d'abord)
+        $stmt = $this->conn->prepare(
+            "SELECT COUNT(*) as count FROM section_Galerie 
+             WHERE date_evenement > :date 
+             OR (date_evenement = :date AND id > :id)"
+        );
+        $stmt->execute([':date' => $event['date_evenement'], ':id' => $eventId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $eventsBefore = (int)$result['count'];
+        
+        // Calculer le numéro de page
+        // Position = événements avant + 1
+        // Page = ceil(position / EVENTS_PER_PAGE)
+        $page = (int)ceil(($eventsBefore + 1) / self::EVENTS_PER_PAGE);
+        
+        return max(1, $page);
+    }
+
+    /**
      * Formate une date en français
      * 
      * @param string $dateString Date au format MySQL
@@ -686,3 +805,4 @@ class GalerieManager
         return sprintf('%02d %s %d', $day, $month, $year);
     }
 }
+?>

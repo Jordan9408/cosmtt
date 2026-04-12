@@ -107,7 +107,7 @@ if (isset($_GET['message'])) {
     <?php endif; ?>
     <?php
         // Inclusion du footer
-        include_once dirname(__DIR__, 4) . '/html_partials/footer.php';
+        include_once dirname(__DIR__, 4) . '/pages/parts/footer.php';
     ?>
 </body>
 

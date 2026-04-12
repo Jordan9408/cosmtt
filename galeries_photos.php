@@ -6,9 +6,31 @@ require_once __DIR__ . '/admin/pages/classPages/galerie/GalerieManager.php';
 // Initialisation du gestionnaire de galerie
 $galerieManager = new GalerieManager($conn);
 $displayError = null;
+$targetEventId = null;
 
 // Récupération des données pour l'affichage
 $currentPage = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+
+// Vérifier si on cherche un événement spécifique par titre et date
+if (isset($_GET['title']) && isset($_GET['date'])) {
+    $searchTitle = isset($_GET['title']) ? (string)$_GET['title'] : '';
+    $searchDate = isset($_GET['date']) ? (string)$_GET['date'] : '';
+    
+    // Nettoyer et décoder les paramètres
+    $searchTitle = trim(urldecode($searchTitle));
+    $searchDate = trim(urldecode($searchDate));
+    
+    if (!empty($searchTitle) && !empty($searchDate)) {
+        // Chercher l'événement correspondant
+        $foundEvent = $galerieManager->findEventByTitleAndDate($searchTitle, $searchDate);
+        
+        if ($foundEvent) {
+            $targetEventId = $foundEvent['id'];
+            // Calculer la bonne page pour cet événement
+            $currentPage = $galerieManager->getEventPageById($targetEventId);
+        }
+    }
+}
 
 try {
     // On utilise la méthode de pagination existante
@@ -59,19 +81,25 @@ foreach ($mediaByEvent as $eventId => $mediaItems) {
                     </h3>
                     <div class="photo-grid">
                         <?php if (!empty($mediaByEvent[$event['id']])) : ?>
-                            <?php foreach ($mediaByEvent[$event['id']] as $index => $media) : ?>
+                            <?php 
+                            $imageIndex = 0; // Compteur séparé pour les images uniquement
+                            foreach ($mediaByEvent[$event['id']] as $media) : 
+                            ?>
                                 <?php
-                                $fullPath = htmlspecialchars($media['chemin_fichier'], ENT_QUOTES, 'UTF-8');
-                                $thumbPath = !empty($media['chemin_miniature']) ? htmlspecialchars($media['chemin_miniature'], ENT_QUOTES, 'UTF-8') : $fullPath;
-                                $altText = 'Photo de l\'événement ' . htmlspecialchars($event['titre'], ENT_QUOTES, 'UTF-8');
+                                    $fullPath = htmlspecialchars($media['chemin_fichier'], ENT_QUOTES, 'UTF-8');
+                                    $thumbPath = !empty($media['chemin_miniature']) ? htmlspecialchars($media['chemin_miniature'], ENT_QUOTES, 'UTF-8') : $fullPath;
+                                    $dateEvent = preg_replace('/[^0-9]/', '', $event['date_evenement']);
+                                    $mediaIdPadded = str_pad($media['id'], 4, '0', STR_PAD_LEFT);
+                                    $altText = 'IMG_' . $dateEvent . '_' . $mediaIdPadded . '_mini';
                                 ?>
 
                                 <?php if (strpos($media['type_media'], 'image/') === 0) : ?>
                                     <div class="photo-wrapper">
-                                        <a href="javascript:void(0)" onclick="openLightbox(event, <?= $index ?>, <?= (int)$event['id'] ?>)">
+                                        <a href="javascript:void(0)" onclick="openLightbox(event, <?= (int)$imageIndex ?>, <?= (int)$event['id'] ?>)">
                                             <img class="photo_galerie" src="<?= $thumbPath ?>" alt="<?= $altText ?>" title="Cliquez pour agrandir">
                                         </a>
                                     </div>
+                                    <?php $imageIndex++; // Incrémenter seulement pour les images ?>
                                 <?php endif; ?>
                             <?php endforeach; ?>
                         <?php else : ?>
@@ -85,21 +113,21 @@ foreach ($mediaByEvent as $eventId => $mediaItems) {
 
         <?php if ($totalPages > 1) : ?>
             <div class="pagination">
-                <a href="<?= $currentPage > 1 ? '?page=' . ($currentPage - 1) : 'javascript:void(0)' ?>" class="btn-pagination <?= $currentPage <= 1 ? 'disabled' : '' ?>">◄</a>
+                <a href="<?= $currentPage > 1 ? '?page=' . ($currentPage - 1) : 'javascript:void(0)' ?>" class="btn_fleche btnPopup-primary <?= $currentPage <= 1 ? 'disabled' : '' ?>">◄</a>
                 <span class="pagination-info"><?= $currentPage ?> / <?= $totalPages ?></span>
-                <a href="<?= $currentPage < $totalPages ? '?page=' . ($currentPage + 1) : 'javascript:void(0)' ?>" class="btn-pagination <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">►</a>
+                <a href="<?= $currentPage < $totalPages ? '?page=' . ($currentPage + 1) : 'javascript:void(0)' ?>" class="btn_fleche btnPopup-primary <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">►</a>
             </div>
         <?php endif; ?>
 
     </div>
 
     <!-- Structure de la Lightbox -->
-    <div id="lightbox" class="lightbox-overlay" style="display:none;">
+    <div id="lightbox" class="lightbox-overlay" style="display:none;" onclick="closeLightboxOnOverlay(event)">
         <button class="lightbox-close" onclick="closeLightbox()" aria-label="Fermer">&times;</button>
         <div class="lightbox-content">
-            <a class="lightbox-prev" onclick="changeImage(-1)">&#10094;</a>
-            <img id="lightboxImage" src="" alt="Image en plein écran">
-            <a class="lightbox-next" onclick="changeImage(1)">&#10095;</a>
+            <a class="lightbox-prev" onclick="changeImage(-1); event.stopPropagation();">&#10094;</a>
+            <img id="lightboxImage" src="" alt="Image en plein écran" onclick="event.stopPropagation()">
+            <a class="lightbox-next" onclick="changeImage(1); event.stopPropagation();">&#10095;</a>
         </div>
         <div class="lightbox-counter" id="lightboxCounter"></div>
     </div>
@@ -128,10 +156,22 @@ foreach ($mediaByEvent as $eventId => $mediaItems) {
         currentImageIndex = index;
         document.getElementById('lightbox').style.display = 'flex';
         updateLightboxImage();
+        
+        // Empêcher le scroll du body quand la lightbox est ouverte
+        document.body.style.overflow = 'hidden';
     }
 
     function closeLightbox() {
         document.getElementById('lightbox').style.display = 'none';
+        // Réactiver le scroll
+        document.body.style.overflow = '';
+    }
+
+    function closeLightboxOnOverlay(event) {
+        // Fermer seulement si on clique sur l'overlay (pas sur le contenu)
+        if (event.target.id === 'lightbox') {
+            closeLightbox();
+        }
     }
 
     function changeImage(direction) {
@@ -148,8 +188,15 @@ foreach ($mediaByEvent as $eventId => $mediaItems) {
     function updateLightboxImage() {
         if (currentImageList.length > 0) {
             const image = currentImageList[currentImageIndex];
-            document.getElementById('lightboxImage').src = image.full;
+            const imgElement = document.getElementById('lightboxImage');
+            imgElement.src = image.full;
             document.getElementById('lightboxCounter').innerText = `${currentImageIndex + 1} / ${currentImageList.length}`;
+            
+            // Précharger l'image suivante pour une meilleure UX
+            if (currentImageIndex + 1 < currentImageList.length) {
+                const preloadNext = new Image();
+                preloadNext.src = currentImageList[currentImageIndex + 1].full;
+            }
         }
     }
 
@@ -158,11 +205,38 @@ foreach ($mediaByEvent as $eventId => $mediaItems) {
         if (document.getElementById('lightbox').style.display === 'flex') {
             if (e.key === 'ArrowRight') {
                 changeImage(1);
+                e.preventDefault(); // Empêcher le scroll de la page
             } else if (e.key === 'ArrowLeft') {
                 changeImage(-1);
+                e.preventDefault();
             } else if (e.key === 'Escape') {
                 closeLightbox();
             }
+        }
+    });
+
+    // Scroll automatique vers l'événement cible s'il y a une recherche
+    document.addEventListener('DOMContentLoaded', function() {
+        const targetEventId = <?= json_encode($targetEventId) ?>;
+        
+        if (targetEventId) {
+            // Attendre légèrement que le DOM soit totalement rendu
+            setTimeout(function() {
+                const targetElement = document.querySelector('[data-event-id="' + targetEventId + '"]');
+                if (targetElement) {
+                    // Scroll fluide vers l'élément
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // Ajouter un surlignage temporaire pour attirer l'attention
+                    targetElement.style.transition = 'background-color 0.3s ease';
+                    targetElement.style.backgroundColor = '#fff8dc';
+                    
+                    // Retirer le surlignage après 2 secondes
+                    setTimeout(function() {
+                        targetElement.style.backgroundColor = '';
+                    }, 2000);
+                }
+            }, 100);
         }
     });
 </script>

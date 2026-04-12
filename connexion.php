@@ -109,3 +109,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </main>
 <?php include('./html_partials/footer.php'); ?>
+<script>
+    document.getElementById('forgot').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector('.main-connect').style.display = 'none';
+        document.querySelector('.main-change-password').style.display = 'block';
+    });
+
+    // Aussi gérer le bouton "Annuler"
+    document.querySelector('input[name="annuler"]').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector('.main-connect').style.display = 'block';
+        document.querySelector('.main-change-password').style.display = 'none';
+    });
+</script>
