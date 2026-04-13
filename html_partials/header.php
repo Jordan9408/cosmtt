@@ -60,7 +60,7 @@ try {
                     <ul class="sousmenu">
                         <li><a href="./championnat.php">CHAMPIONNAT</a></li>
                         <li><a href="./classement.php">CLASSEMENT</a></li>
-                        <li><a href="./criterium.php">CRITERIUM</a></li>
+                        <li><a href="./criteriumArticles.php">CRITERIUM</a></li>
                     </ul>
                 </li>
                 <li>

@@ -1,17 +1,10 @@
-/* ========================================
-   IMPORTS & VARIABLES
-   ======================================== */
 @import url('/cosmtt/admin/css/colors_group.css');
 
 
-/* ========================================
-   RESET & BASE
-   ======================================== */
 body {
     margin: 0;
     padding: 0;
 }
-
 
 /* ========================================
    POPUP
@@ -36,8 +29,6 @@ body {
     width: 90%;
     height:auto;
     max-width: 800px;
-    
-    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }
 
 .popup-content {
@@ -310,8 +301,6 @@ body {
     justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
-    /* padding-top: 20px; */
-    /* border-top: 1px solid var(--fifth-color); */
 }
 
 .btn {
@@ -599,20 +588,13 @@ body {
     flex-wrap: wrap;
     gap: 15px;
     justify-content: center;
-    
-    /* margin: 1em 86px;
-    width: fit-content;
-    max-width: 100%;
-    box-sizing: border-box; */
 }
 
 .photos {
     height: 133px;
     width: 200px;
-    /* overflow: hidden; */
     width: fit-content;
     display: flex;
-    /* align-items: flex-start; */
 }
 
 .photo_galerie {
@@ -623,7 +605,6 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-    /* display: block; */
 }
 
 .photo_galerie:hover {
@@ -799,4 +780,3 @@ body {
         font-size: 12px;
     }
 }
-

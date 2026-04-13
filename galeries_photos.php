@@ -62,7 +62,7 @@ foreach ($mediaByEvent as $eventId => $mediaItems) {
 }
 ?>
 <main>
-    <h2 class="h2_galerie" id="galerie">Galerie</h2>
+    <h2 class="title-bar" id="galerie">Galerie</h2>
     <div id="galerie_photos">
 
         <?php if (isset($displayError)) : ?>
