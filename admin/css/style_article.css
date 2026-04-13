@@ -1,281 +1,181 @@
-/* Style article identique à showGalerie.php - copie style_galerie.css */
-@import url('/cosmtt/admin/css/colors_group.css');
+@import url("/cosmtt/admin/css/colors_group.css");
 
-/* POPUP */
-.popup {
+.popup-content {
+    text-align: start;
+}
+
+.article-list {
+    display: grid;
+    justify-items: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.article-card {
+    width: 40em;
+    max-width: 40em;
+    margin: 0 auto;
+    border: 1px solid var(--fourth-color);
+    padding: 20px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.article-title {
+    font-size: 1.4em;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.event-date-display {
+    font-size: 0.9em;
+    color: var(--thirteenth-color);
+    font-weight: normal;
+    font-style: italic;
+}
+
+.article-date {
+    color: var(--thirteenth-color);
+    margin-bottom: 15px;
+}
+
+.article-image {
+    width: auto;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 5px;
+    display: block;
+    margin: 10px auto;
+    /* cursor: pointer; */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Portrait et paysage - même hauteur */
+.article-image.portrait {
+    height: 200px;
+}
+
+.article-image.landscape {
+    height: 200px;
+}
+
+/* Modal pour agrandissement */
+.image-modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 2000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
 }
 
-.popup-card {
-    background-color: var(--secondary-color);
-    margin: 10vh auto;
-    padding: 0;
-    border-radius: 5px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 80vh;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.article-content-preview {
+    margin: 10px 0;
+    color: var(--thirteenth-color);
 }
 
-.popup-content {
-    padding: 20px;
-    max-height: 70vh;
-    overflow-y: auto;
-}
-
-.popup-content h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: var(--fifth-color);
-    border-bottom: 2px solid var(--fifth-color);
-    padding-bottom: 10px;
-}
-
-/* FORMULAIRE */
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.input-field {
-    padding: 12px;
-    border: 1px solid var(--fifth-color);
-    border-radius: 4px;
-    font-size: 14px;
-    background-color: var(--primary-color);
-    color: var(--fifth-color);
-    box-sizing: border-box;
-}
-
-.input-field:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    background-color: var(--fourth-color);
-}
-
-.input-field::placeholder {
-    color: var(--fifth-color);
-    opacity: 0.7;
-}
-
-textarea.input-field {
-    grid-column: 1 / -1;
-    resize: vertical;
-    min-height: 120px;
-}
-
-.file-input-group {
-    margin-bottom: 20px;
-}
-
-.file-input-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: var(--fifth-color);
-}
-
-.file-input-group input[type="file"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--fifth-color);
-    border-radius: 4px;
-    background-color: var(--primary-color);
-    color: var(--fifth-color);
-}
-
-.form-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid var(--fifth-color);
-}
-
-.btn-primary, .btn-secondary {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-}
-
-.btn-primary:hover {
-    background-color: var(--third-color);
-}
-
-.btn-secondary {
-    background-color: transparent;
-    color: var(--fifth-color);
-    border: 1px solid var(--fifth-color);
-}
-
-.btn-secondary:hover {
-    background-color: var(--fifth-color);
-    color: var(--primary-color);
-}
-
-/* LISTE ARTICLES */
-.article-card {
-    background-color: var(--secondary-color);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border: 1px solid var(--fifth-color);
-}
-
-.article-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-}
-
-.article-header {
+.section-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    position: relative;
+    justify-content: center;
+    margin-bottom: 0;
 }
 
-.article-header h3 {
-    margin: 0;
-    font-size: 1.3em;
-    color: var(--fifth-color);
-    flex: 1;
+.file-info {
+    font-size: 0.9em;
+    color: var(--thirteenth-color);
+    margin-top: 5px;
 }
 
-.date {
+.publication-info {
     color: var(--thirteenth-color);
     font-size: 0.9em;
-    white-space: nowrap;
+    margin-top: 0;
+    margin-bottom: 15px;
 }
 
-.actions {
+.lienArticles a,
+.liens-groupes .lien-article {
+    font-size: 1em;
+    padding: 0px;
+    text-decoration: none;
+    background: var(--primary-color);
+    color: var(--sixth-color);
+    display: block;
+    transition: background-color 0.3s, color 0.3s;
+    width: auto;
+}
+
+.liens-groupes {
     display: flex;
+    flex-direction: column;
     gap: 10px;
+    align-items: flex-start;
 }
 
-.btn-icon {
-    background: none;
-    border: none;
+.docs-input-popup {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#pdfPreview {
+    margin-top: 5px;
+}
+
+.pdf-info {
+    color: var(--ninth-color);
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pdf-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+.pdf-remove-btn {
+    width: 18px;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    transition: all 0.2s ease;
-    width: 36px;
-    height: 36px;
-}
-
-.btn-icon:hover {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-}
-
-.btn-icon.danger:hover {
-    background-color: #dc3545;
-    color: white;
-}
-
-.btn-small {
-    padding: 6px 12px;
-    font-size: 12px;
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-
-.btn-small:hover {
-    background-color: var(--third-color);
-}
-
-.article-card img {
-    width: 100%;
-    max-height: 200px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin: 15px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.article-card p {
-    color: var(--eleventh-color);
-    line-height: 1.5;
     margin: 0;
+    transition: transform 0.2s ease;
 }
 
-.empty-state {
-    text-align: center;
-    color: var(--thirteenth-color);
-    font-style: italic;
-    padding: 40px;
+.pdf-remove-btn:hover {
+    transform: scale(1.1);
 }
 
-.pagination {
+.btn-icons-article {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin: 30px 0;
+    position: absolute;
+    right: 27em;
 }
 
-.page-btn {
-    padding: 10px 16px;
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    text-decoration: none;
+#imagePreview img {
+    max-width: 120px;
+    max-height: 180px;
+    height: auto;
+    width: auto;
+    object-fit: contain;
     border-radius: 4px;
-    transition: all 0.3s ease;
-    font-weight: 500;
+    margin-top: 5px;
 }
 
-.page-btn:hover {
-    background-color: var(--third-color);
+#imagePreview img.portrait {
+    max-width: 80px;
+    max-height: 180px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .article-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .actions {
-        align-self: stretch;
-        justify-content: flex-end;
-    }
-
-    .article-card img {
-        max-height: 150px;
-    }
+#imagePreview img.landscape {
+    max-width: 120px;
+    max-height: 90px;
 }

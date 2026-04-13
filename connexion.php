@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <script>window.successToAlert = '<?= addslashes(htmlspecialchars($success_message)) ?>';</script>
     <?php endif; ?>
     <div class="main-connect" style="<?= $show_reset_form ? 'display:none;' : 'display:block;' ?>">
-        <h2 id="connexion">Connexion</h2>
+        <h2 class="title-bar">Connexion</h2>
         <div class="connect">
             <form action="" method="POST" enctype="multipart/form-data" class="login-form">
                 <div class="encad form-recup">

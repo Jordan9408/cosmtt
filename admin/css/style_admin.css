@@ -25,13 +25,7 @@ main {
 	justify-content: start;
     flex: 1;
 }
-/* main > form {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	/* flex: 1; */
-/* } */
+
 .table-container{
 	display: flex;
     flex-direction: row;
@@ -43,7 +37,6 @@ main {
     display: flex;
 }
 
-/* Vous pouvez également ajouter un style spécifique pour chaque tableau si nécessaire */
 .main-align-table table {
     margin: 10px; /* Espace entre les tableaux */
 }
@@ -54,12 +47,6 @@ main {
 	color:var(--eighth-color);
 }
 
-/* form {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-} */
 ul {
 	display: flex;
 	justify-content: space-around;
@@ -70,14 +57,11 @@ li {
 	list-style: none;
     border: 1px solid var(--secondary-color);
     border-radius: 5px;
-    /* padding: 6px 0px; */
     width: 250px;
 	height: 35px;
     text-align: center;
-    /* margin-top: 20px; */
     color: var(--fifth-color);
     background-color: var(--secondary-color);
-	/* display:flex; */
 }
 
 a {
@@ -124,35 +108,12 @@ h2 {
 	margin: 18px auto 36px;
 }
 
-/* -------------------------------- */
-/* #connexion {
-	margin-top: 2.4em;
-	padding: 11px;
-	background: var(--secondary-color);
-} */
-
-/* form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-content: stretch;
-    align-items: center;
-	border: var(--fifth-color) 2px solid;
-	border-radius: 15px;
-	background: var(--secondary-color);
-	margin: 0px 25em 2em 31em;
-	padding: 5px;
-} */
-
 .encad {
 	padding: 15px 62px;
-	/* width: 200px; */
-	/* margin-bottom: 59px; */
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	/* flex: 1; */
 	background: var(--secondary-color);
 	border: 1px solid var(--fifth-color);
 	border-radius: 20px;
@@ -177,61 +138,6 @@ h2 {
 	font-weight: 400;
 	padding: 5px;
 }
-
-/* 
-a:visited {
-	color: var(--primary-color);
-} */
-
-/* .connect-submit {
-	background: var(--primary-color);
-	width: 200px;
-	padding: 10px;
-	margin-top: 5px;
-	cursor: pointer;
-	border: none;
-	border-radius: 7px;
-	margin: 10px auto 0px auto;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	border: 2px solid var(--fifth-color);
-}
-
-.connect-submit:hover {
-	color: var(--sixth-color);
-
-}
-
-.connect-submit:active {
-	background: var(--secondary-color);
-	color: var(--sixth-color);
-	box-shadow: 1px 1px 1px, inset 1px 1px 1px;
-}
-
-input[type="submit"] {
-	background: var(--primary-color);
-	padding: 10px;
-	margin-top: 5px;
-	cursor: pointer;
-	border: none;
-	border-radius: 7px;
-	margin: 10px auto 0px auto;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	border: 2px solid var(--fifth-color);
-}
-
-input[type="submit"]:hover {
-	color: var(--sixth-color);
-}
-
-input[type="submit"]:active {
-	background: var(--secondary-color);
-	color: var(--sixth-color);
-	box-shadow: 1px 1px 1px, inset 1px 1px 1px;
-} */
 
 .form input {
 	width: 200px;
@@ -260,7 +166,6 @@ input[type="submit"]:active {
 
 .link {
 	background-color: var(--secondary-color);
-	/* padding: 10px 20px; */
 	border-radius: 6px;
 	-webkit-text-decoration: 0;
 	text-decoration: 0;
@@ -272,7 +177,6 @@ a.link {
 
 body {
 	background-color: var(--primary-color);
-	/* min-height: 100vh; */
 }
 
 #container {
@@ -304,20 +208,10 @@ table tr {
 }
 
 #menu_btn {
-	/* width: 200px; */
 	display: flex;
 	justify-content: space-around;
-	margin: 0 25em;
-	/* flex: 1; */
-	
+	margin: 0 25em;	
 }
-
-/* POPUP */
-/* #showPopup {
-	padding: 5px;
-	border-radius: 5px;
-	background: var(--secondary-color);
-} */
 
 /* Styles pour la popup */
 
@@ -356,24 +250,8 @@ table tr {
 	text-align: center;
 }
 
-/* .input-submit {
-    width: 229px;
-	width: 300px;
-    cursor: pointer;
-    font-weight: bold;
-    margin: 3px auto;
-} */
-
-/* .input-submit:active {
-    background-color: var(--secondary-color);
-	border: 1px solid var(--fifth-color);
-	border-radius: 5px;
-	box-shadow: inset 1px 1px var(--fifth-color);
-} */
-
 .form-group {
 	text-align: left;
-	/* margin: 10px 45px; */
 }
 
 /* Calendrier styles */
@@ -428,7 +306,6 @@ table tr {
     display: flex;
     justify-content: center;
     padding: 5px;
-    /* margin: 5px; */
 	margin: 0 35px;
     border-radius: 5px;
     background-color: var(--secondary-color);
@@ -443,7 +320,6 @@ table tr {
     font-size: 1.5em;
     padding: 10px 0;
     text-align: center;
-    /* margin-top: 10px; */
     margin-bottom: 10px;
 }
 /* championnat */

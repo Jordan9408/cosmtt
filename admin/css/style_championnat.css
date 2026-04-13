@@ -103,8 +103,6 @@ table.classement tr:nth-child(even) {
 
 /* ==================== CALENDRIER STYLES ==================== */
 
-
-
 table.calendrier {
     border-collapse: collapse;
     margin: 0 auto;
@@ -151,7 +149,6 @@ table.calendrier td {
 .colonne-retour {
     display: flex;
     flex-direction: column;
-    /* min-width: 45%; */
     margin-bottom: 10px;
 }
 
@@ -205,7 +202,6 @@ table.calendrier td {
     border-collapse: collapse;
     width: 368px;
     height: 177px;
-    /* margin: 0px; */
 }
 
 .journee-table thead tr:first-child th {
@@ -267,7 +263,6 @@ table.calendrier td {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    /* margin: 20px 0 20px auto; */
     padding: 5px 10px;
     position: absolute;
     right: 20px;
@@ -284,208 +279,3 @@ table.calendrier td {
     color: var(--fifth-color);
     width: 90px;
 }
-
-/* .no-journee-message {
-    text-align: center;
-    font-style: italic;
-    color: #666;
-    margin: 20px auto;
-    width: fit-content;
-} */
-
-/* ==================== RESPONSIVE STYLES ==================== */
-
-/* Responsive Styles */
-/* @media (max-width: 1024px) {
-.deux-colonnes-calendrier {
-    margin: 20px 10px;
-    gap: 10px;
-}
-
-.colonne-aller,
-.colonne-retour {
-    min-width: 40%;
-}
-
-.journee-table {
-    width: 100%;
-    max-width: 300px;
-}
-
-.poule-select {
-    position: static;
-    margin: 20px auto;
-    justify-content: center;
-}
-
-.title-bar {
-    font-size: 1.2em;
-    padding: 8px;
-}
-
-table.classement th,
-table.classement td {
-    padding: 4px 6px;
-    font-size: 0.9em;
-}
-
-.journee-table th,
-.journee-table td {
-    padding: 3px 6px;
-    font-size: 0.8em;
-}
-}
-
-@media (max-width: 768px) {
-.deux-colonnes-calendrier {
-    flex-direction: column;
-    margin: 20px 5px;
-    gap: 20px;
-}
-
-.colonne-aller,
-.colonne-retour {
-    min-width: unset;
-    width: 100%;
-}
-
-.journee-table {
-    width: 100%;
-    max-width: none;
-    height: auto;
-}
-
-.journee-table th,
-.journee-table td {
-    padding: 4px 8px;
-    font-size: 0.85em;
-}
-
-.delete-icons {
-    width: 20px;
-    right: 10px;
-}
-
-.poule-select {
-    position: static;
-    margin: 20px auto;
-    justify-content: center;
-}
-
-.title-bar {
-    font-size: 1.1em;
-    padding: 6px;
-    margin-top: 10px;
-    margin-bottom: 5px;
-}
-
-table.classement,
-table.calendrier {
-    width: 100%;
-    margin: 0 5px 20px 5px;
-    font-size: 0.85em;
-}
-
-table.classement th,
-table.classement td,
-table.calendrier th,
-table.calendrier td {
-    padding: 4px 6px;
-}
-
-.lienShowPopup {
-    padding: 8px 12px;
-    font-size: 0.9em;
-    margin: 5px;
-}
-
-.popup-card {
-    width: 95%;
-    max-width: none;
-}
-
-.form-group {
-    gap: 8px;
-}
-
-.numJournée {
-    flex-direction: column;
-    gap: 8px;
-}
-
-.dateDebut,
-.dateFin,
-.Journée {
-    width: 100%;
-}
-
-.matchs {
-    flex-direction: column;
-    gap: 8px;
-}
-
-.matchs > .selectEquipes,
-.score {
-    width: 100%;
-}
-
-.buttons-row {
-    flex-direction: column;
-    gap: 8px;
-}
-
-.ajoutRencontreBtn,
-.supRencontreBtn,
-.type-btn {
-    width: 100%;
-}
-
-.type-journee-select {
-    flex-direction: column;
-    gap: 8px;
-}
-}
-
-@media (max-width: 480px) {
-.title-bar {
-    font-size: 1em;
-    padding: 5px;
-}
-
-table.classement,
-table.calendrier {
-    font-size: 0.8em;
-}
-
-table.classement th,
-table.classement td,
-table.calendrier th,
-table.calendrier td {
-    padding: 3px 4px;
-}
-
-.journee-table th,
-.journee-table td {
-    padding: 3px 6px;
-    font-size: 0.8em;
-}
-
-.lienShowPopup {
-    padding: 6px 10px;
-    font-size: 0.85em;
-}
-
-.popup-card {
-    width: 98%;
-}
-
-.form-group {
-    gap: 6px;
-}
-
-.buttons-row {
-    gap: 6px;
-}
-}
-*/
-/* FIN champ.css */
