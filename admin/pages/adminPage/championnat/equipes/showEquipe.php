@@ -1,120 +1,84 @@
 <?php
-
-// Inclusion des fichiers nécessaires
-require_once dirname(__DIR__, 3) . '/connect_ddb.php';
-require_once dirname(__DIR__, 3) . '/parts/header.php';
+// 1. Inclusions de sécurité et de configuration de l'environnement
 require_once dirname(__DIR__, 4) . '/includes/security.php';
+require_once dirname(__DIR__, 4) . '/includes/session_check.php';
+require_once dirname(__DIR__, 4) . '/includes/ErrorMessages.php';
+require_once dirname(__DIR__, 3) . '/connect_ddb.php';
 
-// Chargement du manager
-define('CLASSPAGES_PATH', dirname(__DIR__, 3) . '/classPages/equipes/');
-require_once CLASSPAGES_PATH . 'EquipesManager.php';
+// 2. Chargement et exécution du Header (génère ou vérifie le jeton CSRF en session)
+require_once dirname(__DIR__, 3) . '/parts/header.php';
 
-$equipeManager = new EquipeManager($conn);
-$message = null;
+// 3. Inclusion du contrôleur original
+require_once dirname(__DIR__, 3) . '/classPages/equipes/EquipeController.php';
+use Admin\ClassPages\Equipes\EquipeController;
 
-// Gestion de l'ajout d'équipe
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nomEquipe'], $_POST['poule'])) {
-    $equipeManager->ajouterEquipe($_POST['nomEquipe'], $_POST['poule']);
-}
+/**
+ * Classe PageShowEquipe
+ * Chef d'orchestre chargé d'initialiser, traiter et afficher la page de gestion des équipes.
+ */
+class PageShowEquipe 
+{
+    private ?string $message = null;
+    private mixed $manager = null;
+    private string $csrfToken = '';
 
-// Gestion de la suppression d'équipe
-if (isset($_GET['action'], $_GET['id']) && $_GET['action'] === 'delete') {
-    if (!in_array($role, ['superAdmin', 'admin'])) {
-        header('HTTP/1.1 403 Forbidden');
-        die('Accès non autorisé à la suppression');
+    /**
+     * Le constructeur utilise la promotion de propriété (PHP 8+)
+     * pour injecter automatiquement la connexion PDO et le rôle de l'utilisateur.
+     */
+    public function __construct(
+        private mixed $dbConnection, 
+        private string $userRole
+    ) {}
+
+    /**
+     * Étape 1 : Récupération sécurisée du jeton CSRF après l'inclusion du Header
+     */
+    private function init(): void 
+    {
+        $this->csrfToken = $_SESSION['csrf_token'] ?? '';
     }
 
-    $equipe_id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+    /**
+     * Étape 2 : Transmission des données au contrôleur et exécution de la logique métier
+     */
+    private function handle(): void 
+    {
+        $controller = new EquipeController($this->dbConnection, $this->csrfToken, $this->userRole);
+        
+        $this->message = $controller->handleRequest();
+        $this->manager = $controller->getManager();
+    }
 
-    if ($equipe_id && $equipe_id > 0) {
-        $equipeManager->supprimerEquipe($equipe_id);
-    } else {
-        header("Location: showEquipe.php?message=InvalidRequest");
-        exit;
+    /**
+     * Étape 3 : Déballage des variables et inclusion de l'interface graphique (Vue + Footer)
+     */
+    private function render(): void 
+    {
+        // Extraction locale pour assurer une compatibilité transparente avec "showEquipe.view.php"
+        $csrfToken = $this->csrfToken;
+        $message = $this->message;
+        $manager = $this->manager;
+
+        // Rendu de la vue
+        require_once dirname(__DIR__, 3) . '/classPages/equipes/showEquipe.view.php';
+
+        // Rendu du pied de page
+        include_once dirname(__DIR__, 3) . '/parts/footer.php';
+    }
+
+    /**
+     * Point d'entrée principal orchestrant le cycle de vie complet de la page
+     */
+    public function run(): void 
+    {
+        $this->init();
+        $this->handle();
+        $this->render();
     }
 }
 
-// Récupération du message d'erreur si présent
-if (isset($_GET['message'])) {
-    $messages = [
-        'EmptyFields' => "Veuillez remplir tous les champs obligatoires.",
-        'EquipeExists' => "L'équipe existe déjà dans la poule sélectionnée.",
-        'DeleteSuccess' => "",
-        'DeleteFail' => "Échec de la suppression.",
-        'InvalidRequest' => "Requête invalide."
-    ];
-
-    $message = $messages[$_GET['message']] ?? "Une erreur inconnue s'est produite.";
-}
-?>
-<!DOCTYPE html>
-<html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des équipes</title>
-    <link rel="stylesheet" href="/cosmtt/admin/css/popup.css">
-</head>
-
-<body>
-    <h2>Liste des équipes</h2>
-
-    <main>
-        <a href="javascript:void(0);" id="showPopup">Ajouter une équipe</a>
-
-        <!-- Popup d'ajout d'équipe -->
-        <div class="popup" id="teamPopup">
-            <div class="popup-card">
-                <div class="popup-content">
-                    <button id="closePopup" title="Fermer">&times;</button>
-                    <h3>AJOUTER UNE ÉQUIPE</h3>
-                    <form method="POST" action="" class="form-ajout">
-                        <div class="form-group">
-                            <input type="text" name="nomEquipe" class="input-popup"
-                                placeholder="Nom de l'équipe" required>
-                            <label for="poule">Division:</label>
-                            <select name="poule" id="poule" required>
-                                <option value="PouleA">Poule A</option>
-                                <option value="PouleB">Poule B</option>
-                            </select>
-                        </div>
-                        <input type="submit" value="Ajouter" class="input-submit" name="send">
-                    </form>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <main>
-        <!-- Affichage des équipes -->
-        <div class="table-container">
-            <section class="show-tab">
-                <?php $equipeManager->displayEquipes("PouleA"); ?>
-            </section>
-            <section class="show-tab">
-                <?php $equipeManager->displayEquipes("PouleB"); ?>
-            </section>
-        </div>
-    </main>
-
-    <script src="/cosmtt/admin/js/app.js"></script>
-
-    <?php if ($message): ?>
-        <script>
-            // Affichage du message d'erreur/succès en alert
-            alert(<?php echo json_encode($message, JSON_HEX_APOS | JSON_HEX_QUOT); ?>);
-
-            // Nettoyage de l'URL pour éviter la réaffichage du message au refresh
-            if (window.history.replaceState) {
-                window.history.replaceState(null, null, window.location.pathname);
-            }
-        </script>
-    <?php endif; ?>
-    <?php
-        // Inclusion du footer
-        // include_once dirname(__DIR__, 4) . '/html_partials/footer.php';
-    ?>
-</body>
-
-</html>
+// --- Instanciation et exécution automatique ---
+// $conn (PDO) et $role proviennent de connect_ddb.php et session_check.php
+$page = new PageShowEquipe($conn, $role);
+$page->run();

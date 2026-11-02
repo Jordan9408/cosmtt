@@ -1,3 +1,48 @@
+@import url('/cosmtt/admin/css/colors_group.css');
+
+/* ============== BOUTONS D'ACTION (AJOUTER, MODIFIER, ENREGISTRER, ANNULER) ============== */
+/* Conteneur principal des boutons d'action (Ajouter, Modifier, Enregistrer, Annuler) */
+.lienPopup {
+    display: flex;
+    justify-content: center;
+    /* Centre 1 bouton seul OU répartit le groupe */
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8em;
+    /* Écart de 70px entre 2 boutons en mode Desktop */
+    margin: 20px auto;
+    width: 100%;
+}
+
+/* Style des liens transformés en boutons en ligne (style menu/header) */
+.lienShowPopup {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    /* Largeur fixe de 250px */
+    height: 30px;
+    /* Hauteur fixe de 30px */
+    box-sizing: border-box;
+    text-decoration: none;
+    text-align: center;
+    /* font-weight: bold; */
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+
+    /* Couleurs et bordures (à adapter si nécessaire avec vos variables de thème) */
+    background-color: var(--secondary-color);
+    color: var(--fifty-color);
+    border: 1px solid var(--secondary-color);
+}
+
+/* .lienShowPopup:hover {
+    background-color: var(--secondary-color);
+    color: var(--fifty-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
 
 /* ==================== POPUP STYLES ==================== */
 
@@ -43,15 +88,20 @@
     width: 2.3em;
 }
 
-.matchs > .selectEquipes {
+.matchs>.selectEquipes {
     width: 8em;
 }
 
 .tabJourn {
-    background: #fff;
+    background: var(--primary-color);
     width: 1em;
     font-size: 14px;
     white-space: nowrap;
+}
+
+.team-error {
+    color: var(--eighth-color);
+    font-weight: bold;
 }
 
 .buttons-row {
@@ -68,48 +118,34 @@
 }
 
 .selected {
-    background-color: #cfcfcf;
-    box-shadow: inset 1px 1px 1px 1px #cfcfcf;
-}
-
-.clear-btn {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 12px;
-    padding: 2px 5px;
-    margin-left: 5px;
+    background-color: var(--fourth-color);
+    box-shadow: inset 1px 1px 1px 1px var(--twelveth-color);
 }
 
 /* ==================== CLASSEMENT STYLES ==================== */
 
 table.classement {
     border-collapse: collapse;
-    margin: 0 auto;
-    margin-bottom: 30px;
+    margin: 30px auto;
 }
 
 table.classement th,
 table.classement td {
-    border: 1px solid black;
+    border: 1px solid var(--fifth-color);
     padding: 5px 10px;
     text-align: center;
 }
 
 table.classement th {
-    background-color: #0b3d91;
-    color: white;
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
 }
 
 table.classement tr:nth-child(even) {
-    background-color: #d3d3d3;
+    background-color: var(--fourth-color);
 }
 
 /* ==================== CALENDRIER STYLES ==================== */
-
-
 
 table.calendrier {
     border-collapse: collapse;
@@ -119,14 +155,14 @@ table.calendrier {
 
 table.calendrier th,
 table.calendrier td {
-    border: 1px solid black;
+    border: 1px solid var(--fifth-color);
     padding: 5px 10px;
     text-align: center;
 }
 
 table.calendrier th {
-    background-color: #0b3d91;
-    color: white;
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
     font-size: 0.9em;
 }
 
@@ -146,22 +182,24 @@ table.calendrier td {
 
 .deux-colonnes-calendrier {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
-    margin: 20px 20em;
+    gap: 8em;
+    margin: 0px auto 0;
 }
 
 .colonne-aller,
 .colonne-retour {
-    flex: 1;
-    min-width: 45%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
 }
 
 .colonne-titre {
     text-align: center;
-    background-color: #3f51b5;
-    color: white;
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -169,7 +207,7 @@ table.calendrier td {
 
 .delete-link {
     float: right;
-    color: #ff4444;
+    color: var(--eighth-color);
     text-decoration: none;
     width: 0px;
     height: 0px;
@@ -188,7 +226,7 @@ table.calendrier td {
     text-align: center;
     margin-bottom: 10px;
     font-size: 1.2em;
-    color: #0b3d91;
+    color: var(--sixth-color);
 }
 
 .aller-column .journee-wrapper,
@@ -201,7 +239,7 @@ table.calendrier td {
 .journee-wrapper {
     position: relative;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
 }
 
 .journee-table {
@@ -211,8 +249,8 @@ table.calendrier td {
 }
 
 .journee-table thead tr:first-child th {
-    background-color: #0b3d91;
-    color: white;
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
     font-weight: bold;
     font-size: 0.95em;
     text-align: center;
@@ -221,20 +259,20 @@ table.calendrier td {
 
 .journee-table th,
 .journee-table td {
-    border: 1px solid black;
+    border: 1px solid var(--fifth-color);
     padding: 4px 8px;
     height: 15px;
     text-align: center;
 }
 
 .journee-table th {
-    background-color: #0b3d91;
-    color: white;
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
     font-size: 0.9em;
 }
 
 .journee-table td:empty {
-    background-color: #f0f0f0;
+    background-color: var(--eleven-color);
 }
 
 .titreJour {
@@ -265,7 +303,39 @@ table.calendrier td {
     cursor: pointer;
 }
 
+/* ==================== SÉLECTEUR DE POULE ====================
+   .title-bar-wrapper est le conteneur positionné (position: relative)
+   qui sert de repère unique à .poule-select, en desktop comme en mobile.
+   Cela évite toute dépendance à l'état de positionnement de <main>
+   (qui passe lui-même en position: relative dans le media query mobile
+   de style.css et changeait donc le bloc conteneur de .poule-select). */
+
+.title-bar-wrapper {
+    position: relative;
+}
+
 .poule-select {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    font-family: Arial, sans-serif;
+}
+
+.poule-select select {
+    padding: 4px 6px;
+    font-size: 1em;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: var(--fifth-color);
+    width: 90px;
+}
+
+/* .poule-select {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -275,219 +345,425 @@ table.calendrier td {
     right: 20px;
     top: 100px;
     font-family: Arial, sans-serif;
-}
+} */
 
 .poule-select select {
     padding: 4px 6px;
     font-size: 1em;
     border-radius: 4px;
     cursor: pointer;
-    background-color: white;
-    color: black;
+    background-color: var(--primary-color);
+    color: var(--fifth-color);
     width: 90px;
 }
 
-.no-journee-message {
-    text-align: center;
-    font-style: italic;
-    color: #666;
-    margin: 20px auto;
-    width: fit-content;
-}
-
-/* ==================== RESPONSIVE STYLES ==================== */
-
-/* Responsive Styles */
-/* @media (max-width: 1024px) {
-.deux-colonnes-calendrier {
-    margin: 20px 10px;
-    gap: 10px;
-}
-
-.colonne-aller,
-.colonne-retour {
-    min-width: 40%;
-}
-
-.journee-table {
-    width: 100%;
-    max-width: 300px;
-}
-
-.poule-select {
-    position: static;
-    margin: 20px auto;
-    justify-content: center;
-}
-
-.title-bar {
-    font-size: 1.2em;
-    padding: 8px;
-}
-
-table.classement th,
-table.classement td {
-    padding: 4px 6px;
-    font-size: 0.9em;
-}
-
-.journee-table th,
-.journee-table td {
-    padding: 3px 6px;
-    font-size: 0.8em;
-}
-}
-
-@media (max-width: 768px) {
-.deux-colonnes-calendrier {
-    flex-direction: column;
-    margin: 20px 5px;
-    gap: 20px;
-}
-
-.colonne-aller,
-.colonne-retour {
-    min-width: unset;
-    width: 100%;
-}
-
-.journee-table {
-    width: 100%;
-    max-width: none;
-    height: auto;
-}
-
-.journee-table th,
-.journee-table td {
-    padding: 4px 8px;
-    font-size: 0.85em;
-}
-
-.delete-icons {
-    width: 20px;
-    right: 10px;
-}
-
-.poule-select {
-    position: static;
-    margin: 20px auto;
-    justify-content: center;
-}
-
-.title-bar {
-    font-size: 1.1em;
-    padding: 6px;
-    margin-top: 10px;
-    margin-bottom: 5px;
-}
-
-table.classement,
-table.calendrier {
-    width: 100%;
-    margin: 0 5px 20px 5px;
-    font-size: 0.85em;
-}
-
-table.classement th,
-table.classement td,
-table.calendrier th,
-table.calendrier td {
-    padding: 4px 6px;
-}
-
 .lienShowPopup {
-    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 250px;
+    min-width: 220px;
     font-size: 0.9em;
-    margin: 5px;
+    margin: 15px 0;
 }
 
-.popup-card {
-    width: 95%;
-    max-width: none;
+.input-submit:active {
+    background-color: var(--third-color);
+    box-shadow: 0 1px 0px rgba(0, 0, 0, 0);
+    /* transform: scale(0.98); */
 }
 
-.form-group {
-    gap: 8px;
+/* ==================== RESPONSIVE TV / GRANDS ÉCRANS (≥ 1600px) ==================== */
+@media (min-width: 1600px) {
+
+    .calendrier-container {
+        max-width: 1300px;
+    }
+
+    .deux-colonnes-calendrier {
+        gap: 10em;
+    }
+
+    .journee-table {
+        width: 420px;
+        height: auto;
+        font-size: 1.05em;
+    }
+
+    .journee-table th,
+    .journee-table td {
+        padding: 8px 12px;
+    }
+
+    table.classement {
+        font-size: 1.1em;
+    }
+
+    table.classement th,
+    table.classement td {
+        padding: 8px 14px;
+    }
+
+    .poule-select select {
+        width: 110px;
+        font-size: 1.1em;
+    }
+
+    .buttons-container {
+        top: 220px;
+        right: 40px;
+        gap: 14px;
+    }
+
+    .buttons-container button {
+        padding: 10px 16px;
+        font-size: 1.05em;
+    }
 }
 
-.numJournée {
-    flex-direction: column;
-    gap: 8px;
+/* ==================== RESPONSIVE TABLETTE PAYSAGE (≤ 1300px) ==================== */
+@media (max-width: 1300px) {
+
+    .deux-colonnes-calendrier {
+        gap: 4em;
+    }
 }
 
-.dateDebut,
-.dateFin,
-.Journée {
-    width: 100%;
+/* ==================== RESPONSIVE TABLETTE PAYSAGE (≤ 1100px) ==================== */
+@media (max-width: 1100px) {
+
+    .deux-colonnes-calendrier {
+        gap: 2em;
+    }
+
+    .buttons-container {
+        right: 10px;
+    }
 }
 
-.matchs {
-    flex-direction: column;
-    gap: 8px;
+/* ==================== RESPONSIVE TABLETTE PAYSAGE (≤ 1000px) ==================== */
+@media (max-width: 1000px) {
+    .journee-table {
+        width: 100%;
+        max-width: 368px;
+        height: auto;
+    }
+
+    table.classement {
+        font-size: 0.9em;
+    }
 }
 
-.matchs > .selectEquipes,
-.score {
-    width: 100%;
+/* ==================== RESPONSIVE TABLETTE PORTRAIT & MOBILE GRAND (≤ 900px) ==================== */
+@media (max-width: 900px) {
+
+    .lienPopup {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+        /* max-width: 260px; */
+        max-width: 300px;
+    }
+
+    .deux-colonnes-calendrier {
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+    }
+
+    .colonne-aller,
+    .colonne-retour {
+        width: 100%;
+        margin: auto;
+    }
+
+    .journee-table {
+        width: 100%;
+        max-width: 368px;
+    }
+
+    table.classement {
+        font-size: 0.85em;
+    }
+
+    table.classement th,
+    table.classement td {
+        padding: 4px 6px;
+    }
+
+    /* --- Mode édition : selects/inputs dans le tableau calendrier --- */
+    .journee-table .selectEquipes {
+        width: 100%;
+        max-width: 85px;
+        font-size: 0.75em;
+    }
+
+    .journee-table .score {
+        width: 2em;
+        font-size: 0.8em;
+    }
+
+    /* --- Liens Enregistrer/Annuler ou Ajouter/Modifier Journée --- */
+    .lienShowPopup {
+        width: 80%;
+        max-width: 260px;
+        margin: 0;
+    }
+
+    /* --- Popup "Ajouter/Modifier Journée" --- */
+    .popup-card {
+        width: 90vw;
+        max-width: 320px;
+        margin: 60px auto;
+        box-sizing: border-box;
+    }
+
+    .form-group {
+        margin: 10px 16px;
+    }
+
+    .numJournée {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .Journée,
+    .dateDebut,
+    .dateFin {
+        width: 100%;
+        max-width: 240px;
+        box-sizing: border-box;
+    }
+
+    .matchs {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .matchs>.selectEquipes {
+        width: 100%;
+        max-width: 240px;
+    }
+
+    .input-popup {
+        width: 100%;
+        max-width: 260px;
+        box-sizing: border-box;
+    }
+
+    .input-submit {
+        width: 100%;
+        max-width: 260px;
+    }
+
+    /* --- Boutons flottants : on repasse en flux normal pour ne pas
+       chevaucher le contenu sur petit écran --- */
+    .buttons-container {
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 20px auto;
+        top: auto;
+        right: auto;
+    }
 }
 
-.buttons-row {
-    flex-direction: column;
-    gap: 8px;
+/* ==================== RESPONSIVE MOBILE EN PAYSAGE (hauteur réduite) ====================
+   Cible les téléphones tournés en paysage (largeur souvent > 480px mais
+   hauteur d'écran très limitée) : on garde le flux compact et on rend
+   la popup défilable pour ne jamais dépasser la hauteur visible. */
+@media (orientation: landscape) and (max-height: 500px) {
+
+    .popup-card {
+        margin: 10px auto;
+        max-height: 88vh;
+        overflow-y: auto;
+    }
+
+    .form-group {
+        margin: 8px 16px;
+    }
+
+    .buttons-container {
+        position: static;
+        flex-direction: row;
+        justify-content: center;
+        margin: 10px auto;
+        gap: 8px;
+    }
+
+    .journee-table {
+        height: auto;
+    }
+
+    .journee-table th,
+    .journee-table td {
+        padding: 3px 6px;
+    }
+
+    table.classement {
+        margin: 15px auto;
+    }
+
+    table.calendrier,
+    table.classement {
+        margin: 30px auto;
+    }
 }
 
-.ajoutRencontreBtn,
-.supRencontreBtn,
-.type-btn {
-    width: 100%;
+/* ==================== RESPONSIVE GRAND MOBILE PORTRAIT (≤ 600px) ==================== */
+@media (max-width: 600px) {
+
+    .journee-table th,
+    .journee-table td {
+        font-size: 0.8em;
+        padding: 3px 5px;
+    }
+
+    table.classement {
+        font-size: 0.8em;
+    }
+
+    .poule-select select {
+        width: 85px;
+    }
+
+    .buttons-container button {
+        padding: 6px 10px;
+        font-size: 0.9em;
+    }
+
+    table.classement {
+        border-collapse: collapse;
+        margin: 30px auto;
+    }
 }
 
-.type-journee-select {
-    flex-direction: column;
-    gap: 8px;
-}
-}
-
+/* ==================== RESPONSIVE PETIT MOBILE (≤ 480px) ==================== */
 @media (max-width: 480px) {
-.title-bar {
-    font-size: 1em;
-    padding: 5px;
+
+    .journee-table th,
+    .journee-table td {
+        font-size: 0.75em;
+        padding: 3px 4px;
+    }
+
+    .journee-table th[colspan="4"] {
+        font-size: 0.8em;
+        padding: 4px 6px;
+    }
+
+    table.classement {
+        font-size: 0.75em;
+    }
+
+    table.classement th,
+    table.classement td {
+        padding: 3px 4px;
+    }
+
+    .poule-select {
+        top: 40%;
+        right: 5px;
+        padding: 0;
+    }
+
+    #select_poule {
+        padding: 0;
+    }
+
+    .poule-select select {
+        width: 80px;
+        font-size: 0.8em;
+    }
+
+    .journee-table .selectEquipes {
+        max-width: 70px;
+        font-size: 0.68em;
+    }
+
+    .journee-table td {
+        padding: 2px 3px;
+    }
+
+    .popup-card {
+        width: 94vw;
+        margin: 30px auto;
+    }
+
+    .buttons-container {
+        gap: 6px;
+    }
+
+    .buttons-container button {
+        padding: 5px 8px;
+        font-size: 0.85em;
+    }
+
+    table.classement {
+        border-collapse: collapse;
+        margin: 30px auto;
+        width: 100%;
+        max-width: 368px;
+    }
 }
 
-table.classement,
-table.calendrier {
-    font-size: 0.8em;
-}
+/* ==================== RESPONSIVE TRÈS PETIT MOBILE (≤ 360px) ==================== */
+@media (max-width: 360px) {
 
-table.classement th,
-table.classement td,
-table.calendrier th,
-table.calendrier td {
-    padding: 3px 4px;
-}
+    .journee-table th,
+    .journee-table td {
+        font-size: 0.68em;
+        padding: 2px 3px;
+    }
 
-.journee-table th,
-.journee-table td {
-    padding: 3px 6px;
-    font-size: 0.8em;
-}
+    .journee-table th[colspan="4"] {
+        font-size: 0.72em;
+        padding: 3px 4px;
+    }
 
-.lienShowPopup {
-    padding: 6px 10px;
-    font-size: 0.85em;
-}
+    table.classement {
+        font-size: 0.68em;
+    }
 
-.popup-card {
-    width: 98%;
-}
+    table.classement th,
+    table.classement td {
+        padding: 2px 3px;
+    }
 
-.form-group {
-    gap: 6px;
-}
+    .poule-select select {
+        width: 70px;
+        font-size: 0.85em;
+    }
 
-.buttons-row {
-    gap: 6px;
+    .journee-table .selectEquipes {
+        max-width: 60px;
+        font-size: 0.62em;
+    }
+
+    .lienShowPopup {
+        width: 90%;
+        max-width: 260px;
+        font-size: 0.9em;
+    }
+
+    .popup-card {
+        width: 96vw;
+        margin: 15px auto;
+    }
+
+    .input-popup,
+    .input-submit {
+        max-width: 100%;
+    }
+
+    table.classement {
+        border-collapse: collapse;
+        margin: 30px auto;
+        width: 100%;
+        max-width: 368px;
+    }
 }
-}
-*/
-/* FIN champ.css */

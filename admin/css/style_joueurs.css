@@ -1,9 +1,52 @@
-/* ==================== GENERAL STYLES ==================== */
+@import url('/cosmtt/admin/css/colors_group.css');
 
 #clas_joueurs {
+    margin: 0 0 20px;
+    width: 100%;
+    padding: 0 0px;
+}
+
+/* ============== BOUTONS D'ACTION (AJOUTER, MODIFIER, ENREGISTRER, ANNULER) ============== */
+/* Conteneur principal des boutons d'action (Ajouter, Modifier, Enregistrer, Annuler) */
+.lienPopup {
+    display: flex;
+    justify-content: center;
+    /* Centre 1 bouton seul OU répartit le groupe */
+    align-items: center;
+    gap: 70px;
+    /* Écart de 70px entre 2 boutons en mode Desktop */
     margin: 20px auto;
-    max-width: 1200px;
-    padding: 0 20px;
+    width: 100%;
+}
+
+/* Style des liens transformés en boutons en ligne (style menu/header) */
+.lienShowPopup {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    /* Largeur fixe de 250px */
+    height: 30px;
+    /* Hauteur fixe de 30px */
+    box-sizing: border-box;
+    text-decoration: none;
+    text-align: center;
+    /* font-weight: bold; */
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+
+    /* Couleurs et bordures (à adapter si nécessaire avec vos variables de thème) */
+    background-color: var(--secondary-color);
+    color: var(--fifty-color);
+    border: 1px solid var(--secondary-color);
+}
+
+.input-submit:active {
+    background-color: var(--third-color);
+    box-shadow: 0 1px 0px rgba(0, 0, 0, 0);
+    /* transform: scale(0.98); */
 }
 
 /* ==================== POPUP STYLES ==================== */
@@ -14,7 +57,7 @@
     margin-bottom: 10px;
 }
 
-.Joueur > * {
+.Joueur>* {
     width: 50%;
 }
 
@@ -24,11 +67,11 @@
     margin-bottom: 10px;
 }
 
-.niveauJoueur > * {
+.niveauJoueur>* {
     width: 98px;
 }
 
-.niveauJoueur > :nth-child(1) {
+.niveauJoueur> :nth-child(1) {
     width: 60px;
 }
 
@@ -40,14 +83,14 @@
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 }
 
 /* ==================== CLASSEMENT STYLES ==================== */
 
 #tabjoueurs {
     text-align: center;
-    width: 1200px;
+    width: 100%;
     margin: auto;
     border: none;
     border-collapse: collapse;
@@ -55,28 +98,35 @@
 
 #tabjoueurs th,
 #tabjoueurs td {
-    height: 44px;
+    height: 50px;
     vertical-align: middle;
 }
 
 .tabcouleur1 {
-    background-color: #ddd;
+    background-color: var(--fourth-color);
 }
 
 .tabcouleur2 {
-    background-color: #d2e9ff;
+    background-color: var(--seventh-color);
 }
 
 .pointsgagne {
-    color: #1b6e31;
+    color: var(--ninth-color);
 }
 
 .pointsperdu {
-    color: #FF3028;
+    color: var(--eighth-color);
 }
 
 .neutre {
-    color: #000;
+    color: var(--fifth-color);
+}
+
+.centrer_nom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .td_nom {
@@ -94,7 +144,7 @@
 .edit-input {
     box-sizing: border-box;
     padding: 2px;
-    border: 1px solid #000;
+    border: 1px solid var(--fifth-color);
     border-radius: 2px;
 }
 
@@ -103,7 +153,7 @@
     justify-content: center;
     text-align: center;
     width: 50%;
-    margin: auto;
+    margin: 10px auto;
 }
 
 #tabpoints {
@@ -111,8 +161,8 @@
 }
 
 #tabpoints tr th {
-    background-color: #036;
-    color: #f9f9f9;
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
     padding: 5px;
 }
 
@@ -126,28 +176,28 @@
 }
 
 .tabcouleur3 {
-    background-color: #ddd;
+    background-color: var(--fourth-color);
 }
 
 .tabcouleur4 {
-    background-color: #d2e9ff;
+    background-color: var(--seventh-color);
 }
 
 .edit-input-classement {
-    width: 150px;
+    width: 100%;
 }
 
 .edit-input-pts-debut-saison,
 .edit-input-pts-mensuel {
-    width: 180px;
+    width: 100%;
 }
 
 .evolution {
-    width: 200px;
+    width: 100%;
 }
 
 .error-message {
-    color: red;
+    color: var(--eighth-color);
     font-size: 12px;
     margin-top: 5px;
     font-weight: bold;
@@ -155,11 +205,189 @@
 
 /* Style pour les inputs en mode édition afin d'éviter le changement de fond par l'autofill du navigateur */
 input.edit-input-nom:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px white inset;
-    -webkit-text-fill-color: #2b66dd;
+    -webkit-box-shadow: 0 0 0px 1000px var(--primary-color) inset;
+    -webkit-text-fill-color: var(--tenth-color);
 }
 
 input.edit-input-nom:-moz-autofill {
-    box-shadow: 0 0 0px 1000px white inset;
-    color: #2b66dd !important;
+    box-shadow: 0 0 0px 1000px var(--primary-color) inset;
+    color: var(--tenth-color) !important;
+}
+
+/* ==========================================================================
+   Base & Structuration du Tableau à Largeurs Égales
+   ========================================================================== */
+
+a {
+    width: 100%;
+}
+
+/* Force le navigateur à appliquer des largeurs strictement égales à toutes les colonnes */
+#tabjoueurs {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* En mode normal (non-édition), le tableau a 5 colonnes = 20% chacune */
+#tabjoueurs th,
+#tabjoueurs td {
+    width: 20%;
+    box-sizing: border-box;
+    text-align: center;
+    word-wrap: break-word;
+    /* Évite les débordements de texte */
+}
+
+/* En mode Édition avec SuperAdmin (6 colonnes : 100 / 6 = 16.66%) */
+#tabjoueurs tr:has(th:nth-child(6)) th,
+#tabjoueurs tr:has(td.delete) td {
+    width: 100%;
+}
+
+/* ==========================================================================
+   Gestion Flexbox pour Nom / Prénom (Retour à la ligne automatique)
+   ========================================================================== */
+
+/* Mode Affichage : Flexbox pour forcer le prénom dessous si la colonne (20% ou 16.66%) est étroite */
+#tabjoueurs td.td_nom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    /* S'adapte à la cellule de 20% */
+    box-sizing: border-box;
+}
+
+/* Mode Édition : Conteneur des 2 inputs */
+#tabjoueurs td.centrer_nom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 2px 0;
+    padding: 2px 0;
+}
+
+#tabjoueurs td.centrer_nom .edit-input-nom {
+    flex: 1 1 100%;
+    /* Prend toute la largeur disponible dans la cellule pour forcer l'un sous l'autre si nécessaire */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ajustement des champs de saisie pour qu'ils ne dépassent pas de leur colonne égale */
+.edit-input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* Alignement de l'icône de suppression */
+#tabjoueurs td.delete {
+    text-align: center;
+    vertical-align: middle;
+}
+
+#tabjoueurs .delete-icon {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+/* ==========================================================================
+   1. TABLETTE PAYSAGE & ÉCRANS INTERMÉDIAIRES (<= 1024px)
+   ========================================================================== */
+@media screen and (max-width: 1024px) {
+
+    #tabjoueurs,
+    #bareme {
+        width: 100% !important;
+    }
+
+    #tabjoueurs th,
+    #tabjoueurs td {
+        padding: 8px 2px;
+        font-size: 0.85em;
+    }
+}
+
+
+/* ==========================================================================
+   2. TABLETTE PORTRAIT (<= 768px)
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+
+    #tabjoueurs th,
+    #tabjoueurs td {
+        padding: 6px 1px;
+        font-size: 0.78em;
+    }
+
+    /* Modale & Boutons */
+    .lienPopup {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .lienShowPopup {
+        margin: 0;
+        padding: 8px 15px;
+    }
+
+    .popup-card {
+        width: 90%;
+        max-width: 450px;
+        margin: 5% auto;
+        padding: 15px;
+    }
+}
+
+
+/* ==========================================================================
+   3. MOBILE GRAND ET PETIT (Portrait & Paysage <= 576px)
+   ========================================================================== */
+@media screen and (max-width: 576px) {
+
+    #tabjoueurs th,
+    #tabjoueurs td {
+        font-size: 0.7em;
+        padding: 4px 1px;
+    }
+
+    /* Sécurité si les colonnes deviennent très étroits sur petit mobile */
+    main#clas_joueurs,
+    section.clas_joueurs {
+        font-size: x-small;
+        padding: 0;
+    }
+}
+
+
+/* ==========================================================================
+   4. GRAND ÉCRAN / TV (>= 1600px)
+   ========================================================================== */
+@media screen and (min-width: 1600px) {
+    .title-bar {
+        font-size: 1.8em;
+    }
+
+    #tabjoueurs,
+    #bareme {
+        font-size: 1.1em;
+    }
+
+    #tabjoueurs th,
+    #tabjoueurs td {
+        padding: 12px 6px;
+    }
 }

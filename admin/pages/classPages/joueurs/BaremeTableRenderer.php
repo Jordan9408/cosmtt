@@ -1,11 +1,16 @@
 <?php
 
 /**
- * Renderer pour le tableau du barème de points
+ * Renderer pour le tableau du barème de points.
  */
-class BaremeTableRenderer
+final class BaremeTableRenderer
 {
-    private array $baremeData = [
+    /**
+     * Données du barème.
+     *
+     * @var list<array{ecart:string,vn:string,dn:string,va:string,da:string,class:string}>
+     */
+    private const BAREME_DATA = [
         ['ecart' => '0-24', 'vn' => '+6', 'dn' => '-5', 'va' => '+6', 'da' => '-5', 'class' => 'tabcouleur3'],
         ['ecart' => '25-49', 'vn' => '+5.5', 'dn' => '-4.5', 'va' => '+7', 'da' => '-6', 'class' => 'tabcouleur4'],
         ['ecart' => '50-99', 'vn' => '+5', 'dn' => '-4', 'va' => '+8', 'da' => '-7', 'class' => 'tabcouleur3'],
@@ -18,65 +23,67 @@ class BaremeTableRenderer
     ];
 
     /**
-     * Affiche le tableau du barème
+     * Affiche le tableau du barème.
      */
     public function render(): void
     {
         ?>
-        <h2 class="title-bar">Barème de points</h2>
-        <main class="clas_joueurs">
-            <table id="bareme">
-                <tbody id="tabpoints">
-                    <?php $this->renderHeader(); ?>
-                    <?php $this->renderRows(); ?>
-                </tbody>
-            </table>
-        </main>
-        <?php
+<div class="title-bar">Barème de points</div>
+<section class="clas_joueurs">
+    <table id="bareme">
+        <tbody id="tabpoints">
+            <?php $this->renderHeader(); ?>
+            <?php $this->renderRows(); ?>
+        </tbody>
+    </table>
+</section>
+<?php
     }
 
     /**
-     * Affiche l'en-tête du tableau
+     * Affiche l'en-tête du tableau.
      */
     private function renderHeader(): void
     {
         ?>
-        <tr>
-            <th colspan="5">COMPTAGE DES POINTS</th>
-        </tr>
-        <tr>
-            <th>écart de points</th>
-            <th>VICTOIRES NORMALES</th>
-            <th>DÉFAITES NORMALES</th>
-            <th>VICTOIRES ANORMALES</th>
-            <th>DÉFAITES ANORMALES</th>
-        </tr>
-        <?php
+<tr>
+    <th colspan="5">COMPTAGE DES POINTS</th>
+</tr>
+<tr>
+    <th>écart de points</th>
+    <th>VICTOIRES NORMALES</th>
+    <th>DÉFAITES NORMALES</th>
+    <th>VICTOIRES ANORMALES</th>
+    <th>DÉFAITES ANORMALES</th>
+</tr>
+<?php
     }
 
     /**
-     * Affiche les lignes de données
+     * Affiche les lignes de données.
      */
     private function renderRows(): void
     {
-        foreach ($this->baremeData as $row) {
+        foreach (self::BAREME_DATA as $row) {
             $this->renderRow($row);
         }
     }
 
     /**
-     * Affiche une ligne de données
+     * Affiche une ligne de données.
+     *
+     * @param array{ecart:string,vn:string,dn:string,va:string,da:string,class:string} $row
      */
     private function renderRow(array $row): void
     {
         ?>
-        <tr class="<?= $row['class'] ?>">
-            <td><?= $row['ecart'] ?></td>
-            <td><?= $row['vn'] ?></td>
-            <td><?= $row['dn'] ?></td>
-            <td><?= $row['va'] ?></td>
-            <td><?= $row['da'] ?></td>
-        </tr>
-        <?php
+<tr class="<?= $row['class'] ?>">
+    <td><?= $row['ecart'] ?></td>
+    <td><?= $row['vn'] ?></td>
+    <td><?= $row['dn'] ?></td>
+    <td><?= $row['va'] ?></td>
+    <td><?= $row['da'] ?></td>
+</tr>
+<?php
     }
 }

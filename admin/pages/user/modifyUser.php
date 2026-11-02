@@ -1,86 +1,29 @@
 <?php
-include_once('../parts/header.php');
-include_once('../../../config/config.php');
-include_once ('../connect_ddb.php');
-require_once('../class/User.php');
+// 1. Vérification de session et inclusions globales de l'application
+require_once dirname(__DIR__, 2) . '/includes/session_check.php';
+include_once dirname(__DIR__, 1) . '/parts/header.php';
+include_once dirname(__DIR__, 3) . '/config/config.php';
+include_once dirname(__DIR__, 1) . '/connect_ddb.php';
 
-$user = null;
-$errorMessage = '';
+// 2. Correction des chemins pour les dépendances (Depuis admin/pages/user)
+require_once dirname(__DIR__, 1) . '/class/User.php'; 
+require_once dirname(__DIR__, 1) . '/classPages/club/Validations.php';
+require_once dirname(__DIR__, 2) . '/includes/ErrorMessages.php';
 
-if (isset($_GET['id'])) {
-    $user_id = (int) $_GET['id'];
-    $userClass = new User($conn);
+// 3. Inclusion de la structure MVC propre aux utilisateurs
+require_once dirname(__DIR__, 1) . '/classPages/users/ModifyUserManager.php';
+require_once dirname(__DIR__, 1) . '/classPages/users/ModifyUserView.php';
+require_once dirname(__DIR__, 1) . '/classPages/users/ModifyUserController.php';
 
-    // Traitement du formulaire de modification
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send'])) {
-        $firstName = trim($_POST['firstName'] ?? '');
-        $lastName = trim($_POST['lastName'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? null;
-        $role = $_POST['role'] ?? '';
+use Admin\ClassPages\Users\ModifyUserManager;
+use Admin\ClassPages\Users\ModifyUserView;
+use Admin\ClassPages\Users\ModifyUserController;
 
-        try {
-            if ($userClass->updateUser($user_id, $firstName, $lastName, $email, $password, $role)) {
-                header("Location: showUser.php");
-                exit();
-            } else {
-                $errorMessage = "Échec de la modification de l'utilisateur.";
-            }
-        } catch (InvalidArgumentException $e) {
-            $errorMessage = $e->getMessage();
-        } catch (Exception $e) {
-            $errorMessage = "Une erreur est survenue : " . $e->getMessage();
-        }
-    }
+// 4. Initialisation et injection des dépendances
+$userModel  = new User($conn);
+$manager    = new ModifyUserManager($userModel);
+$view       = new ModifyUserView();
+$controller = new ModifyUserController($manager, $view, $role ?? '', (int)($_SESSION['user_id'] ?? 0));
 
-    // Récupération des informations de l'utilisateur à modifier
-    $user = $userClass->getUser($user_id);
-}
-?>
-
-<!DOCTYPE html>
-<html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier un utilisateur</title>
-    <link rel="stylesheet" href="../../css/style_admin.css">
-</head>
-
-<body>
-    <?php if ($user): ?>
-        <h2>Modifier un utilisateur</h2>
-        <main>
-            <?php if ($errorMessage): ?>
-            <div class="error-message"><?= htmlspecialchars($errorMessage) ?></div>
-            <?php endif; ?>
-            <form action="" method="POST" class="form encad">
-                <div>
-                    <label for="firstName">Prénom:</label>
-                    <input type="text" name="firstName" placeholder="First Name" value="<?= htmlspecialchars($user['firstName']) ?>" required>
-                    <label for="lastName">Nom:</label>
-                    <input type="text" name="lastName" placeholder="Last Name" value="<?= htmlspecialchars($user['lastName']) ?>" required>
-                    <label for="email">Email:</label>
-                    <input type="email" name="email" placeholder="Email" value="<?= htmlspecialchars($user['email']) ?>" required>
-                    
-                    
-                    <label for="role">Rôle:</label>
-                    <select name="role" required>
-                        <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
-                        <option value="superAdmin" <?= $user['role'] === 'superAdmin' ? 'selected' : '' ?>>Super Admin</option>
-                    </select>
-                    <input type="submit" value="Modifier" name="send">
-                    <input type="button" value="Annuler" onclick="window.location.href='showUser.php'">
-                </div>
-            </form>
-        </main>
-    <?php elseif (isset($user_id)): ?>
-        <p>Utilisateur non trouvé.</p>
-    <?php else: ?>
-        <p>ID de l'utilisateur non spécifié.</p>
-    <?php endif; ?>
-</body>
-
-</html>
+// 5. Exécution du contrôleur (qui gère la logique et l'affichage)
+$controller->handleRequest();

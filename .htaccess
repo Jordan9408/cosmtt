@@ -1,0 +1,46 @@
+Options -Indexes
+ServerSignature Off
+
+# Secrets, VCS, dépendances et fichiers de configuration/sauvegarde
+<FilesMatch "^(\.env|\.env\..*|composer\.(json|lock|phar)|composer-setup\.php|\.git.*)$">
+    Require all denied
+</FilesMatch>
+
+# Interdire l'accès direct aux fichiers sensibles de données/code
+<FilesMatch "\.(sql|log|bak|orig|md|sh|dist|xlsx|xls|csv)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Bloquer l'accès au dossier .git et aux fichiers .env
+    RewriteRule ^\.git/ - [F,L]
+    RewriteRule (^|/)\.env - [F,L]
+
+    # Protection des dossiers sensibles ou outils internes
+    RewriteRule ^storage/ - [F,L]
+    RewriteRule ^ECC/ - [F,L]
+    RewriteRule ^(config|include|admin/includes)/ - [F,L]
+</IfModule>
+
+<FilesMatch "^(diagnostic_pdf\.php|clean_pdfs\.php|functions\.php)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header unset X-Powered-By
+    Header always unset X-Powered-By
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    # En-tête HSTS pour forcer les navigateurs à utiliser HTTPS
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on'"
+
+    # Content Security Policy (CSP) sans 'unsafe-inline' sur les scripts (protection anti-XSS [M-02])
+    # Note : object-src 'self' est indispensable pour que le visualiseur / plugin PDF interne de Chrome puisse charger et télécharger le document
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; frame-src 'self' https://www.google.com https://maps.googleapis.com https://www.openstreetmap.org https://www.bing.com; connect-src 'self' https://cdn.jsdelivr.net; object-src 'self'; base-uri 'self';"
+</IfModule>
+
+# Les pages PHP appliquent APP_URL; le vhost doit aussi forcer HTTPS pour les ressources statiques.

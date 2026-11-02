@@ -1,0 +1,8 @@
+# Les uploads (photos, PDF) ne doivent jamais exécuter de PHP.
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<FilesMatch "\.ph(p[0-9]?|tml|ar)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes

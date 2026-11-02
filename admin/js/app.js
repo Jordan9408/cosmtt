@@ -1,5 +1,26 @@
-document.addEventListener('DOMContentLoaded', function (e) {
-    e.preventDefault();
+// loader
+// ( éviter les collisions quand js/app.js et admin/js/app.js sont chargés sur la même page )
+var loader = document.querySelector('.loader');
+
+// Ne redéfinir hideLoader que si js/app.js ne l'a pas déjà fait (elle contient la logique data-alert)
+if (typeof hideLoader !== 'function') {
+    function hideLoader() {
+        if (loader && !loader.classList.contains('fondu-out')) {
+            loader.classList.add('fondu-out');
+        }
+    }
+}
+// Petit délai pour éviter un flash si la page est très rapide.
+var LOADER_MIN_DELAY_MS = 250;
+var LOADER_START_TS = Date.now();
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const elapsed = Date.now() - LOADER_START_TS;
+    const remaining = Math.max(0, LOADER_MIN_DELAY_MS - elapsed);
+    setTimeout(hideLoader, remaining);
+
+    // === Popup (équipe) ===
     const popupOverlay = document.createElement('div');
     popupOverlay.id = 'popupOverlay';
     document.body.appendChild(popupOverlay);
@@ -8,169 +29,85 @@ document.addEventListener('DOMContentLoaded', function (e) {
     popupForm.id = 'popupForm';
     document.body.appendChild(popupForm);
 
-    // Function to open popup with content
     function openPopup(content) {
         popupForm.innerHTML = content;
         popupOverlay.style.display = 'block';
         popupForm.style.display = 'block';
 
-        // Add close button event
-        const closeBtn = popupForm.querySelector('.close-popup');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', closePopup);
-        }
+        // Ajouter l'événement de fermeture aux boutons
+        const closeBtns = popupForm.querySelectorAll('.close-popup');
+        closeBtns.forEach(btn => btn.addEventListener('click', closePopup));
     }
 
-    // Function to close popup
     function closePopup() {
         popupOverlay.style.display = 'none';
         popupForm.style.display = 'none';
         popupForm.innerHTML = '';
     }
 
-    // Event listeners for buttons
-    // const btnAjouter = document.getElementById('btnAjouter');
-    // const btnModifier = document.getElementById('btnModifier');
+    window.showMessage = function (message) {
+        const content = `
+            <h3>Message</h3>
+            <button class="close-popup" style="float:right;">&times;</button>
+            <p>${message}</p>
+            <button class="close-popup">Fermer</button>
+        `;
+        openPopup(content);
+    };
 
-    // btnAjouter.addEventListener('click', function (e) {
-    //     e.preventDefault();
-    //     const content = `
-    //         <h3>Ajouter une journÃ©e / rencontre</h3>
-    //         <button class="close-popup" style="float:right;">&times;</button>
-    //         <form id="formAjouter" method="post">
-    //             <label>Date dÃ©but (JJ/MM/AAAA):</label><br/>
-    //             <input type="text" name="dateDebut" required pattern="\\d{2}/\\d{2}/\\d{4}" /><br/>
-    //             <label>Date fin (JJ/MM/AAAA):</label><br/>
-    //             <input type="text" name="dateFin" required pattern="\\d{2}/\\d{2}/\\d{4}" /><br/>
-    //             <table>
-    //                 <thead>
-    //                     <tr>
-    //                         <th>Ã‰quipe 1</th>
-    //                         <th>Score 1</th>
-    //                         <th>Score 2</th>
-    //                         <th>Ã‰quipe 2</th>
-    //                     </tr>
-    //                 </thead>
-    //                 <tbody>
-    //                     <tr>
-    //                         <td><input type="text" name="equipe1[]" required /></td>
-    //                         <td><input type="number" name="score1[]" min="0" /></td>
-    //                         <td><input type="number" name="score2[]" min="0" /></td>
-    //                         <td><input type="text" name="equipe2[]" required /></td>
-    //                     </tr>
-    //                 </tbody>
-    //             </table>
-    //             <button type="submit" class="btn btn-success">Ajouter</button>
-    //             <button type="button" class="btn close-popup">Annuler</button>
-    //         </form>
-    //     `;
-    //     openPopup(content);
-    //     attachFormEvents();
-    // });
+    const showPopupLink = document.getElementById('showPopup');
+    const teamPopup = document.getElementById('teamPopup');
+    const cancelPopupButton = document.getElementById('cancelPopup');
+    const cancelModifyUser = document.getElementById('cancelModifyUser');
 
-    // btnModifier.addEventListener('click', function (e) {
-    //     e.preventDefault();
-    //     const content = `
-    //         <h3>Modifier une journÃ©e / rencontre</h3>
-    //         <button class="close-popup" style="float:right;">&times;</button>
-    //         <form id="formModifier" method="post">
-    //             <label>Date dÃ©but (JJ/MM/AAAA):</label><br/>
-    //             <input type="text" name="dateDebut" required pattern="\\d{2}/\\d{2}/\\d{4}" /><br/>
-    //             <label>Date fin (JJ/MM/AAAA):</label><br/>
-    //             <input type="text" name="dateFin" required pattern="\\d{2}/\\d{2}/\\d{4}" /><br/>
-    //             <table>
-    //                 <thead>
-    //                     <tr>
-    //                         <th>Ã‰quipe 1</th>
-    //                         <th>Score 1</th>
-    //                         <th>Score 2</th>
-    //                         <th>Ã‰quipe 2</th>
-    //                     </tr>
-    //                 </thead>
-    //                 <tbody>
-    //                     <tr>
-    //                         <td><input type="text" name="equipe1[]" required /></td>
-    //                         <td><input type="number" name="score1[]" min="0" /></td>
-    //                         <td><input type="number" name="score2[]" min="0" /></td>
-    //                         <td><input type="text" name="equipe2[]" required /></td>
-    //                     </tr>
-    //                 </tbody>
-    //             </table>
-    //             <button type="submit" class="btn btn-primary">Modifier</button>
-    //             <button type="button" class="btn close-popup">Annuler</button>
-    //         </form>
-    //     `;
-    //     openPopup(content);
-    //     attachFormEvents();
-    // });
+    if (cancelModifyUser) {
+        cancelModifyUser.addEventListener('click', function () {
+            window.location.href = 'showUser.php';
+        });
+    }
 
-    // // Attach form submit and cancel events
-    // function attachFormEvents() {
-    //     const formAjouter = document.getElementById('formAjouter');
-    //     if (formAjouter) {
-    //         formAjouter.addEventListener('submit', function (e) {
-    //             e.preventDefault();
-    //             // TODO: Ajouter la logique d'envoi AJAX ou soumission classique
-    //             alert('Ajout soumis (fonctionnalitÃ© Ã  implÃ©menter)');
-    //             closePopup();
-    //         });
-    //     }
-    //     const formModifier = document.getElementById('formModifier');
-    //     if (formModifier) {
-    //         formModifier.addEventListener('submit', function (e) {
-    //             e.preventDefault();
-    //             // TODO: Ajouter la logique d'envoi AJAX ou soumission classique
-    //             alert('Modification soumise (fonctionnalitÃ© Ã  implÃ©menter)');
-    //             closePopup();
-    //         });
-    //     }
-    //     const cancelButtons = popupForm.querySelectorAll('.close-popup');
-    //     cancelButtons.forEach(btn => btn.addEventListener('click', closePopup));
-    // }
+    if (window.location.search.includes('unauthorized') && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname);
+    }
+
+    if (showPopupLink && teamPopup) {
+        showPopupLink.addEventListener('click', function () {
+            teamPopup.style.display = 'block';
+        });
+    }
+
+    if (cancelPopupButton && teamPopup) {
+        cancelPopupButton.addEventListener('click', function () {
+            teamPopup.style.display = 'none';
+        });
+    }
+
+    document.addEventListener('submit', function (event) {
+        const form = event.target.closest('.js-confirm-delete-team');
+        if (form && !confirm('Êtes-vous sûr de vouloir supprimer cette équipe ?\nCette action mettra à jour toutes les rencontres associées.')) {
+            event.preventDefault();
+        }
+    });
+
+        // Toggle visibilité mot de passe (délégation d'événements : marche même si le DOM est injecté/actualisé après)
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.toggle-password');
+        if (!btn) return;
+
+        const targetId = btn.getAttribute('data-target');
+        if (!targetId) return;
+
+        const input = document.getElementById(targetId);
+        if (!input) return;
+
+        const isCurrentlyPassword = input.type === 'password';
+        input.type = isCurrentlyPassword ? 'text' : 'password';
+
+        const icon = btn.querySelector('i');
+        if (icon) {
+            icon.classList.toggle('fa-eye', input.type === 'text');
+            icon.classList.toggle('fa-eye-slash', input.type === 'password');
+        }
+    });
+
 });
-// Popup Ajouter JournÃ©e
-document.addEventListener('DOMContentLoaded', function() {
-    var showPopupLink = document.getElementById('showPopup');
-    var teamPopup = document.getElementById('teamPopup');
-    var closePopupButton = document.getElementById('closePopup');
-
-    if (showPopupLink) {
-        showPopupLink.addEventListener('click', function() {
-            if (teamPopup) {
-                teamPopup.style.display = 'block';
-            }
-        });
-    }
-
-    if (closePopupButton) {
-        closePopupButton.addEventListener('click', function() {
-            if (teamPopup) {
-                teamPopup.style.display = 'none';
-            }
-        });
-    }
-});
-
-// Popup Ajouter Ã‰quipe
-document.addEventListener('DOMContentLoaded', function() {
-    var showPopupLink = document.getElementById('showPopup');
-    var teamPopup = document.getElementById('teamPopup');
-    var closePopupButton = document.getElementById('closePopup');
-
-    if (showPopupLink) {
-        showPopupLink.addEventListener('click', function() {
-            if (teamPopup) {
-                teamPopup.style.display = 'block';
-            }
-        });
-    }
-
-    if (closePopupButton) {
-        closePopupButton.addEventListener('click', function() {
-            if (teamPopup) {
-                teamPopup.style.display = 'none';
-            }
-        });
-    }
-});
-

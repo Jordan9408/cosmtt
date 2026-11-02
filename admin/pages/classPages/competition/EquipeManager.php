@@ -21,5 +21,3 @@ class EquipeManager
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
-// var_dump('EquipeManager.php - Ok');
-?>

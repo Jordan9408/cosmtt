@@ -1,0 +1,11 @@
+# Protection du dossier img
+# Interdire l'exécution de tout script (PHP ou autre)
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+<FilesMatch "\.(php[0-9]?|phtml|phar|pl|py|cgi|sh|bash|exe)$">
+    Require all denied
+</FilesMatch>
+
+Options -Indexes

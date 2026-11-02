@@ -1,101 +1,353 @@
 <?php
-require_once('./admin/pages/class/Auth.php');
-require_once('./html_partials/header.php');
-require_once('./admin/pages/create_tab.php');
 
-session_start();
+declare(strict_types=1);
 
-$auth = new Auth();
-$error = "";
+require_once __DIR__ . '/include/security_connexion.php';
+require_once __DIR__ . '/admin/includes/ErrorMessages.php';
+// create_tab.php (outil d'admin de création de tables) n'est plus inclus sur la page publique.
+// Les tables sont initialisées à la demande (ex: Auth::ensureResetTable) ou via un script CLI protégé.
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Nettoyage et validation des entrées
-    if (isset($_POST['valid-button'])) {
-        $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
-        $password = $_POST['password'] ?? '';
+use Admin\Includes\ErrorMessages;
 
-        if (!$email) {
-            $error = "Adresse email invalide.";
-        } elseif (empty($password)) {
-            $error = "Le mot de passe est requis.";
-        } else {
-            // Tentative de connexion
-            if ($auth->login($email, $password)) {
-                header("Location: ./admin/pages/home.php");
-                exit();
-            } else {
-                $error = "Adresse Mail ou Mot de passe incorrect !";
-            }
+/**
+ * Gère toute la logique métier de la page de connexion.
+ */
+final class ConnexionPage
+{
+    private string $error          = '';
+    private string $successMessage = '';
+    private string $email          = '';
+    private bool   $showResetForm  = false;
+    private array  $flash          = [];
+
+    public function __construct(
+        private readonly object $auth,
+        private readonly RateLimiter $loginLimiter,
+    ) {
+    }
+
+    public function handle(): void
+    {
+        $this->loadFlashMessage();
+
+        if ($this->loginLimiter->isLocked($this->loginKey())) {
+            $this->error = ErrorMessages::format(
+                'AUTH_TOO_MANY_ATTEMPTS',
+                [$this->loginLimiter->remainingMinutes($this->loginKey())]
+            );
+            return;
         }
-    } elseif (isset($_POST['recup-submit'])) {
-        $recup_email = filter_var($_POST['recup_mail'] ?? '', FILTER_VALIDATE_EMAIL);
-        if (!$recup_email) {
-            $error = "Adresse email invalide pour la réinitialisation.";
-        } else {
-            $user = $auth->findUserByEmail($recup_email);
-            if ($user) {
-                try {
-                    $token = $auth->generateResetToken();
-                    if ($auth->savePasswordResetRequest($user['user_id'], $token)) {
-                        if ($auth->sendResetEmail($recup_email, $token)) {
-                            $error = "";
-                        } else {
-                            $error = "Erreur lors de l'envoi de l'email de réinitialisation.";
-                        }
-                    } else {
-                        $error = "Erreur lors de la sauvegarde de la demande de réinitialisation.";
-                    }
-                } catch (Exception $e) {
-                    $error = "Erreur interne : " . $e->getMessage();
-                }
-            } else {
-                $error = "Aucun utilisateur trouvé avec cet email.";
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $this->error === '') {
+            if (isset($_POST['valid-button'])) {
+                $this->handleLogin();
+            } elseif (isset($_POST['recup-submit'])) {
+                $this->handlePasswordReset();
             }
         }
     }
+
+    private function loadFlashMessage(): void
+    {
+        if (!isset($_SESSION['flash_message'])) {
+            return;
+        }
+
+        $flash = $_SESSION['flash_message'];
+        unset($_SESSION['flash_message']);
+
+        if (is_array($flash) && !empty($flash['message'])) {
+            $this->flash = $flash;
+            if (($flash['type'] ?? '') === 'error') {
+                $this->error = $flash['message'];
+            }
+        }
+    }
+
+    private function verifyCsrf(): bool
+    {
+        if (
+            !isset($_POST['csrf_token'], $_SESSION['csrf_token']) ||
+            !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])
+        ) {
+            $this->error = ErrorMessages::get('AUTH_CSRF_INVALID');
+            error_log('SÉCURITÉ: Tentative CSRF détectée depuis ' . $this->clientIpHash());
+            return false;
+        }
+        return true;
+    }
+
+    private function regenerateCsrfToken(): void
+    {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    private function handleLogin(): void
+    {
+        if (!$this->verifyCsrf()) {
+            return;
+        }
+
+        if ($this->loginLimiter->isLocked($this->loginKey())) {
+            $this->error = ErrorMessages::format(
+                'AUTH_TOO_MANY_ATTEMPTS',
+                [$this->loginLimiter->remainingMinutes($this->loginKey())]
+            );
+            return;
+        }
+
+        $this->email = $_POST['email'] ?? '';
+        $password    = $_POST['password'] ?? '';
+
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            $this->registerLoginFailure();
+            $this->error = ErrorMessages::get('AUTH_EMAIL_INVALID');
+            return;
+        }
+
+        // Verrou lié au compte ciblé (anti rotation d'IP / brute-force compte par compte)
+        $acctKey = $this->accountKey($this->email);
+        if ($this->loginLimiter->isLocked($acctKey)) {
+            $this->error = ErrorMessages::format(
+                'AUTH_TOO_MANY_ATTEMPTS',
+                [$this->loginLimiter->remainingMinutes($acctKey)]
+            );
+            return;
+        }
+
+        if ($password === '') {
+            $this->registerLoginFailure();
+            $this->loginLimiter->hit($acctKey);
+            $this->error = ErrorMessages::get('AUTH_PASSWORD_EMPTY');
+            return;
+        }
+
+        try {
+            if ($this->auth->login($this->email, $password)) {
+                $this->loginLimiter->clear($this->loginKey());
+                $this->loginLimiter->clear($acctKey);
+                $_SESSION['auth_created'] = time();
+                header('Location: ./admin/pages/home.php');
+                exit();
+            }
+        } catch (Exception $e) {
+            error_log('SÉCURITÉ: Erreur lors de la connexion: ' . $e->getMessage());
+            $this->error = ErrorMessages::get('AUTH_INTERNAL_ERROR');
+            $this->regenerateCsrfToken();
+            $this->registerLoginFailure();
+            $this->loginLimiter->hit($acctKey);
+            return;
+        }
+
+        $ipLocked   = $this->registerLoginFailure();
+        $acctLocked = $this->loginLimiter->hit($acctKey);
+
+        if ($acctLocked) {
+            error_log('SÉCURITÉ: Compte verrouillé suite à plusieurs échecs (anti-bruteforce) : ' . hash('sha256', strtolower(trim($this->email))));
+        }
+
+        if ($ipLocked || $acctLocked) {
+            $remaining = max(
+                $this->loginLimiter->remainingMinutes($this->loginKey()),
+                $this->loginLimiter->remainingMinutes($acctKey)
+            );
+            $this->error = ErrorMessages::format('AUTH_TOO_MANY_ATTEMPTS', [$remaining]);
+        } else {
+            $this->error = ErrorMessages::get('AUTH_LOGIN_FAILED');
+        }
+
+        $this->regenerateCsrfToken();
+        error_log('SÉCURITÉ: Tentative de connexion échouée depuis ' . $this->clientIpHash());
+    }
+
+    private function registerLoginFailure(): bool
+    {
+        $locked = $this->loginLimiter->hit($this->loginKey());
+        if ($locked) {
+            error_log('SÉCURITÉ: IP verrouillée (login) : ' . $this->clientIpHash());
+        }
+        return $locked;
+    }
+
+    private function handlePasswordReset(): void
+    {
+        if (!$this->verifyCsrf()) {
+            $this->showResetForm = true;
+            return;
+        }
+
+        $resetKey = $this->resetKey();
+
+        if ($this->loginLimiter->isLocked($resetKey)) {
+            $this->error = ErrorMessages::format(
+                'AUTH_TOO_MANY_ATTEMPTS',
+                [$this->loginLimiter->remainingMinutes($resetKey)]
+            );
+            $this->showResetForm = true;
+            return;
+        }
+
+        $this->loginLimiter->hit($resetKey);
+
+        if ($this->loginLimiter->isLocked($resetKey)) {
+            $this->error = ErrorMessages::format(
+                'AUTH_TOO_MANY_ATTEMPTS',
+                [$this->loginLimiter->remainingMinutes($resetKey)]
+            );
+            $this->showResetForm = true;
+            error_log('SÉCURITÉ: IP bloquée (reset) : ' . $this->clientIpHash());
+            return;
+        }
+
+        $recupEmail = $_POST['recup_mail'] ?? '';
+
+        if (!filter_var($recupEmail, FILTER_VALIDATE_EMAIL)) {
+            $this->error         = ErrorMessages::get('AUTH_RESET_EMAIL_INVALID');
+            $this->showResetForm = true;
+            return;
+        }
+
+        $user = $this->auth->findUserByEmail($recupEmail);
+
+        if (!$user) {
+            $this->regenerateCsrfToken();
+            $this->successMessage = ErrorMessages::get('AUTH_RESET_MAIL_SENT');
+            return;
+        }
+
+        try {
+            $token = $this->auth->generateResetToken();
+
+            if (!$this->auth->savePasswordResetRequest($user['user_id'], $token)) {
+                $this->error         = ErrorMessages::get('AUTH_RESET_SAVE_ERROR');
+                $this->showResetForm = true;
+                error_log('SÉCURITÉ: Erreur lors de la sauvegarde du token de réinitialisation');
+                return;
+            }
+
+            if (!$this->auth->sendResetEmail($recupEmail, $token)) {
+                $this->error         = ErrorMessages::get('AUTH_RESET_SEND_ERROR');
+                $this->showResetForm = true;
+                error_log('SÉCURITÉ: Erreur lors de l\'envoi du mail de réinitialisation pour ' . substr($recupEmail, 0, 5) . '...');
+                return;
+            }
+
+            $this->regenerateCsrfToken();
+            $this->successMessage = ErrorMessages::get('AUTH_RESET_MAIL_SENT');
+        } catch (Exception $e) {
+            $this->error         = ErrorMessages::get('AUTH_INTERNAL_ERROR');
+            $this->showResetForm = true;
+            error_log('SÉCURITÉ: Exception lors de la réinitialisation: ' . $e->getMessage());
+        }
+    }
+
+    private function loginKey(): string
+    {
+        return 'login:' . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+    }
+
+    /**
+     * Verrou lié au compte ciblé (résiste efficacement à la rotation d'IP [M-01]).
+     * Basé uniquement sur l'identifiant normalisé du compte (email).
+     * N'inclut PAS l'adresse IP cliente ni le User-Agent afin de bloquer
+     * les attaques par force brute distribuée (multi-IP / proxies / botnets).
+     */
+    private function accountKey(string $email): string
+    {
+        return 'login-acct:' . hash('sha256', strtolower(trim($email)));
+    }
+
+    private function resetKey(): string
+    {
+        return 'reset:' . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+    }
+
+    private function clientIpHash(): string
+    {
+        return hash('sha256', $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+    }
+
+    public function getError(): string
+    {
+        return $this->error;
+    }
+
+    public function getSuccessMessage(): string
+    {
+        return $this->successMessage;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function isShowResetForm(): bool
+    {
+        return $this->showResetForm;
+    }
+
+    public function getFlash(): array
+    {
+        return $this->flash;
+    }
 }
+
+$page = new ConnexionPage(
+    auth: $auth,
+    loginLimiter: $rateLimiter,
+);
+$page->handle();
+
+require_once __DIR__ . '/html_partials/header.php';
+$alertMessage = $page->getError() ?: ($page->getSuccessMessage() ?: ($page->getFlash()['message'] ?? ''));
 ?>
 
-<main>
-    <div class="main-connect">
-        <h2 id="connexion">Connexion</h2>
+<main<?= !empty($alertMessage) ? ' data-alert="' . htmlspecialchars($alertMessage, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
+    <!-- Formulaire de connexion -->
+    <div class="main-connect" style="<?= $page->isShowResetForm() ? 'display:none;' : 'display:block;' ?>">
+        <h2 class="title-bar">Connexion</h2>
         <div class="connect">
-            <?php if (!empty($error)) : ?>
-                <p class="Error"><?= htmlspecialchars($error) ?></p>
-            <?php endif; ?>
-            <form action="" method="POST" enctype="multipart/form-data" class="login-form">
+            <form action="" method="POST" class="login-form">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                 <div class="encad form-recup">
-                    <label>Email :</label>
-                    <input type="email" class="connect-input email" name="email" required>
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" class="connect-input email" name="email"
+                           value="<?= htmlspecialchars($page->getEmail()) ?>"
+                           autocomplete="email" required>
 
                     <label for="password">Mot de passe :</label>
                     <div class="mdp">
-                        <input type="password" id="password" class="connect-input" name="password" required>
+                        <input type="password" id="password" class="connect-input" name="password"
+                               autocomplete="current-password" required>
                         <i class="fa-solid fa-eye"></i>
                     </div>
-                    <a href="#" id="forgot" class="mdp_oublie" title="Oublie ou modification du mot de passe.">Mot de passe oublié</a>
+
+                    <a href="#" id="forgot" class="mdp_oublie"
+                       title="Oublie ou modification du mot de passe.">Mot de passe oublié</a>
                     <input type="submit" class="connect-submit" value="Connectez-vous" name="valid-button">
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="main-change-password" style="display:none;">
-        <h2 id="connexion">Mot de passe oublié</h2>
+    <!-- Formulaire de réinitialisation du mot de passe -->
+    <div class="main-change-password" style="<?= $page->isShowResetForm() ? 'display:block;' : 'display:none;' ?>">
+        <h2 class="title-bar">Mot de passe oublié</h2>
         <div class="connect">
-            <?php if (!empty($error)) : ?>
-                <p class="Error"><?= htmlspecialchars($error) ?></p>
-            <?php endif; ?>
-            <form action="" method="POST" enctype="multipart/form-data" class="login-form">
+            <form action="" method="POST" class="login-form">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                 <div class="encad form-recup">
-                    <label>Email :</label>
-                    <input type="email" class="connect-input email" name="recup_mail" placeholder="Votre adresse e-mail" required>
+                    <label for="recup_mail">Email :</label>
+                    <input type="email" id="recup_mail" class="connect-input email" name="recup_mail"
+                           autocomplete="email" required>
 
                     <input type="submit" class="connect-submit" name="recup-submit" value="Réinitialiser">
-                    <input type="submit" class="connect-submit" name="annuler" value="Annuler">
+                    <input type="submit" class="connect-submit" name="annuler"      value="Annuler">
                 </div>
             </form>
         </div>
     </div>
 </main>
-<?php include('./html_partials/footer.php'); ?>
+
+<?php include(__DIR__ . '/html_partials/footer.php'); ?>

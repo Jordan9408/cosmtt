@@ -1,9 +1,11 @@
 <?php
 
+use Admin\Includes\ErrorMessages;
+
 /**
  * Classe pour gérer les joueurs avec la table classementJoueurs
  */
-class JoueurManager
+final class JoueurManager
 {
     private $conn;
 
@@ -35,7 +37,8 @@ class JoueurManager
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Erreur lors de la récupération des joueurs : " . $e->getMessage());
+            error_log("DB Error (getAllJoueurs): " . $e->getMessage());
+            throw new Exception(ErrorMessages::get('JOUER_FETCH_FAILED'));
         }
     }
 
@@ -53,7 +56,8 @@ class JoueurManager
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Erreur lors de la récupération du joueur : " . $e->getMessage());
+            error_log("DB Error (getJoueurById): " . $e->getMessage());
+            throw new Exception(ErrorMessages::get('JOUER_NOT_FOUND'));
         }
     }
 
@@ -70,19 +74,19 @@ class JoueurManager
 
         // Validation basique uniquement
         if (empty($data['nom'])) {
-            $errors[] = "Le nom est obligatoire.";
+            $errors[] = ErrorMessages::get('JOUER_NOM_REQUIRED');
         }
         if (empty($data['prenom'])) {
-            $errors[] = "Le prénom est obligatoire.";
+            $errors[] = ErrorMessages::get('JOUER_PRENOM_REQUIRED');
         }
         if (!isset($data['classement']) || $data['classement'] < 5) {
-            $errors[] = "Le classement doit être au moins 5.";
+            $errors[] = ErrorMessages::get('JOUER_CLASSEMENT_MIN');
         }
         if (!isset($data['points_debut_saison']) || $data['points_debut_saison'] < 500) {
-            $errors[] = "Les points de début de saison doivent être au minimun 500.";
+            $errors[] = ErrorMessages::get('JOUER_POINTS_DEBUT_SAISON_MIN');
         }
         if (!isset($data['points_mensuels']) || $data['points_mensuels'] < 0) {
-            $errors[] = "Les points mensuels doivent être positifs.";
+            $errors[] = ErrorMessages::get('JOUER_POINTS_MENSUELS_POSITIVE');
         }
 
         if (!empty($errors)) {
@@ -114,11 +118,12 @@ class JoueurManager
             
             return [
                 'errors' => [],
-                'success' => "AjoutJoueurOK"
+                'success' => ""
             ];
         } catch (PDOException $e) {
+            error_log("DB Error (addJoueur): " . $e->getMessage());
             return [
-                'errors' => ["Erreur lors de l'ajout du joueur : " . $e->getMessage()],
+                'errors' => [ErrorMessages::get('JOUER_ADD_ERROR')],
                 'success' => ''
             ];
         }
@@ -138,8 +143,8 @@ class JoueurManager
             if (isset($data['joueur_id']) && is_array($data['joueur_id'])) {
                 foreach ($data['joueur_id'] as $id) {
                     // Validation basique pour chaque joueur
-                    if (empty($data['nom'][$id]) || empty($data['prenom'][$id])) {
-                        $errors[] = "Le nom et le prénom sont obligatoires pour tous les joueurs.";
+                    if (empty($data['nom'][$id]) || empty($data['prenom'][$id]) || !isset($data['classement'][$id])) {
+                        $errors[] = ErrorMessages::get('JOUER_MASS_UPDATE_REQUIRED_FIELDS');
                         continue;
                     }
 
@@ -173,7 +178,7 @@ class JoueurManager
 
             if (empty($errors)) {
                 $this->conn->commit();
-                $success = "ModificationsOK";
+                $success = "";
             } else {
                 $this->conn->rollBack();
             }
@@ -181,8 +186,9 @@ class JoueurManager
             return ['errors' => $errors, 'success' => $success];
         } catch (PDOException $e) {
             $this->conn->rollBack();
+            error_log("DB Error (updateJoueur): " . $e->getMessage());
             return [
-                'errors' => ["Erreur lors de la mise à jour : " . $e->getMessage()],
+                'errors' => [ErrorMessages::get('JOUER_MASS_UPDATE_ERROR')],
                 'success' => ''
             ];
         }
@@ -200,7 +206,8 @@ class JoueurManager
             
             return true;
         } catch (PDOException $e) {
-            throw new Exception("Erreur lors de la suppression du joueur : " . $e->getMessage());
+            error_log("DB Error: " . $e->getMessage());
+            throw new Exception("Échec de la suppression du joueur.");
         }
     }
 
@@ -222,13 +229,14 @@ class JoueurManager
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Erreur lors de la récupération des statistiques : " . $e->getMessage());
+            error_log("DB Error (getStatistiques): " . $e->getMessage());
+            throw new Exception(ErrorMessages::get('GENERIC_ERROR')); //Utilisation d'une erreur générique pour la récupération des statistiques
         }
     }
 
     /**
      * Mettre à jour l'évolution mensuelle pour tous les joueurs
-     * (Utile pour synchroniser la colonne EvolutionMensuelle)
+     * (Synchroniser la colonne EvolutionMensuelle)
      */
     public function updateEvolutionMensuelle()
     {
@@ -241,7 +249,8 @@ class JoueurManager
             $stmt->execute();
             return true;
         } catch (PDOException $e) {
-            throw new Exception("Erreur lors de la mise à jour de l'évolution mensuelle : " . $e->getMessage());
+            error_log("DB Error (updateEvolutionMensuelle): " . $e->getMessage());
+            throw new Exception(ErrorMessages::get('GENERIC_ERROR')); // Utilisation d'une erreur générique pour la mise à jour d'évolution
         }
     }
 }

@@ -1,56 +1,73 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Renderer pour le tableau des joueurs
+ * Renderer pour le tableau des joueurs.
+ *
+ * Responsabilité unique : produire le balisage HTML du tableau
+ * à partir d'un objet ClassementViewData.
  */
-class JoueurTableRenderer
+final class JoueurTableRenderer
 {
+    /** Colonnes fixes, toujours affichées. */
+    private const array COLONNES_FIXES = [
+        'NOM PRÉNOM',
+        'CLASSEMENT',
+        "POINTS\nDébut de saison",
+        'POINTS MENSUELS',
+        'EVOLUTION MENSUELLE',
+    ];
+
+    /** Séquence des classes CSS alternées pour les lignes. */
+    private const array ROW_CLASSES = ['tabcouleur1', 'tabcouleur2'];
+
     /**
-     * Affiche le tableau complet
+     * Affiche le tableau complet.
      */
     public function render(ClassementViewData $data): void
     {
-        ?>
-        <table id="tabjoueurs">
-            <tbody>
-                <?php $this->renderHeader($data); ?>
-                <?php $this->renderRows($data); ?>
-            </tbody>
-        </table>
-        <?php
+        echo '<table id="tabjoueurs"><tbody>';
+        $this->renderHeader($data);
+        $this->renderRows($data);
+        echo '</tbody></table>';
     }
 
     /**
-     * Affiche l'en-tête du tableau
+     * Affiche la ligne d'en-tête.
      */
     private function renderHeader(ClassementViewData $data): void
     {
-        ?>
-        <tr>
-            <th>NOM PRÉNOM</th>
-            <th>CLASSEMENT</th>
-            <th>POINTS<br>Début de saison</th>
-            <th>POINTS MENSUELS</th>
-            <th>EVOLUTION MENSUELLE</th>
-            <?php if ($data->isEditMode && $data->isSuperAdmin()): ?>
-                <th>SUPPRIMER</th>
-            <?php endif; ?>
-        </tr>
-        <?php
+        $cellules = array_map(
+            static fn(string $label): string =>
+                '<th>' . nl2br(htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) . '</th>',
+            self::COLONNES_FIXES
+        );
+
+        if ($data->isEditMode && $data->isSuperAdmin()) {
+            $cellules[] = '<th>SUPPRIMER</th>';
+        }
+
+        echo '<tr>' . implode('', $cellules) . '</tr>';
     }
 
     /**
-     * Affiche toutes les lignes
+     * Affiche toutes les lignes de joueurs.
      */
     private function renderRows(ClassementViewData $data): void
     {
-        $rowClass = 'tabcouleur1';
-        
-        foreach ($data->joueurs as $joueur) {
-            $joueurRow = new JoueurRow($joueur, $data->isEditMode, $data->isSuperAdmin(), $rowClass);
-            $joueurRow->render();
-            
-            $rowClass = ($rowClass === 'tabcouleur1') ? 'tabcouleur2' : 'tabcouleur1';
+        $isSuperAdmin = $data->isSuperAdmin();
+
+        foreach ($data->joueurs as $index => $joueur) {
+            $rowClass = self::ROW_CLASSES[$index % 2];
+
+            (new JoueurRow(
+                joueur: $joueur,
+                isEditMode: $data->isEditMode,
+                isSuperAdmin: $isSuperAdmin,
+                rowClass:    $rowClass,
+                csrfToken:   $data->csrfToken,
+            ))->render();
         }
     }
 }

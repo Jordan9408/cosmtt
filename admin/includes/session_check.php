@@ -2,27 +2,27 @@
 // session_check.php
 
 // Vérifiez si une session est déjà démarrée
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
+require_once dirname(__DIR__, 2) . '/include/session_boot.php';
+
+// Vérification de l'authentification canonique : un utilisateur connecté doit avoir un user_id valide.
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /cosmtt/connexion.php');
+    exit;
 }
 
-// Vérification de l'authentification
-// Si l'utilisateur n'est pas connecté (par exemple, si 'firstName' n'est pas dans la session)
-if (!isset($_SESSION['firstName'])) {
-    // Redirige vers la page de connexion
+if (empty($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'superAdmin'], true)) {
     header('Location: /cosmtt/connexion.php');
-    exit; // Arrête l'exécution du script après la redirection
+    exit;
 }
 
 // Si l'utilisateur est connecté, définissez les variables courantes
-$userFirstName = $_SESSION['firstName'];
-$userRole = $_SESSION['role'] ?? ''; // Utilisez l'opérateur de coalescence nul pour une valeur par défaut
+$userFirstName = $_SESSION['firstName'] ?? '';
+$userRole = $_SESSION['role'] ?? '';
 
-// Vous pouvez également définir la variable $role ici pour plus de clarté dans les fichiers clients
 $role = '';
-if ($userRole == 'superAdmin') {
+if ($userRole === 'superAdmin') {
     $role = 'superAdmin';
-} elseif ($userRole == 'admin') {
+} elseif ($userRole === 'admin') {
     $role = 'admin';
 }
 

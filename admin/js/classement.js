@@ -1,35 +1,5 @@
 // JavaScript pour la page de classement des joueurs
 
-// Gestion des popups
-const showPopup = document.getElementById('showPopup');
-const teamPopup = document.getElementById('teamPopup');
-const cancelPopup = document.getElementById('cancelPopup');
-
-if (showPopup) {
-    showPopup.addEventListener('click', () => {
-        teamPopup.style.display = 'flex';
-    });
-}
-
-// Fermer le popup en cliquant sur Annuler
-if (cancelPopup) {
-    cancelPopup.addEventListener('click', () => {
-        const formAjout = document.querySelector('.form-ajout');
-        if (formAjout) {
-            formAjout.reset(); // Réinitialise tous les champs
-        }
-        teamPopup.style.display = 'none'; // Ferme le popup
-    });
-}
-
-// Fermer le popup en cliquant en dehors
-window.addEventListener('click', (e) => {
-    if (e.target === teamPopup) {
-        teamPopup.style.display = 'none';
-    }
-});
-
-// Fonction de validation pour nom et prénom (lettres, espaces, tirets, apostrophes uniquement)
 function validateNomPrenom(value) {
     const regex = /^[\p{L}\s'-]+$/u;
     return regex.test(value);
@@ -41,17 +11,10 @@ if (formAjout) {
     formAjout.addEventListener('submit', function(e) {
         const nomInput = this.querySelector('input[name="nom"]');
         const prenomInput = this.querySelector('input[name="prenom"]');
-        const errors = [];
-
-        // Validation nom + prénom
+        
         if ( (nomInput.value && !validateNomPrenom(nomInput.value)) || (prenomInput.value && !validateNomPrenom(prenomInput.value)) ) {
-            errors.push('Le nom et le prénom ne doivent pas contenir de chiffre.');
-        }
-
-        // Si des erreurs existent, afficher l'alerte et empêcher la soumission
-        if (errors.length > 0) {
             e.preventDefault();
-            alert(errors.join('\n'));
+            alert('Le nom et le prénom ne doivent pas contenir de chiffre.');
         }
     });
 }
@@ -71,7 +34,8 @@ function validateEditForm() {
     // Validation des noms
     nomInputs.forEach(function(input) {
         const value = input.value.trim();
-        const joueurId = input.getAttribute('name').match(/\[(\d+)\]/);
+        const match = input.getAttribute('name').match(/\[(\d+)\]/);
+        const joueurId = match ? match[1] : null;
         const prenomInput = document.querySelector(`input[name="prenom[${joueurId}]"]`);
         const prenom = prenomInput ? prenomInput.value.trim() : "";
 
@@ -85,7 +49,8 @@ function validateEditForm() {
     // Validation des prénoms
     prenomInputs.forEach(function(input) {
         const value = input.value.trim();
-        const joueurId = input.getAttribute('name').match(/\[(\d+)\]/);
+        const match = input.getAttribute('name').match(/\[(\d+)\]/);
+        const joueurId = match ? match[1] : null;
         const nomInput = document.querySelector(`input[name="nom[${joueurId}]"]`);
         const nom = nomInput ? nomInput.value.trim() : "";
 
@@ -108,7 +73,8 @@ function validateEditForm() {
 
     // Validation des classements
     classementInputs.forEach(function(input) {
-        const joueurId = input.getAttribute('name').match(/\[(\d+)\]/)[1];
+        const match = input.getAttribute('name').match(/\[(\d+)\]/);
+        const joueurId = match ? match[1] : null;
         const nomInput = document.querySelector(`input[name="nom[${joueurId}]"]`);
         const prenomInput = document.querySelector(`input[name="prenom[${joueurId}]"]`);
         const joueurNom = nomInput ? nomInput.value.trim() : '';
@@ -123,7 +89,8 @@ function validateEditForm() {
 
     // Validation des points début saison
     ptsDebutInputs.forEach(function(input) {
-        const joueurId = input.getAttribute('name').match(/\[(\d+)\]/)[1];
+        const match = input.getAttribute('name').match(/\[(\d+)\]/);
+        const joueurId = match ? match[1] : null;
         const nomInput = document.querySelector(`input[name="nom[${joueurId}]"]`);
         const prenomInput = document.querySelector(`input[name="prenom[${joueurId}]"]`);
         const joueurNom = nomInput ? nomInput.value.trim() : '';
@@ -138,7 +105,8 @@ function validateEditForm() {
 
     // Validation des points mensuels
     ptsMensuelInputs.forEach(function(input) {
-        const joueurId = input.getAttribute('name').match(/\[(\d+)\]/)[1];
+        const match = input.getAttribute('name').match(/\[(\d+)\]/);
+        const joueurId = match ? match[1] : null;
         const nomInput = document.querySelector(`input[name="nom[${joueurId}]"]`);
         const prenomInput = document.querySelector(`input[name="prenom[${joueurId}]"]`);
         const joueurNom = nomInput ? nomInput.value.trim() : '';
@@ -157,3 +125,78 @@ function validateEditForm() {
     }
     return true;
 }
+
+// Initialisation au chargement du DOM
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Bouton "Enregistrer" en mode édition
+    const btnEnregistrer = document.getElementById('btnSaveClassement');
+    if (btnEnregistrer) {
+        btnEnregistrer.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (validateEditForm()) {
+                const editForm = document.getElementById('editForm');
+                if (editForm) {
+                    editForm.submit();
+                }
+            }
+        });
+    }
+
+    // 2. Suppression de joueur via délégation d'événements
+    document.addEventListener('click', function(e) {
+        const deleteLink = e.target.closest('.btn-delete-joueur');
+        if (!deleteLink) return;
+
+        e.preventDefault();
+        const joueurId = deleteLink.dataset.id;
+        const csrfToken = deleteLink.dataset.csrf || (document.querySelector('input[name="csrf_token"]') ? document.querySelector('input[name="csrf_token"]').value : '');
+        if (joueurId && csrfToken) {
+            supprimerJoueur(joueurId, csrfToken);
+        }
+    });
+
+    // 3. Affichage des notifications d'erreur si présentes
+    const errorsScript = document.getElementById('classementErrorsData');
+    if (errorsScript) {
+        try {
+            const errorMessages = JSON.parse(errorsScript.textContent);
+            if (Array.isArray(errorMessages)) {
+                errorMessages.forEach(msg => {
+                    const div = document.createElement('div');
+                    div.className = 'error-notification';
+                    div.textContent = msg;
+                    document.body.prepend(div);
+                });
+            }
+        } catch (err) {
+            console.error('Erreur lecture données erreurs classement:', err);
+        }
+    }
+});
+
+/**
+ * Demande confirmation et soumet la suppression d'un joueur en méthode POST avec jeton CSRF
+ */
+function supprimerJoueur(id, csrfToken) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce joueur ?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'showClassement.php?edit=1';
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+
+        const deleteInput = document.createElement('input');
+        deleteInput.type = 'hidden';
+        deleteInput.name = 'delete_id';
+        deleteInput.value = id;
+        form.appendChild(deleteInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+

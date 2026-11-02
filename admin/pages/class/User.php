@@ -1,197 +1,201 @@
 <?php
-/**
- * Classe User
- * Gère les opérations liées aux utilisateurs, notamment l'ajout d'un nouvel utilisateur.
- */
+
 class User
 {
-    /**
-     * Instance PDO pour la base de données
-     * @var PDO
-     */
     private PDO $conn;
 
-    /**
-     * Constructeur
-     * @param PDO $conn Connexion PDO à la base de données
-     */
     public function __construct(PDO $conn)
     {
         $this->conn = $conn;
     }
 
     /**
-     * Ajoute un nouvel utilisateur à la base de données après validation des données.
-     * @param string $firstName Prénom de l'utilisateur
-     * @param string $lastName Nom de l'utilisateur
-     * @param string $email Email de l'utilisateur
-     * @param string $password Mot de passe en clair
-     * @param string $role Rôle de l'utilisateur
-     * @return bool true si ajout réussi, false sinon
-     * @throws InvalidArgumentException en cas de données invalides
+     * Ajoute un nouvel utilisateur.
+     *
+     * @throws InvalidArgumentException
      */
-    public function addUser(string $firstName, string $lastName, string $email, string $password, string $role): bool
-    {
-        // Validation des données
-        if (empty($firstName) || empty($lastName) || empty($email) || empty($password) || empty($role)) {
-            throw new InvalidArgumentException("Tous les champs sont obligatoires.");
-        }
+    public function addUser(
+        string $firstName,
+        string $lastName,
+        string $email,
+        string $password,
+        string $role
+    ): bool {
+        $this->validateNames($firstName, $lastName);
+        $this->validateEmail($email);
+        $this->validatePassword($password);
 
-        if (preg_match('/[0-9]/', $firstName) || preg_match('/[0-9]/', $lastName)) {
-            throw new InvalidArgumentException("Le prénom et le nom ne doivent pas contenir de chiffres.");
-        }
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException("L'adresse email n'est pas valide.");
-        }
-
-        // Vérification si l'email existe déjà
         if ($this->existsEmail($email)) {
             throw new InvalidArgumentException("L'adresse email est déjà utilisée.");
         }
 
-        // Vérification de la longueur minimale du mot de passe
-        if (strlen($password) < 8) {
-            throw new InvalidArgumentException("Le mot de passe doit contenir au moins 8 caractères.");
-        }
-        // On peut ajouter d'autres règles de complexité ici si besoin
+        $stmt = $this->conn->prepare(
+            "INSERT INTO users (firstName, lastName, email, password, role)
+             VALUES (:firstName, :lastName, :email, :password, :role)"
+        );
 
-        // Liste des domaines autorisés
-        $allowedDomains = [
-            'gmail.com', 'hotmail.fr', 'outlook.fr', 'outlook.com',
-            'yahoo.fr', 'wanadoo.fr', 'orange.fr', 'sfr.fr',
-            'bouyguestelecom.fr', 'free.fr', 'laposte.net',
-            'protonmail.com', 'aliceadsl.fr', 'mailo.com'
-        ];
-        $domain = substr(strrchr($email, '@'), 1);
-        if (!in_array(strtolower($domain), $allowedDomains, true)) {
-            throw new InvalidArgumentException("Le domaine de l'email n'est pas autorisé.");
-        }
-
-        // Hachage du mot de passe
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-        // Préparation de la requête SQL
-        $sql = "INSERT INTO users (firstName, lastName, email, password, role) VALUES (:firstName, :lastName, :email, :password, :role)";
-        $stmt = $this->conn->prepare($sql);
-
-        // Liaison des paramètres
-        $stmt->bindValue(':firstName', $firstName);
-        $stmt->bindValue(':lastName', $lastName);
-        $stmt->bindValue(':email', $email);
-        $stmt->bindValue(':password', $hashedPassword);
-        $stmt->bindValue(':role', $role);
-
-        // Exécution de la requête
-        return $stmt->execute();
+        return $stmt->execute([
+            ':firstName' => $firstName,
+            ':lastName'  => $lastName,
+            ':email'     => $email,
+            ':password'  => password_hash($password, PASSWORD_DEFAULT),
+            ':role'      => $role,
+        ]);
     }
 
     /**
-     * Vérifie si une adresse email est déjà utilisée par un autre utilisateur
-     * @param string $email
-     * @return bool true si l'email existe, false sinon
+     * Met à jour un utilisateur existant.
+     * Le mot de passe est optionnel : null ou chaîne vide = inchangé.
+     *
+     * @throws InvalidArgumentException
+     */
+    public function updateUser(
+        int $user_id,
+        string $firstName,
+        string $lastName,
+        string $email,
+        ?string $password,
+        string $role
+    ): bool {
+        $this->validateNames($firstName, $lastName);
+        $this->validateEmail($email);
+
+        if ($this->existsEmailForOther($email, $user_id)) {
+            throw new InvalidArgumentException("L'adresse email est déjà utilisée par un autre utilisateur.");
+        }
+
+        $hashedPassword = null;
+        if ($password !== null && $password !== '') {
+            $this->validatePassword($password);
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        }
+
+        $sql = "UPDATE users
+                SET firstName = :firstName, lastName = :lastName, email = :email, role = :role"
+             . ($hashedPassword !== null ? ", password = :password" : "")
+             . " WHERE user_id = :user_id";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $params = [
+            ':firstName' => $firstName,
+            ':lastName'  => $lastName,
+            ':email'     => $email,
+            ':role'      => $role,
+            ':user_id'   => $user_id,
+        ];
+
+        if ($hashedPassword !== null) {
+            $params[':password'] = $hashedPassword;
+        }
+
+        return $stmt->execute($params);
+    }
+
+    /**
+     * Retourne les données d'un utilisateur, ou null s'il est introuvable.
+     */
+    public function getUser(int $user_id): ?array
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE user_id = :user_id");
+        $stmt->execute([':user_id' => $user_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    /**
+     * Supprime un utilisateur et ses données associées (droit à l'oubli).
+     */
+    public function deleteUser(int $user_id): bool
+    {
+        try {
+            $this->conn->beginTransaction();
+
+            $this->conn->prepare("DELETE FROM password_reset_request WHERE user_id = ?")
+                       ->execute([$user_id]);
+
+            $stmt = $this->conn->prepare("DELETE FROM users WHERE user_id = ?");
+            $result = $stmt->execute([$user_id]);
+
+            $this->conn->commit();
+            return $result;
+        } catch (Exception $e) {
+            if ($this->conn->inTransaction()) {
+                $this->conn->rollBack();
+            }
+            error_log("Erreur lors de la suppression de l'utilisateur $user_id : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Vérifie si une adresse email est déjà utilisée.
      */
     public function existsEmail(string $email): bool
     {
-        $sql = "SELECT COUNT(*) FROM users WHERE email = :email";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['email' => $email]);
-        $count = $stmt->fetchColumn();
-        return $count > 0;
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+        $stmt->execute([':email' => $email]);
+        return (int) $stmt->fetchColumn() > 0;
     }
-    /**
-     * Met à jour un utilisateur existant après validation des données.
-     * @param int $user_id ID de l'utilisateur à modifier
-     * @param string $firstName Prénom de l'utilisateur
-     * @param string $lastName Nom de l'utilisateur
-     * @param string $email Email de l'utilisateur
-     * @param string|null $password Mot de passe en clair (optionnel)
-     * @param string $role Rôle de l'utilisateur
-     * @return bool true si mise à jour réussie, false sinon
-     * @throws InvalidArgumentException en cas de données invalides
-     */
-    public function updateUser(int $user_id, string $firstName, string $lastName, string $email, ?string $password, string $role): bool
+
+    // -------------------------------------------------------------------------
+    // Méthodes privées de validation
+    // -------------------------------------------------------------------------
+
+    private function validateNames(string $firstName, string $lastName): void
     {
-        // Validation des données
-        if (empty($firstName) || empty($lastName) || empty($email) || empty($role)) {
-            throw new InvalidArgumentException("Tous les champs sauf le mot de passe sont obligatoires.");
+        if (empty($firstName) || empty($lastName)) {
+            throw new InvalidArgumentException("Le prénom et le nom sont obligatoires.");
         }
 
         if (preg_match('/[0-9]/', $firstName) || preg_match('/[0-9]/', $lastName)) {
             throw new InvalidArgumentException("Le prénom et le nom ne doivent pas contenir de chiffres.");
+        }
+    }
+
+    private function validateEmail(string $email): void
+    {
+        if (empty($email)) {
+            throw new InvalidArgumentException("L'adresse email est obligatoire.");
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException("L'adresse email n'est pas valide.");
         }
 
-        // Vérification si l'email existe déjà pour un autre utilisateur
-        $sql = "SELECT COUNT(*) FROM users WHERE email = :email AND user_id != :user_id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['email' => $email, 'user_id' => $user_id]);
-        $count = $stmt->fetchColumn();
-        if ($count > 0) {
-            throw new InvalidArgumentException("L'adresse email est déjà utilisée par un autre utilisateur.");
+        $domain = strtolower(substr(strrchr($email, '@'), 1));
+        if ($domain === '' || (!checkdnsrr($domain, 'MX') && !checkdnsrr($domain, 'A'))) {
+            throw new InvalidArgumentException("Le domaine de l'adresse email semble inexistant.");
         }
+    }
 
-        // Vérification de la longueur minimale du mot de passe si fourni
-        if ($password !== null && $password !== '') {
-            if (strlen($password) < 8) {
-                throw new InvalidArgumentException("Le mot de passe doit contenir au moins 8 caractères.");
-            }
-            // On peut ajouter d'autres règles de complexité ici si besoin
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        } else {
-            $hashedPassword = null;
+    private function validatePassword(string $password): void
+    {
+        if (strlen($password) < 12) {
+            throw new InvalidArgumentException("Le mot de passe doit contenir au moins 12 caractères.");
         }
-
-        // Liste des domaines autorisés
-        $allowedDomains = [
-            'gmail.com', 'hotmail.fr', 'outlook.fr', 'outlook.com',
-            'yahoo.fr', 'wanadoo.fr', 'orange.fr', 'sfr.fr',
-            'bouyguestelecom.fr', 'free.fr', 'laposte.net',
-            'protonmail.com', 'aliceadsl.fr', 'mailo.com'
-        ];
-        $domain = substr(strrchr($email, '@'), 1);
-        if (!in_array(strtolower($domain), $allowedDomains, true)) {
-            throw new InvalidArgumentException("Le domaine de l'email n'est pas autorisé.");
+        if (!preg_match('/[A-Z]/', $password)) {
+            throw new InvalidArgumentException("Le mot de passe doit contenir au moins une majuscule.");
         }
-
-        // Préparation de la requête SQL
-        $sql = "UPDATE users SET firstName = :firstName, lastName = :lastName, email = :email, role = :role";
-        if ($hashedPassword !== null) {
-            $sql .= ", password = :password";
+        if (!preg_match('/[a-z]/', $password)) {
+            throw new InvalidArgumentException("Le mot de passe doit contenir au moins une minuscule.");
         }
-        $sql .= " WHERE user_id = :user_id";
-
-        $stmt = $this->conn->prepare($sql);
-
-        // Liaison des paramètres
-        $stmt->bindValue(':firstName', $firstName);
-        $stmt->bindValue(':lastName', $lastName);
-        $stmt->bindValue(':email', $email);
-        $stmt->bindValue(':role', $role);
-        if ($hashedPassword !== null) {
-            $stmt->bindValue(':password', $hashedPassword);
+        if (!preg_match('/[0-9]/', $password)) {
+            throw new InvalidArgumentException("Le mot de passe doit contenir au moins un chiffre.");
         }
-        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-
-        // Exécution de la requête
-        return $stmt->execute();
+        if (!preg_match('/[\W_]/', $password)) {
+            throw new InvalidArgumentException("Le mot de passe doit contenir au moins un caractère spécial.");
+        }
     }
 
     /**
-     * Récupère les informations d'un utilisateur par son ID
-     * @param int $user_id
-     * @return array|null Tableau associatif des données utilisateur ou null si non trouvé
+     * Vérifie si une adresse email est utilisée par un utilisateur autre que $excludeId.
      */
-    public function getUser(int $user_id): ?array
+    private function existsEmailForOther(string $email, int $excludeId): bool
     {
-        $sql = "SELECT * FROM users WHERE user_id = :user_id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['user_id' => $user_id]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $user ?: null;
+        $stmt = $this->conn->prepare(
+            "SELECT COUNT(*) FROM users WHERE email = :email AND user_id != :user_id"
+        );
+        $stmt->execute([':email' => $email, ':user_id' => $excludeId]);
+        return (int) $stmt->fetchColumn() > 0;
     }
 }
-?>

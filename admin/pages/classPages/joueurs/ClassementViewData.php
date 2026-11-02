@@ -3,14 +3,26 @@
 /**
  * Objet de transfert de données pour la vue
  */
-class ClassementViewData
+final class ClassementViewData
 {
+    /**
+     * @var array
+     */
     public array $joueurs;
+
     public bool $isEditMode;
     public bool $canEdit;
+
     public string $role;
+
+    /**
+     * @var list<string>
+     */
     public array $errors;
+
     public string $successMessage;
+    public string $csrfToken;
+
 
     public function __construct(
         array $joueurs,
@@ -18,7 +30,8 @@ class ClassementViewData
         bool $canEdit,
         string $role,
         array $errors = [],
-        string $successMessage = ''
+        string $successMessage = '',
+        string $csrfToken = ''
     ) {
         $this->joueurs = $joueurs;
         $this->isEditMode = $isEditMode;
@@ -26,7 +39,9 @@ class ClassementViewData
         $this->role = $role;
         $this->errors = $errors;
         $this->successMessage = $successMessage;
+        $this->csrfToken = $csrfToken;
     }
+
 
     public function hasErrors(): bool
     {

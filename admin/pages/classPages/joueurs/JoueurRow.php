@@ -3,19 +3,22 @@
 /**
  * Représente une ligne de joueur dans le tableau
  */
-class JoueurRow
+final class JoueurRow
 {
     private array $joueur;
     private bool $isEditMode;
     private bool $isSuperAdmin;
     private string $rowClass;
+    private string $csrfToken;
 
-    public function __construct(array $joueur, bool $isEditMode, bool $isSuperAdmin, string $rowClass)
+
+    public function __construct(array $joueur, bool $isEditMode, bool $isSuperAdmin, string $rowClass, string $csrfToken = '')
     {
         $this->joueur = $joueur;
         $this->isEditMode = $isEditMode;
         $this->isSuperAdmin = $isSuperAdmin;
         $this->rowClass = $rowClass;
+        $this->csrfToken = $csrfToken;
     }
 
     /**
@@ -41,7 +44,7 @@ class JoueurRow
     {
         $id = $this->joueur['ID'];
         ?>
-        <td class="td_nom">
+        <td class="centrer_nom">
             <input type="hidden" name="joueur_id[<?= $id ?>]" value="<?= $id ?>">
             <input type="text" name="nom[<?= $id ?>]" value="<?= $this->escape($this->joueur['Nom']) ?>" class="edit-input edit-input-nom" placeholder="Nom">
             <input type="text" name="prenom[<?= $id ?>]" value="<?= $this->escape($this->joueur['Prenom']) ?>" class="edit-input edit-input-nom" placeholder="Prénom">
@@ -58,8 +61,10 @@ class JoueurRow
         <td class="<?= $this->getEvolutionClass() ?> evolution"><?= $this->getEvolution() ?></td>
         <?php if ($this->isSuperAdmin): ?>
             <td class="delete">
-                <a href="javascript:void(0);" 
-                   onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce joueur ?')) { window.location.href='?delete_id=<?= $id ?>'; }"
+                <a href="#"
+                   class="btn-delete-joueur"
+                   data-id="<?= (int)$id ?>"
+                   data-csrf="<?= htmlspecialchars($this->csrfToken, ENT_QUOTES, 'UTF-8') ?>"
                    title="Supprimer">
                     <img src="/cosmtt/img/icones/remove.png" alt="Supprimer" class="delete-icon">
                 </a>

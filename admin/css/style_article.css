@@ -1,0 +1,680 @@
+@import url("/cosmtt/admin/css/colors_group.css");
+
+/* Message styles */
+.error-message {
+    color: var(--eighth-color);
+    text-align: center;
+    margin: 20px 0;
+}
+
+.empty-message {
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* Form styles */
+.form-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: flex-start;
+}
+
+.article-content-preview {
+    text-align: justify;
+    line-height: 1.6;
+}
+
+.popup-content {
+    text-align: start;
+}
+
+main {
+    padding-bottom: 0px;
+}
+
+.article-list {
+    display: grid;
+    justify-items: center;
+    gap: 20px;
+    margin: 20px 0 0;
+}
+
+.article-card {
+    width: 40em;
+    max-width: 40em;
+    margin: 0 auto;
+    border: 1px solid var(--fourth-color);
+    padding: 20px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.article-title {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    column-gap: 6px;
+    row-gap: 2px;
+    font-size: 1.4em;
+    margin-bottom: 10px;
+    font-style: italic;
+    min-width: 0;
+    /* autorise le h3 à rétrécir dans .section-header */
+    max-width: 100%;
+}
+
+/* Comportement responsive: si le titre ne laisse plus assez de place,
+   la date passe automatiquement sur la ligne suivante. */
+.event-title-text {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.event-date-display {
+    flex: 0 0 auto;
+    font-size: 0.9em;
+    color: var(--thirteenth-color);
+    font-weight: normal;
+    font-style: italic;
+}
+
+
+.article-date {
+    color: var(--thirteenth-color);
+    margin-bottom: 15px;
+}
+
+.article-image {
+    width: auto;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 5px;
+    display: block;
+    margin: 10px auto;
+    /* cursor: pointer; */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Portrait et paysage - même hauteur */
+.article-image.portrait {
+    height: 200px;
+}
+
+.article-image.landscape {
+    height: 200px;
+}
+
+/* Modal pour agrandissement */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.publication-info {
+    color: var(--thirteenth-color);
+    font-size: 0.9em;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0;
+}
+
+.file-info {
+    font-size: 0.9em;
+    color: var(--thirteenth-color);
+    margin-top: 5px;
+}
+
+.lienArticles a,
+.liens-groupes .lien-article {
+    font-size: 1em;
+    padding: 0px;
+    text-decoration: none;
+    background: var(--primary-color);
+    color: var(--sixth-color);
+    display: block;
+    transition: background-color 0.3s, color 0.3s;
+    width: auto;
+}
+
+.liens-groupes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.docs-input-popup {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#pdfPreview {
+    margin-top: 5px;
+}
+
+.pdf-info {
+    color: var(--ninth-color);
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pdf-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+.pdf-remove-btn {
+    width: 18px;
+    cursor: pointer;
+    margin: 0;
+    transition: transform 0.2s ease;
+}
+
+.pdf-remove-btn:hover {
+    transform: scale(1.1);
+}
+
+.btn-icons-article {
+    display: flex;
+    position: absolute;
+    right: 27em;
+}
+
+#imagePreview img {
+    max-width: 120px;
+    max-height: 180px;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+#imagePreview img.portrait {
+    max-width: 80px;
+    max-height: 180px;
+}
+
+#imagePreview img.landscape {
+    max-width: 120px;
+    max-height: 90px;
+}
+
+/* ===================================================================
+   RESPONSIVE
+   Le desktop (PC) ci-dessus reste la base, inchangée.
+   Paliers ci-dessous : TV > Tablette paysage > Tablette portrait
+   > Mobile grand (paysage/portrait) > Mobile petit (paysage/portrait)
+   =================================================================== */
+
+/* --- TV / très grands écrans (>= 1600px) --- */
+@media (min-width: 1600px) {
+
+    .article-list {
+        gap: 30px;
+        margin: 30px 0;
+    }
+
+    .article-card {
+        width: 55em;
+        max-width: 55em;
+        padding: 30px;
+    }
+
+    .article-title {
+        font-size: 1.7em;
+        /* padding-right: 60px; */
+        /* réserve la place des boutons d'action */
+    }
+
+    .event-date-display {
+        font-size: 1em;
+    }
+
+    .article-content-preview {
+        font-size: 1.1em;
+    }
+
+    .article-image,
+    .article-image.portrait,
+    .article-image.landscape {
+        height: 260px;
+    }
+
+    .section-header {
+        position: relative;
+    }
+
+    .btn-icons-article {
+        /* top: 20%; */
+        right: 0;
+    }
+}
+
+/* --- Tablette paysage (992px - 1199px) --- */
+@media (max-width: 1199px) and (min-width: 992px) {
+
+    .article-list {
+        gap: 18px;
+        margin: 18px 0;
+    }
+
+    .article-card {
+        width: 38em;
+        max-width: 90%;
+        padding: 18px;
+    }
+
+    .article-title {
+        font-size: 1.3em;
+        /* padding-right: 55px; */
+        /* réserve la place des boutons d'action */
+    }
+
+    .article-image,
+    .article-image.portrait,
+    .article-image.landscape {
+        height: 200px;
+    }
+
+    .section-header {
+        position: relative;
+    }
+
+    .btn-icons-article {
+        /* top: 20%; */
+        right: 0;
+    }
+}
+
+/* --- Tablette portrait (768px - 991px) --- */
+@media (max-width: 991px) and (min-width: 768px) {
+
+    .article-list {
+        gap: 15px;
+        margin: 15px auto;
+    }
+
+    .article-card {
+        width: 90%;
+        max-width: 600px;
+        text-align: center;
+        padding: 18px;
+    }
+
+    .article-image {
+        display: block;
+        max-width: 100%;
+        margin: 0 auto 15px auto;
+    }
+
+    .article-image,
+    .article-image.portrait,
+    .article-image.landscape {
+        height: 220px;
+    }
+
+    .article-title {
+        font-size: 1.3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1.3;
+        text-align: center;
+        /* padding-right: 50px; */
+        /* réserve la place des boutons d'action */
+    }
+
+    .publication-info {
+        text-align: center;
+    }
+
+    .event-date-display {
+        font-size: 1rem;
+        margin-top: 5px;
+    }
+
+    .article-content-preview {
+        font-size: 1rem;
+        text-align: justify;
+    }
+
+    .section-header {
+        position: relative;
+    }
+
+    .btn-icons-article {
+        position: absolute;
+        /* top: 20%; */
+        right: 0;
+    }
+
+    .liens-groupes {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+/* --- Mobile grand : portrait (576px - 767px) --- */
+@media (max-width: 767px) and (min-width: 576px) and (orientation: portrait) {
+
+    .article-list {
+        gap: 0;
+        margin: auto;
+    }
+
+    .article-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        text-align: left;
+        padding: 0 15px;
+        box-sizing: border-box;
+        border: none;
+    }
+
+    .article-image {
+        float: none;
+        display: block;
+        max-width: 100%;
+        margin: 0 auto 15px auto;
+    }
+
+    .article-image,
+    .article-image.portrait,
+    .article-image.landscape {
+        height: 200px;
+    }
+
+    .article-title {
+        font-size: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1.3;
+        text-align: center;
+        /* padding-right: 48px; */
+        /* réserve la place des boutons d'action */
+    }
+
+    .publication-info {
+        text-align: center;
+    }
+
+    .event-date-display {
+        font-size: 1rem;
+        margin-top: 5px;
+    }
+
+    .article-content-preview {
+        font-size: 0.95rem;
+        text-align: justify;
+    }
+
+    .section-header {
+        position: relative;
+    }
+
+    .btn-icons-article {
+        display: flex;
+        position: absolute;
+        /* top: 20%; */
+        right: 0;
+    }
+
+    .liens-groupes {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* --- Mobile grand : paysage (576px - 767px, largeur affichée réduite en hauteur) --- */
+@media (max-width: 767px) and (min-width: 576px) and (orientation: landscape) {
+
+    .article-list {
+        gap: 0;
+        margin: auto;
+    }
+
+    .article-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        text-align: left;
+        padding: 0 15px;
+        box-sizing: border-box;
+        border: none;
+    }
+
+    .article-image {
+        float: none;
+        display: block;
+        max-width: 100%;
+        margin: 0 auto 10px auto;
+    }
+
+    /* Hauteur réduite : peu de hauteur disponible en paysage sur mobile */
+    .article-image,
+    .article-image.portrait,
+    .article-image.landscape {
+        height: 140px;
+    }
+
+    .article-title {
+        font-size: 1.1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1.25;
+        text-align: center;
+        /* padding-right: 44px; */
+        /* réserve la place des boutons d'action */
+    }
+
+    .publication-info {
+        text-align: center;
+    }
+
+    .event-date-display {
+        font-size: 0.9rem;
+        margin-top: 3px;
+    }
+
+    .article-content-preview {
+        font-size: 0.9rem;
+        text-align: justify;
+    }
+
+    .section-header {
+        position: relative;
+    }
+
+    .btn-icons-article {
+        display: flex;
+        position: absolute;
+        /* top: 20%; */
+        right: 0;
+    }
+
+    .liens-groupes {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+/* --- Mobile petit : portrait (< 576px) --- */
+@media (max-width: 575px) and (orientation: portrait) {
+
+    .article-list {
+        gap: 0;
+        margin: auto;
+    }
+
+    .article-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        text-align: left;
+        padding: 0 10px;
+        box-sizing: border-box;
+        border: none;
+    }
+
+    .article-image {
+        float: none;
+        display: block;
+        max-width: 100%;
+        margin: 0 auto 12px auto;
+    }
+
+    .article-image,
+    .article-image.portrait,
+    .article-image.landscape {
+        height: 170px;
+    }
+
+    .article-title {
+        font-size: 1.05rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1.25;
+        text-align: center;
+        column-gap: 4px;
+        /* padding-right: 40px; réserve la place des boutons d'action */
+    }
+
+    .publication-info {
+        text-align: center;
+        font-size: 0.85em;
+    }
+
+    .event-date-display {
+        font-size: 0.9rem;
+        margin-top: 4px;
+    }
+
+    .article-content-preview {
+        font-size: 0.88rem;
+        text-align: justify;
+    }
+
+    .section-header {
+        position: relative;
+    }
+
+    .btn-icons-article {
+        display: flex;
+        position: absolute;
+        /* top: 20%; */
+        right: 0;
+    }
+
+    .liens-groupes {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    #imagePreview img {
+        max-width: 90px;
+        max-height: 140px;
+    }
+}
+
+/* --- Mobile petit : paysage (< 576px, très peu de hauteur) --- */
+@media (max-width: 575px) and (orientation: landscape) {
+
+    .article-list {
+        gap: 0;
+        margin: auto;
+    }
+
+    .article-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        text-align: left;
+        padding: 0 10px;
+        box-sizing: border-box;
+        border: none;
+    }
+
+    .article-image {
+        float: none;
+        display: block;
+        max-width: 100%;
+        margin: 0 auto 8px auto;
+    }
+
+    /* Palier le plus contraint en hauteur : image la plus basse */
+    .article-image,
+    .article-image.portrait,
+    .article-image.landscape {
+        height: 110px;
+    }
+
+    .article-title {
+        font-size: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1.2;
+        text-align: center;
+        /* padding-right: 38px; */
+        /* réserve la place des boutons d'action */
+    }
+
+    .publication-info {
+        text-align: center;
+        font-size: 0.8em;
+    }
+
+    .event-date-display {
+        font-size: 0.85rem;
+        margin-top: 3px;
+    }
+
+    .article-content-preview {
+        font-size: 0.85rem;
+        text-align: justify;
+    }
+
+    .section-header {
+        position: relative;
+    }
+
+    .btn-icons-article {
+        display: flex;
+        position: absolute;
+        /* top: 20%; */
+        right: 0;
+    }
+
+    .liens-groupes {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+}

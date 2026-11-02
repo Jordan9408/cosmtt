@@ -1,0 +1,656 @@
+@import url('/cosmtt/admin/css/colors_group.css');
+
+/* ==========================================================================
+   PAGE showUser.php - GESTION DES UTILISATEURS
+   Styles desktop (PC) déjà en place dans style_admin.css.
+   Ce fichier complète ET rend responsable le tableau de la page showUser.php
+   UNIQUEMENT (sélecteurs ciblés sous .table-container de showUser).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Conteneur principal - centrage raisonnable en desktop
+   (écrase la marge énorme #container de style_admin.css pour cette page)
+   -------------------------------------------------------------------------- */
+#container {
+    margin: 2em auto;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.title-bar {
+    margin-bottom: 0;
+}
+
+/* Bouton "Ajouter un utilisateur" */
+.link_container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.link {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    /* width: auto; */
+    padding: 5px 0;
+    /* font-weight: bold; */
+    text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   Tableau desktop (repos sur les styles définis dans style_admin.css)
+   -------------------------------------------------------------------------- */
+.table-container {
+    display: block;
+    width: 100%;
+    overflow-x: visible;
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: transparent;
+}
+
+.table-container th,
+.table-container td {
+    padding: 10px 12px;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--fourth-color);
+}
+
+.table-container th {
+    background-color: var(--sixth-color);
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.table-container tr {
+    background-color: var(--seventh-color);
+}
+
+.table-container tr:nth-child(even) {
+    background-color: var(--fourth-color);
+}
+
+.table-container a.image,
+.table-container .image-button,
+.table-container .delete-user-btn,
+.table-container .disabled-delete-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    padding: 0;
+    background: none;
+    border: none;
+    line-height: 1;
+}
+
+.table-container a.image img,
+.table-container .image-button img,
+.table-container .delete-user-btn img,
+.table-container .disabled-delete-btn img {
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    display: block;
+}
+
+/* ==========================================================================
+   1. TV / GRAND ÉCRAN (>= 1600px)
+   ========================================================================== */
+@media screen and (min-width: 1600px) {
+    .title-bar {
+        font-size: 1.8em;
+    }
+
+    #container {
+        max-width: 1400px;
+        margin: 2.5em auto;
+    }
+
+    .table-container th,
+    .table-container td {
+        padding: 14px 18px;
+        font-size: 1.1em;
+    }
+
+    .table-container a.image img,
+    .table-container .image-button img,
+    .table-container .delete-user-btn img,
+    .table-container .disabled-delete-btn img {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* ==========================================================================
+   2. TABLETTE PAYSAGE & ÉCRANS INTERMÉDIAIRES (<= 1024px)
+   ========================================================================== */
+@media screen and (max-width: 1024px) {
+    #container {
+        margin: 2em auto;
+        max-width: 100%;
+        padding: 0 15px;
+    }
+
+    .table-container th,
+    .table-container td {
+        padding: 8px 8px;
+        font-size: 0.9em;
+    }
+}
+
+/* ==========================================================================
+   3. TABLETTE PORTRAIT (<= 768px)
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    #container {
+        margin: 1.5em auto;
+        padding: 0 12px;
+    }
+
+    .title-bar {
+        font-size: 1.3em;
+    }
+
+    .table-container th,
+    .table-container td {
+        padding: 6px 4px;
+        font-size: 0.8em;
+    }
+
+    .table-container a.image img,
+    .table-container .image-button img,
+    .table-container .delete-user-btn img,
+    .table-container .disabled-delete-btn img {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* ==========================================================================
+   4. MOBILE GRAND PORTRAIT (<= 576px)
+   Transformation du tableau en CARTES EMPILÉES (UNIQUEMENT showUser)
+   - Pas de défilement horizontal
+   - Chaque utilisateur = une carte verticale avec libellés
+   ========================================================================== */
+@media screen and (max-width: 576px) {
+    #container {
+        margin: 1em auto;
+        padding: 0 10px;
+    }
+
+    .title-bar {
+        font-size: 1.15em;
+        padding: 8px 0;
+    }
+
+    /* Le conteneur ne doit jamais générer de scroll horizontal */
+    .table-container {
+        display: block;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* On désactive l'affichage en tableau pour le réorganiser en cartes */
+    .table-container table,
+    .table-container tbody,
+    .table-container tr,
+    .table-container td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* On masque l'en-tête (thead) sur mobile */
+    .table-container thead {
+        display: none;
+    }
+
+    /* Chaque ligne devient une carte (position relative pour ancrer les icônes) */
+    .table-container tbody tr {
+        position: relative;
+        /* border: 1px solid var(--fourth-color); */
+        border-radius: 8px;
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: var(--seventh-color);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Légère marge interne en haut pour éviter le chevauchement avec les icônes */
+    .table-container tbody tr:has(td.action-cell) {
+        padding-top: 40px;
+    }
+
+    /* Chaque cellule devient une rangée avec libellé (attr) à gauche */
+    .table-container td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 8px 4px;
+        font-size: 0.95em;
+        text-align: right;
+        border-bottom: none;
+    }
+
+    .table-container td:last-child {
+        border-bottom: none;
+    }
+
+    .table-container td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: var(--sixth-color);
+        text-align: left;
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+
+    /* Cellules des icônes : positionnées en HAUT À DROITE de la carte (absolute) */
+    .table-container td.action-cell {
+        position: absolute;
+        top: 8px;
+        width: auto;
+        padding: 0;
+        border: none;
+        text-align: center;
+    }
+
+    .table-container td.action-cell::before {
+        content: "";
+    }
+
+    /* Modifier (6e colonne) placé juste à gauche de Supprimer */
+    .table-container td.action-cell:nth-child(6) {
+        right: 46px;
+    }
+
+    /* Supprimer (7e colonne) tout à droite */
+    .table-container td.action-cell:nth-child(7) {
+        right: 8px;
+    }
+
+    .table-container a.image img,
+    .table-container .image-button img,
+    .table-container .delete-user-btn img,
+    .table-container .disabled-delete-btn img {
+        width: 26px;
+        height: 26px;
+    }
+
+    /* Message "Aucun utilisateur présent" - centré */
+    .table-container td.message {
+        display: block;
+        text-align: center;
+        font-style: italic;
+        color: var(--thirteenth-color);
+        padding: 20px 10px;
+    }
+
+    .table-container td.message::before {
+        content: "";
+    }
+}
+
+/* ==========================================================================
+   5. MOBILE PETIT (<= 400px)
+   ========================================================================== */
+@media screen and (max-width: 400px) {
+    #container {
+        padding: 0 6px;
+    }
+
+    .title-bar {
+        font-size: 1em;
+    }
+
+    .link {
+        /* width: 100%; */
+        /* padding: 10px 0; */
+        font-size: 0.9em;
+    }
+
+    .table-container tbody tr {
+        padding: 8px;
+    }
+
+    .table-container td {
+        font-size: 0.85em;
+        padding: 7px 2px;
+    }
+
+    .table-container td::before {
+        font-size: 0.85em;
+    }
+}
+
+/* ==========================================================================
+   6. MOBILE PAYSAGE (orientation paysage + hauteur limitée)
+   ========================================================================== */
+@media screen and (max-width: 900px) and (orientation: landscape) {
+    #container {
+        margin: 1.2em auto;
+        padding: 0 12px;
+    }
+
+    .title-bar {
+        font-size: 1.3em;
+    }
+
+    /* En paysage, le tableau tient mieux : on le garde sous forme de tableau
+       compacté avec un léger scroll horizontal si nécessaire, SAUF très petit */
+    .table-container th,
+    .table-container td {
+        padding: 8px 6px;
+        font-size: 0.85em;
+    }
+
+    .table-container a.image img,
+    .table-container .image-button img,
+    .table-container .delete-user-btn img,
+    .table-container .disabled-delete-btn img {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* En dessous de 576px de large en paysage, on repasse en cartes */
+@media screen and (max-width: 576px) and (orientation: landscape) {
+
+    /* Les règles "cartes" de la section 4 s'appliquent déjà via max-width: 576px.
+       On ajuste juste la marge haute pour la hauteur réduite. */
+    #container {
+        margin: 0.8em auto;
+    }
+
+    .table-container tbody tr {
+        margin-bottom: 10px;
+        padding: 8px;
+    }
+}
+
+/* ==========================================================================
+   FORMULAIRES "AJOUTER UN UTILISATEUR" (addUser.php) ET
+   "MODIFIER UN UTILISATEUR" (modifyUser.php) - RESPONSIVE
+   --------------------------------------------------------------------------
+   - Ciblage UNIQUEMENT des formulaires .form.encad situés dans <main>
+     (présents sur addUser.php et modifyUser.php uniquement).
+   - Styles inspirés des popups (popup.css) : fond couleur, champs arrondis,
+     pleine largeur sur petit écran.
+   - Le desktop (PC) est déjà géré par style_admin.css, on ne le touche pas.
+========================================================================== */
+
+/* --------------------------------------------------------------------------
+   BASE - ALIGNEMENT VERTICAL DES LABELS ET INPUTS
+   --------------------------------------------------------------------------
+   - Labels conservés AU-DESSUS des inputs.
+   - Tous les inputs prennent la même largeur fixe et sont alignés dans la
+     même colonne verticale (alignés à gauche dans le formulaire).
+   - Le formulaire reste centré horizontalement sur l'écran.
+   -------------------------------------------------------------------------- */
+main .form.encad>div {
+    width: 220px;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+main .form.encad label {
+    display: block;
+    text-align: left;
+    margin: 10px 0 4px;
+}
+
+main .form.encad input[type="text"],
+main .form.encad input[type="email"],
+main .form.encad input[type="password"],
+main .form.encad select {
+    width: 100%;
+    height: 35px;
+    box-sizing: border-box;
+    margin: 4px 0;
+    display: block;
+}
+
+main .form.encad .password-input-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+main .form.encad .input-with-icon {
+    width: 100%;
+}
+
+main .form.encad input[type="submit"],
+main .form.encad input[type="button"] {
+    width: 100%;
+    height: 35px;
+    box-sizing: border-box;
+    margin: 8px 0;
+}
+
+/* --------------------------------------------------------------------------
+   1. TV / GRAND ÉCRAN (>= 1600px)
+   -------------------------------------------------------------------------- */
+@media screen and (min-width: 1600px) {
+    main .form.encad {
+        padding: 25px 80px;
+        margin-top: 20px;
+    }
+
+    main .form.encad input[type="text"],
+    main .form.encad input[type="email"],
+    main .form.encad input[type="password"],
+    main .form.encad select {
+        width: 260px;
+        height: 40px;
+        font-size: 1.05em;
+    }
+
+    main .form.encad label {
+        font-size: 1.1em;
+    }
+
+    main .form.encad input[type="submit"],
+    main .form.encad input[type="button"] {
+        width: 260px;
+        height: 40px;
+        font-size: 1.05em;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   2. TABLETTE PAYSAGE & ÉCRANS INTERMÉDIAIRES (<= 1024px)
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 1024px) {
+    main .form.encad {
+        padding: 18px 50px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    main .form.encad input[type="text"],
+    main .form.encad input[type="email"],
+    main .form.encad input[type="password"],
+    main .form.encad select {
+        width: 230px;
+        height: 38px;
+    }
+
+    main .form.encad input[type="submit"],
+    main .form.encad input[type="button"] {
+        width: 230px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   3. TABLETTE PORTRAIT (<= 768px)
+   Le formulaire passe en pleine largeur, champs empilés.
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 768px) {
+    main .form.encad {
+        width: 100%;
+        max-width: 480px;
+        padding: 20px 25px;
+        margin: 15px auto;
+        box-sizing: border-box;
+    }
+
+    main .form.encad>div {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    main .form.encad label {
+        text-align: left;
+        display: block;
+        margin: 10px 0 4px;
+    }
+
+    main .form.encad input[type="text"],
+    main .form.encad input[type="email"],
+    main .form.encad input[type="password"],
+    main .form.encad select {
+        width: 100%;
+        height: 40px;
+        box-sizing: border-box;
+        margin: 4px auto;
+    }
+
+    main .form.encad .password-input-wrapper {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    main .form.encad .input-with-icon {
+        width: 100%;
+    }
+
+    main .form.encad input[type="submit"],
+    main .form.encad input[type="button"] {
+        width: 100%;
+        height: 42px;
+        margin: 8px auto;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   4. MOBILE GRAND PORTRAIT (<= 576px)
+   Formulaire pleine largeur de l'écran, champs confortables au toucher.
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 576px) {
+    main .form.encad {
+        width: 100%;
+        max-width: 100%;
+        padding: 18px 16px;
+        margin: 10px auto;
+        border-radius: 12px;
+    }
+
+    main .form.encad label {
+        font-size: 0.95em;
+        margin: 10px 0 4px;
+    }
+
+    main .form.encad input[type="text"],
+    main .form.encad input[type="email"],
+    main .form.encad input[type="password"],
+    main .form.encad select {
+        width: 100%;
+        height: 44px;
+        font-size: 1em;
+        margin: 4px auto;
+    }
+
+    main .form.encad input[type="submit"],
+    main .form.encad input[type="button"] {
+        width: 100%;
+        height: 46px;
+        font-size: 1em;
+        margin: 8px auto;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   5. MOBILE PETIT (<= 400px)
+   Réduction des paddings et des inter-champs.
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 400px) {
+    main .form.encad {
+        padding: 14px 12px;
+    }
+
+    main .form.encad label {
+        font-size: 0.9em;
+    }
+
+    main .form.encad input[type="text"],
+    main .form.encad input[type="email"],
+    main .form.encad input[type="password"],
+    main .form.encad select {
+        height: 42px;
+        font-size: 0.95em;
+    }
+
+    main .form.encad input[type="submit"],
+    main .form.encad input[type="button"] {
+        height: 44px;
+        font-size: 0.95em;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   6. MOBILE PAYSAGE (orientation paysage + hauteur réduite)
+   Formulaire compacté pour tenir à l'écran sans scroll vertical excessif.
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 900px) and (orientation: landscape) {
+    main .form.encad {
+        padding: 12px 20px;
+        margin: 8px auto;
+    }
+
+    main .form.encad label {
+        margin: 6px 0 2px;
+    }
+
+    main .form.encad input[type="text"],
+    main .form.encad input[type="email"],
+    main .form.encad input[type="password"],
+    main .form.encad select {
+        height: 34px;
+        margin: 2px auto;
+    }
+
+    main .form.encad input[type="submit"],
+    main .form.encad input[type="button"] {
+        height: 36px;
+        margin: 4px auto;
+    }
+}
+
+/* En dessous de 576px en paysage, on garde la pleine largeur mais compactée */
+@media screen and (max-width: 576px) and (orientation: landscape) {
+    main .form.encad {
+        padding: 10px 14px;
+    }
+}
+
+/* ==========================================================================
+   ICÔNE INFO-BULLE CLASSIQUE (MOT DE PASSE)
+   ========================================================================== */
+.info-tooltip-icon {
+    color: var(--tenth-color);
+    margin-left: 2px;
+    cursor: help;
+    font-size: 1em;
+    vertical-align: middle;
+    /* transition: color 0.2s ease, transform 0.2s ease; */
+}

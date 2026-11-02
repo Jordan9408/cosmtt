@@ -1,77 +1,37 @@
 <?php
-include_once('../parts/header.php');
-require_once('../connect_ddb.php');
-require_once('../class/User.php');
+declare(strict_types=1);
 
-$firstNameValue = "";
-$lastNameValue = "";
-$emailValue = "";
-$roleValue = "";
-$errorMessage = "";
+// 1. Inclusions globales des dépendances existantes
+// Définition des rôles autorisés (accès superAdmin strict - [SEC-01])
+$requiredRoles = ['superAdmin'];
+require_once dirname(__DIR__, 2) . '/includes/security.php';
+require_once dirname(__DIR__, 2) . '/includes/session_check.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send'])) {
-    // Récupération et assainissement des données
-    $firstName = trim($_POST['firstName'] ?? '');
-    $lastName = trim($_POST['lastName'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confPassword = $_POST['confPassword'] ?? '';
-    $role = $_POST['role'] ?? '';
-
-    // Conserver les valeurs pour réaffichage en cas d'erreur
-    $firstNameValue = htmlspecialchars($firstName);
-    $lastNameValue = htmlspecialchars($lastName);
-    $emailValue = htmlspecialchars($email);
-    $roleValue = htmlspecialchars($role);
-
-    // Vérification de la correspondance des mots de passe
-    if ($password !== $confPassword) {
-        $errorMessage = "Le mot de passe doit être identique à la confirmation.";
-    } else {
-        try {
-            $user = new User($conn);
-            if ($user->addUser($firstName, $lastName, $email, $password, $role)) {
-                header("Location: ./showUser.php");
-                exit();
-            } else {
-                $errorMessage = "Échec de l'ajout de l'utilisateur.";
-            }
-        } catch (InvalidArgumentException $e) {
-            $errorMessage = $e->getMessage();
-        } catch (Exception $e) {
-            $errorMessage = "Une erreur est survenue : " . $e->getMessage();
-        }
-    }
+// Défense en profondeur : vérification stricte du rôle superAdmin
+if (($role ?? '') !== 'superAdmin') {
+    http_response_code(403);
+    header('Location: /cosmtt/admin/pages/home.php?unauthorized=1');
+    exit;
 }
-?>
+require_once dirname(__DIR__) . '/connect_ddb.php';
+require_once dirname(__DIR__) . '/class/User.php';
+require_once dirname(__DIR__) . '/classPages/club/Validations.php';
+require_once dirname(__DIR__, 2) . '/includes/ErrorMessages.php';
 
-<body>
-    <h2>Ajouter un utilisateur</h2>
-    <main>
-        <?php if ($errorMessage): ?>
-            <div class="error-message"><?= htmlspecialchars($errorMessage) ?></div>
-        <?php endif; ?>
+// 2. Inclusion de la nouvelle architecture MVC pour l'ajout
+require_once dirname(__DIR__) . '/classPages/users/AddUserManager.php';
+require_once dirname(__DIR__) . '/classPages/users/AddUserView.php';
+require_once dirname(__DIR__) . '/classPages/users/AddUserController.php';
 
-        <form action="" method="POST" class="form encad">
-            <div>
-                <label for="firstName">Prénom:</label>
-                <input type="text" name="firstName" placeholder="First Name" value="<?= $firstNameValue ?>">
-                <label for="lastName">Nom:</label>
-                <input type="text" name="lastName" placeholder="Last Name" value="<?= $lastNameValue ?>">
-                <label for="email">Email:</label>
-                <input type="email" name="email" placeholder="Email" value="<?= $emailValue ?>">
-                <label for="password">Mot de passe :</label>
-                <input type="password" name="password" placeholder="Password">
-                <label for="confPassword">Confirmer le mot de passe :</label>
-                <input type="password" name="confPassword" placeholder="Confirm Password">
-                <label for="role">Rôle:</label>
-                <select name="role">
-                    <option value="admin" <?= $roleValue === 'admin' ? 'selected' : '' ?>>Admin</option>
-                    <option value="superAdmin" <?= $roleValue === 'superAdmin' ? 'selected' : '' ?>>Super Admin</option>
-                </select>
-                <input type="submit" value="Ajouter" name="send">
-            </div>
-        </form>
-    </main>
-</body>
-</html>
+use Admin\ClassPages\Users\AddUserManager;
+use Admin\ClassPages\Users\AddUserView;
+use Admin\ClassPages\Users\AddUserController;
+
+// 3. Initialisation et injection des dépendances
+$userModel  = new User($conn);
+$manager    = new AddUserManager($userModel);
+$view       = new AddUserView();
+$controller = new AddUserController($manager, $view, $role ?? '');
+
+// 4. Exécution de la page
+$controller->handleRequest();

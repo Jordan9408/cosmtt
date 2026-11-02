@@ -1,6 +1,8 @@
 <?php
 
-// Gestion simple des erreurs pour les fichiers manquants
+declare(strict_types=1);
+
+// Vérification des fichiers requis
 if (!file_exists('html_partials/header.php')) {
     echo 'Erreur: Le fichier header.php est manquant.';
     exit;
@@ -11,104 +13,121 @@ if (!file_exists('html_partials/footer.php')) {
     exit;
 }
 
-// Inclusion des fichiers nécessaires
 require_once 'admin/pages/connect_ddb.php';
 
-// Appel des Classes
 define('CLASSPAGES_PATH', 'admin/pages/classPages/competition/');
 require_once CLASSPAGES_PATH . 'ChampionnatManager.php';
 require_once CLASSPAGES_PATH . 'EquipeManager.php';
 require_once CLASSPAGES_PATH . 'RencontreManager.php';
 
-// Gestion de la sélection de la poule
-$poule = $_GET['poule'] ?? 'pouleA';
+/**
+ * Prépare et expose les données nécessaires à l'affichage du championnat.
+ */
+final class ChampionnatPage
+{
+    private const POULES_VALIDES = ['pouleA', 'pouleB'];
 
-if (!in_array($poule, ['pouleA', 'pouleB'])) {
-    $poule = 'pouleA';
-}
+    public readonly string $poule;
+    public readonly array $classement;
+    public readonly array $journeesAller;
+    public readonly array $journeesRetour;
+    public readonly array $rencontres;
 
-// Récupération des données
-$championnatManager = new ChampionnatManager($conn);
-$classement = $championnatManager->calculerClassement($poule);
-$rencontreManager = new RencontreManager($conn);
-$journees = $rencontreManager->getJourneesByPoule($poule);
-$rencontres = $rencontreManager->getRencontresByPoule($poule);
+    public function __construct(PDO $conn)
+    {
+        $this->poule = $this->resoudrePoule($_GET['poule'] ?? '');
 
-// Séparation des journées "Aller" et "Retour"
-$journeesAller = [];
-$journeesRetour = [];
-foreach ($journees as $journee) {
-    if (isset($journee['type_journee']) && $journee['type_journee'] === 'retour') {
-        $journeesRetour[] = $journee;
-    } else {
-        $journeesAller[] = $journee;
+        $championnatManager  = new ChampionnatManager($conn);
+        $rencontreManager    = new RencontreManager($conn);
+
+        $this->classement = $championnatManager->calculerClassement($this->poule);
+        $this->rencontres = $rencontreManager->getRencontresByPoule($this->poule);
+
+        [$this->journeesAller, $this->journeesRetour] = $this->partitionnerJournees(
+            $rencontreManager->getJourneesByPoule($this->poule)
+        );
+    }
+
+    private function resoudrePoule(string $poule): string
+    {
+        return in_array($poule, self::POULES_VALIDES, true) ? $poule : 'pouleA';
+    }
+
+    /** @return array{0: array, 1: array} */
+    private function partitionnerJournees(array $journees): array
+    {
+        $aller  = [];
+        $retour = [];
+
+        foreach ($journees as $journee) {
+            if (($journee['type_journee'] ?? '') === 'retour') {
+                $retour[] = $journee;
+            } else {
+                $aller[] = $journee;
+            }
+        }
+
+        return [$aller, $retour];
     }
 }
 
 /**
- * Fonction pour échapper le HTML
+ * Utilitaires d'affichage pour la vue championnat.
  */
-function escapeHtml(string $string): string
+final class ChampionnatView
 {
-    return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    public static function e(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    public static function score(int|string|null $score): string
+    {
+        return $score !== null ? (string)$score : '';
+    }
+
+    public static function equipe(?string $nom): string
+    {
+        return $nom !== null ? ucfirst(self::e($nom)) : '';
+    }
+
+    public static function date(string $date, string $format): string
+    {
+        return date($format, strtotime($date));
+    }
+
+    /** @param array $rencontres */
+    public static function filtrerParJournee(array $rencontres, int $journeeId): array
+    {
+        return array_values(array_filter($rencontres, fn($m) => (int)$m['journee_id'] === $journeeId));
+    }
 }
 
-// Inclusion du header
+// --- Initialisation ---
+$page = new ChampionnatPage($conn);
+
 include_once 'html_partials/header.php';
 
 ?>
 
 <title>Championnat - Affichage</title>
-<!-- <link rel="stylesheet" href="admin/pages/adminPage/championnat/rencontres/champ.css"> -->
-<!-- <link rel="stylesheet" href="./css/style.css">
-<link rel="stylesheet" href="./css/animation.css"> -->
-<style>
-    /* Mise en page du calendrier en 2 colonnes */
-    .deux-colonnes-calendrier {
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin: 20px 19em;
-    }
-
-    .colonne-aller,
-    .colonne-retour {
-        flex: 1;
-        min-width: 45%;
-        margin-bottom: 10px;
-    }
-
-    .colonne-titre {
-        text-align: center;
-        background-color: #3f51b5;
-        color: white;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-    }
-
-    @media (max-width: 768px) {
-        .deux-colonnes-calendrier {
-            flex-direction: column;
-            gap: 0;
-        }
-    }
-</style>
+<!-- <link rel="stylesheet" href="css/style.css"> -->
+<link rel="stylesheet" href="admin/css/style_championnat.css">
 
 <main>
     <div id="align-center">
         <p><img src="./img/logo-ufolep.jpg" alt="Logo_Ufolep" class="ufolep"></p>
-        <h2 class="h2_championnat">CHAMPIONNAT</h2>
-        <div class="poule-select">
-            <form method="get" action="" id="select_poule">
-                <label for="poule">&nbsp;</label>
-                <select name="poule" id="poule" onchange="this.form.submit()">
-                    <option value="pouleA" <?= $poule === 'pouleA' ? 'selected' : '' ?>>Poule A</option>
-                    <option value="pouleB" <?= $poule === 'pouleB' ? 'selected' : '' ?>>Poule B</option>
-                </select>
-            </form>
+        <div class="title-bar-wrapper">
+            <h2 class="title-bar">CHAMPIONNAT</h2>
+            <div class="poule-select">
+                <form method="get" action="" id="select_poule">
+                    <label for="poule">&nbsp;</label>
+                    <select name="poule" id="poule">
+                        <option value="pouleA" <?= $page->poule === 'pouleA' ? 'selected' : '' ?>>Poule A</option>
+                        <option value="pouleB" <?= $page->poule === 'pouleB' ? 'selected' : '' ?>>Poule B</option>
+                    </select>
+                </form>
+            </div>
         </div>
 
         <!-- Tableau de classement -->
@@ -124,15 +143,15 @@ include_once 'html_partials/header.php';
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($classement as $nomEquipe => $stats): ?>
-                    <tr>
-                        <td><?= escapeHtml($nomEquipe) ?></td>
-                        <td><?= $stats['points'] ?></td>
-                        <td><?= $stats['journees'] ?></td>
-                        <td><?= $stats['victoires'] ?></td>
-                        <td><?= $stats['defaites'] ?></td>
-                        <td><?= $stats['nuls'] ?></td>
-                    </tr>
+                <?php foreach ($page->classement as $nomEquipe => $stats): ?>
+                <tr>
+                    <td><?= ChampionnatView::e($nomEquipe) ?></td>
+                    <td><?= $stats['points'] ?></td>
+                    <td><?= $stats['journees'] ?></td>
+                    <td><?= $stats['victoires'] ?></td>
+                    <td><?= $stats['defaites'] ?></td>
+                    <td><?= $stats['nuls'] ?></td>
+                </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -140,98 +159,87 @@ include_once 'html_partials/header.php';
         <div class="title-bar">CALENDRIER</div>
 
         <!-- Affichage des journées -->
-        <?php if (!empty($journeesAller) || !empty($journeesRetour)): ?>
-            <div class="deux-colonnes-calendrier">
+        <?php if (!empty($page->journeesAller) || !empty($page->journeesRetour)): ?>
+        <div class="deux-colonnes-calendrier" style="margin: 20px auto 0;">
 
-                <!-- Colonne Aller -->
-                <div class="colonne-aller">
-                    <?php foreach ($journeesAller as $journee): ?>
-                        <div class="journee-wrapper">
-                            <table class="journee-table">
-                                <thead>
-                                    <tr>
-                                        <th colspan="4">
-                                            <?= $journee['journee_id'] ?>
-                                            (<?= date('d/m', strtotime($journee['dateDebut'])) ?> au
-                                            <?= date('d/m', strtotime($journee['dateFin'])) ?>)
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th>Équipe</th>
-                                        <th>Score</th>
-                                        <th>Score</th>
-                                        <th>Équipe</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    $currentJourneeId = $journee['id'];
-                                    $matchesForJournee = array_filter($rencontres, fn($match) => $match['journee_id'] == $currentJourneeId);
-
-                                    foreach ($matchesForJournee as $match):
-                                    ?>
-                                        <tr class="tabJourn">
-                                            <td><?= $match['equipe1'] ? ucfirst(escapeHtml($match['equipe1'])) : '' ?></td>
-                                            <td><?= $match['score1'] !== null ? $match['score1'] : '' ?></td>
-                                            <td><?= $match['score2'] !== null ? $match['score2'] : '' ?></td>
-                                            <td><?= $match['equipe2'] ? ucfirst(escapeHtml($match['equipe2'])) : '' ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php endforeach; ?>
+            <!-- Colonne Aller -->
+            <div class="colonne-aller">
+                <?php foreach ($page->journeesAller as $journee): ?>
+                <?php $matches = ChampionnatView::filtrerParJournee($page->rencontres, (int)$journee['id']); ?>
+                <div class="journee-wrapper">
+                    <table class="journee-table">
+                        <thead>
+                            <tr>
+                                <th colspan="4">
+                                    <?= ChampionnatView::e($journee['journee_id']) ?>
+                                    (<?= ChampionnatView::date($journee['dateDebut'], 'd/m') ?> au
+                                    <?= ChampionnatView::date($journee['dateFin'], 'd/m') ?>)
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Équipe</th>
+                                <th>Score</th>
+                                <th>Score</th>
+                                <th>Équipe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($matches as $match): ?>
+                            <tr class="tabJourn">
+                                <td><?= ChampionnatView::equipe($match['equipe1']) ?></td>
+                                <td><?= ChampionnatView::score($match['score1']) ?></td>
+                                <td><?= ChampionnatView::score($match['score2']) ?></td>
+                                <td><?= ChampionnatView::equipe($match['equipe2']) ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
-
-                <!-- Colonne Retour -->
-                <div class="colonne-retour">
-                    <?php foreach ($journeesRetour as $journee): ?>
-                        <div class="journee-wrapper">
-                            <table class="journee-table">
-                                <thead>
-                                    <tr>
-                                        <th colspan="4">
-                                            <?= $journee['journee_id'] ?>
-                                            (<?= date('d/m', strtotime($journee['dateDebut'])) ?> au
-                                            <?= date('d/m', strtotime($journee['dateFin'])) ?>)
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th>Équipe</th>
-                                        <th>Score</th>
-                                        <th>Score</th>
-                                        <th>Équipe</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    $currentJourneeId = $journee['id'];
-                                    $matchesForJournee = array_filter($rencontres, fn($match) => $match['journee_id'] == $currentJourneeId);
-
-                                    foreach ($matchesForJournee as $match):
-                                    ?>
-                                        <tr class="tabJourn">
-                                            <td><?= $match['equipe1'] ? ucfirst(escapeHtml($match['equipe1'])) : '' ?></td>
-                                            <td><?= $match['score1'] !== null ? $match['score1'] : '' ?></td>
-                                            <td><?= $match['score2'] !== null ? $match['score2'] : '' ?></td>
-                                            <td><?= $match['equipe2'] ? ucfirst(escapeHtml($match['equipe2'])) : '' ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-
+                <?php endforeach; ?>
             </div>
+
+            <!-- Colonne Retour -->
+            <div class="colonne-retour">
+                <?php foreach ($page->journeesRetour as $journee): ?>
+                <?php $matches = ChampionnatView::filtrerParJournee($page->rencontres, (int)$journee['id']); ?>
+                <div class="journee-wrapper">
+                    <table class="journee-table">
+                        <thead>
+                            <tr>
+                                <th colspan="4">
+                                    <?= ChampionnatView::e($journee['journee_id']) ?>
+                                    (<?= ChampionnatView::date($journee['dateDebut'], 'd/m') ?> au
+                                    <?= ChampionnatView::date($journee['dateFin'], 'd/m') ?>)
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Équipe</th>
+                                <th>Score</th>
+                                <th>Score</th>
+                                <th>Équipe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($matches as $match): ?>
+                            <tr class="tabJourn">
+                                <td><?= ChampionnatView::equipe($match['equipe1']) ?></td>
+                                <td><?= ChampionnatView::score($match['score1']) ?></td>
+                                <td><?= ChampionnatView::score($match['score2']) ?></td>
+                                <td><?= ChampionnatView::equipe($match['equipe2']) ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
+        </div>
         <?php else: ?>
-            <p style="text-align: center;">Aucune journée n'a été programmée pour le moment.</p>
+        <p style="text-align: center;">Aucune journée n'a été programmée pour le moment.</p>
         <?php endif; ?>
 
     </div>
 </main>
 
-<?php
-// Inclusion du footer
-include_once 'html_partials/footer.php';
-?>
+<?php include_once 'html_partials/footer.php'; ?>

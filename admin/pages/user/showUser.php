@@ -1,71 +1,40 @@
-<?php include_once('../parts/header.php') ?>
-<?php include_once('../../../config/config.php') ?>
-
 <?php
-// Classe pour la gestion des utilisateurs
-class UserManager
-{
-    private $conn;
+// 1. Sécurité et Session (avant tout rendu)
+$requiredRoles = ['superAdmin'];
+require_once dirname(__DIR__, 2) . '/includes/security.php';
+require_once dirname(__DIR__, 2) . '/includes/session_check.php';
 
-    // Constructeur pour établir la connexion à la base de données
-    public function __construct($conn)
-    {
-        $this->conn = $conn;
-    }
-
-    // Méthode pour récupérer la liste des utilisateurs
-    public function getUsers()
-    {
-        $users = array();
-        $sql = "SELECT * FROM users";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result;
-    }
-
-    // Méthode pour afficher la liste des utilisateurs dans le tableau
-    public function displayUsers()
-    {
-        $users = $this->getUsers();
-
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                echo "<tr>";
-                echo "<td>" . htmlspecialchars($user['firstName']) . "</td>";
-                echo "<td>" . htmlspecialchars($user['lastName']) . "</td>";
-                echo "<td>" . htmlspecialchars($user['email']) . "</td>";
-                echo "<td>********</td>"; // Ne pas afficher le mot de passe
-                echo "<td>" . htmlspecialchars($user['role']) . "</td>";
-                echo "<td><a class='image' href='modifyUser.php?id=" . htmlspecialchars($user['user_id']) . "'><img src='../../../img/icones/write.png' alt='Modifier'></a></td>";
-                echo "<td><a class='image' href='deleteUser.php?id=" . htmlspecialchars($user['user_id']) . "'><img src='../../../img/icones/remove.png' alt='Supprimer'></a></td>";
-                echo "</tr>";
-            }
-        } else {
-            echo "<tr><td colspan='7' class='message'>Aucun utilisateur présent !</td></tr>";
-        }
-    }
+// Défense en profondeur : vérification stricte du rôle superAdmin
+if (($role ?? '') !== 'superAdmin') {
+    http_response_code(403);
+    header('Location: /cosmtt/admin/pages/home.php?unauthorized=1');
+    exit;
 }
+require_once dirname(__DIR__, 1) . '/connect_ddb.php';
+require_once dirname(__DIR__, 3) . '/config/config.php';
 
-include_once "../connect_ddb.php"; // Assurez-vous que ce fichier utilise PDO
+// Appel du contrôleur depuis le nouveau dossier "users"
+require_once dirname(__DIR__, 1) . '/classPages/users/ShowUserController.php';
+require_once dirname(__DIR__, 1) . '/parts/header.php';
 
-// Création d'une instance de la classe UserManager
-$userManager = new UserManager($conn);
+// Création d'une instance du contrôleur
+$controller = new ShowUserController($conn);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des utilisateurs</title>
-    <link rel="stylesheet" href="../style_admin.css">
+    <link rel="stylesheet" href="/cosmtt/admin/css/style_admin.css">
+    <link rel="stylesheet" href="/cosmtt/admin/css/style_utilisateurs.css">
 </head>
 
 <body>
+    <div class="title-bar">Gestion des utilisateurs</div>
     <main>
         <div id="container">
             <div class="link_container">
@@ -87,14 +56,17 @@ $userManager = new UserManager($conn);
                     <tbody>
                         <?php
                         // Appel de la méthode pour afficher les utilisateurs
-                        $userManager->displayUsers();
+                        $controller->displayUsers();
                         ?>
                     </tbody>
                 </table>
             </section>
         </div>
     </main>
+    <?php
+        require_once dirname(__DIR__, 1) . '/parts/footer.php';
+    ?>
+    <script src="/cosmtt/admin/js/showUser.js"></script>
 </body>
 
 </html>
-<!-- <?php include_once('../parts/footer.php') ?> -->

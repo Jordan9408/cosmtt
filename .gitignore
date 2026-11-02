@@ -1,0 +1,19 @@
+.env*
+*.pem
+*.key
+*.p12
+*.pfx
+/audit_securite.md
+/RAPPORT_SECURITE_CONNEXION.md
+/MCD-MLD/script SQL.txt
+composer-setup.php
+composer.phar
+*.log
+.vscode/
+.idea/
+.history-memo/
+.kilo/
+.blackbox/
+node_modules/
+/storage/rate_limit/*.json
+Audit De Sécurité Web.md

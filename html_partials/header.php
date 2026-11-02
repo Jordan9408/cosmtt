@@ -1,3 +1,45 @@
+<?php
+
+require_once __DIR__ . '/../include/session_boot.php';
+
+require_once('./config/config.php');
+require_once('./admin/pages/connect_ddb.php');
+require_once __DIR__ . '/../include/IpPseudonymizer.php';
+
+require_once __DIR__ . '/../include/TrafficTracker.php';
+
+final class VisitorTracker
+{
+    public function __construct(private PDO $conn)
+    {
+    }
+
+    public function track(string $ip): void
+    {
+        try {
+            $stmt = $this->conn->prepare(
+                'INSERT INTO visitors (ip_address, visit_date) VALUES (?, ?)'
+            );
+            $stmt->execute([$ip, date('Y-m-d H:i:s')]);
+        } catch (PDOException $e) {
+            // Consignez les erreurs si nécessaire
+        }
+    }
+}
+
+$rawIp = $_SERVER['REMOTE_ADDR'] ?? null;
+$ip = IpPseudonymizer::hash($rawIp);
+
+// Tracking du trafic global (table statistiques_visites pour Rapport de Trafic)
+// On enregistre une visite par heure et par session pour éviter de surcharger à chaque rafraîchissement
+$now = time();
+$lastTracked = (int) ($_SESSION['last_visit_tracked'] ?? 0);
+if (($now - $lastTracked) >= 3600) {
+    (new TrafficTracker($conn))->logVisit();
+    (new VisitorTracker($conn))->track($ip);
+    $_SESSION['last_visit_tracked'] = $now;
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -45,7 +87,7 @@
                     <ul class="sousmenu">
                         <li><a href="./championnat.php">CHAMPIONNAT</a></li>
                         <li><a href="./classement.php">CLASSEMENT</a></li>
-                        <li><a href="./criterium.php">CRITERIUM</a></li>
+                        <li><a href="./criteriumArticles.php">CRITERIUM</a></li>
                     </ul>
                 </li>
                 <li>
@@ -57,6 +99,7 @@
             </ul>
 
         </nav>
-        <a href="/index.php"><img src="./img/logo_COSM.webp" alt="Logo COSMVTT" class="logo-cosmtt"></a>
+        <a href="./index.php"><img src="./img/logo_COSM.webp" alt="Logo COSMVTT" class="logo-cosmtt"></a>
+
 
     </header>

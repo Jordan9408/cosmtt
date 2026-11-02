@@ -35,7 +35,7 @@ class DatabaseConnection
     {
         if (self::$instance === null) {
             if (self::$configInstance === null) {
-                require_once __DIR__ . './../../../config/config.php';
+                require_once dirname(__DIR__, 3) . '/config/config.php';
                 self::$configInstance = new Config();
             }
 
@@ -44,8 +44,8 @@ class DatabaseConnection
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 self::$instance->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             } catch (PDOException $e) {
-                // Gestion sécurisée de l'erreur
-                throw new PDOException("Erreur de connexion à la base de données : " . $e->getMessage());
+                error_log("Erreur connexion DB: " . $e->getMessage());
+                throw new PDOException("Erreur de connexion à la base de données.");
             }
         }
         return self::$instance;
